@@ -5,6 +5,8 @@ import { HapticTab } from '@/src/components/haptic-tab';
 import { IconSymbol } from '@/src/components/ui/icon-symbol';
 import { theme } from '@/src/constants/theme';
 import Entypo from '@expo/vector-icons/Entypo';
+import Octicons from '@expo/vector-icons/Octicons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 export default function TabLayout() {
   return (
@@ -42,6 +44,24 @@ export default function TabLayout() {
           title: 'Progreso',
           tabBarIcon: ({ color }) => (
             <Entypo name="progress-two" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="history"
+        options={{
+          title: 'Historial',
+          tabBarIcon: ({ color }) => (
+            <Octicons name="history" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="account" size={24} color={color} />
           ),
         }}
       />
