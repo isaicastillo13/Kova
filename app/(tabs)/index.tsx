@@ -1,8 +1,8 @@
-import { theme } from "@/src/constants/theme";
+import { spacing, theme } from "@/src/constants/theme";
 import { Image, StyleSheet, Text, View } from "react-native";
 
 type Props = {
-  name: "isaias";
+  name: "Isaias";
   date: string;
   imageUrl?: string;
   onSearchPress?: () => void;
@@ -23,9 +23,18 @@ export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
 
         {/* Texto */}
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Hello, Isaias</Text>
-          <Text style={styles.subtitle}>02/04/2026</Text>
+          <Text style={styles.title}>Hello, {name || 'Isaias'}</Text>
+          <Text style={styles.subtitle}>{date || '02/04/2026'}</Text>
         </View>
+
+         <Image
+          source={
+            imageUrl
+              ? { uri: imageUrl }
+              : require("@/assets/images/iconAppNaranja.png")
+          }
+          style={styles.avatar}
+        />
       </View>
       {/* Avatar */}
     </View>
@@ -36,7 +45,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
-    padding: theme.spacing.xxl,
+    paddingTop: spacing.xxxl,
+    paddingHorizontal: spacing.xxl,
   },
 
   screenTitle: {
@@ -88,7 +98,7 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    marginLeft: theme.spacing.md,
   },
 
   title: {
