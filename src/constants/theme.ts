@@ -7,7 +7,7 @@ export const colors = {
   surface: "#f8f8f8",
   border: "#e5e7eb",
 
-  text: "#111827",
+  text: "#404040",
   textSecondary: "#6b7280",
   textMuted: "#9ca3af",
 
@@ -16,7 +16,7 @@ export const colors = {
   error: "#dc2626",
 
   white: "#ffffff",
-  black: "#000000",
+  black: "#404040",
 };
 
 export const spacing = {
@@ -77,7 +77,7 @@ export const Colors = {
   light: {
     primary: '#d00a0c',
     background: '#ffffff',
-    text: '#111827',
+    text: '#404040',
     textSecondary: '#6b7280',
     textMuted: '#9ca3af',
     border: '#e5e7eb',
@@ -86,7 +86,7 @@ export const Colors = {
   },
   dark: {
     primary: '#d00a0c',
-    background: '#0f0f10',
+    background: '#404040',
     text: '#f3f4f6',
     textSecondary: '#d1d5db',
     textMuted: '#9ca3af',

@@ -9,6 +9,7 @@ import {
   Text,
   TextInput,
   View,
+  Image,
 } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { theme } from '@/src/constants/theme';
@@ -40,6 +41,7 @@ export default function LoginScreen() {
     if (!email.trim()) {
       setEmailError('El correo es obligatorio');
       hasError = true;
+      
     } else if (!validateEmail(email.trim())) {
       setEmailError('Ingresa un correo válido');
       hasError = true;
@@ -61,7 +63,7 @@ export default function LoginScreen() {
       // Simulación de login
       await new Promise(resolve => setTimeout(resolve, 1200));
 
-      router.replace('/(tabs)/home');
+      router.replace('/(tabs)');
     } catch (error) {
       setPasswordError('No se pudo iniciar sesión. Intenta nuevamente.');
     } finally {
@@ -76,18 +78,20 @@ export default function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.container}>
-          <View style={styles.header}>
+            <View style={styles.header}>
             <View style={styles.logoCircle}>
-              <Text style={styles.logoText}>R</Text>
+
+              <Image
+              source={require('@/assets/images/iconAppWhite.png')}
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+              />
+            </View>
+            <Text style={styles.brand}>Kova</Text>
+          
             </View>
 
-            <Text style={styles.brand}>RunPlan AI</Text>
-            <Text style={styles.subtitle}>
-              Tu plan de running, adaptado a ti.
-            </Text>
-          </View>
-
-          <View style={styles.card}>
+          <View>
             <Text style={styles.title}>Iniciar sesión</Text>
             <Text style={styles.description}>
               Accede para continuar con tu entrenamiento
