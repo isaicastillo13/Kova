@@ -41,7 +41,7 @@ export default function LoginScreen() {
     if (!email.trim()) {
       setEmailError('El correo es obligatorio');
       hasError = true;
-      
+
     } else if (!validateEmail(email.trim())) {
       setEmailError('Ingresa un correo válido');
       hasError = true;
@@ -50,6 +50,7 @@ export default function LoginScreen() {
     if (!password.trim()) {
       setPasswordError('La contraseña es obligatoria');
       hasError = true;
+      
     } else if (password.trim().length < 6) {
       setPasswordError('La contraseña debe tener al menos 6 caracteres');
       hasError = true;
