@@ -23,11 +23,11 @@ export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
 
         {/* Texto */}
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Hello, {name || 'Isaias'}</Text>
-          <Text style={styles.subtitle}>{date || '02/04/2026'}</Text>
+          <Text style={styles.title}>Hello, {name || "Isaias"}</Text>
+          <Text style={styles.subtitle}>{date || "02/04/2026"}</Text>
         </View>
 
-         <Image
+        <Image
           source={
             imageUrl
               ? { uri: imageUrl }
@@ -36,7 +36,23 @@ export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
           style={styles.avatar}
         />
       </View>
-      {/* Avatar */}
+      <View style={styles.card}>
+        <View style={styles.row}>
+          <View>
+            <Text style={styles.cardTitle}>15km Long Run</Text>
+            <Text style={styles.subtitle}>5:20 - 5:30</Text>
+          </View>
+          <Image
+          source={
+            imageUrl
+              ? { uri: imageUrl }
+              : require("@/assets/images/iconoRunner.png")
+          }
+          style={styles.avatar}
+        />
+        </View>
+        {/* colocar el detalle corto del entrenamiento  */}
+      </View>
     </View>
   );
 }
@@ -57,7 +73,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.primary,
     borderRadius: theme.radius.xl,
     padding: theme.spacing.xxl,
     borderWidth: 1,
@@ -68,7 +84,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: theme.typography.titleMD,
     fontWeight: theme.fontWeight.bold,
-    color: theme.colors.primary,
+    color: theme.colors.white,
     marginBottom: theme.spacing.lg,
   },
 
@@ -109,7 +125,7 @@ const styles = StyleSheet.create({
 
   subtitle: {
     fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    color: theme.colors.white,
     marginTop: 2,
   },
 
