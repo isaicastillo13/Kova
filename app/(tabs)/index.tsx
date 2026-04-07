@@ -55,7 +55,7 @@ export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
           </View>
         </View>
         <View>
-          <Text style={styles.cardTitle}>Meta Semanal</Text>
+          <Text style={styles.label}>1 de 7 sesiones completadas</Text>
           <ProgressBar current={2} total={41} />
         </View>
       </View>
@@ -108,8 +108,10 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    fontSize: theme.typography.bodyMD,
-    color: theme.colors.textSecondary,
+    fontSize: theme.typography.titleSM,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.colors.white,
+    marginBottom: theme.spacing.sm,
   },
 
   value: {
