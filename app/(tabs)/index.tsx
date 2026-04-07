@@ -1,6 +1,7 @@
 import { spacing, theme } from "@/src/constants/theme";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { ProgressBar } from "@/src/components/ProgresBar";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 type Props = {
   name: "Isaias";
@@ -56,7 +57,19 @@ export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
         </View>
         <View>
           <Text style={styles.label}>1 de 7 sesiones completadas</Text>
-          <ProgressBar current={2} total={41} />
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: spacing.sm,
+              borderRadius: theme.radius.sm,
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <ProgressBar current={2} total={41} />
+            </View>
+            <AntDesign name="trophy" size={24} color="white" />
+          </View>
         </View>
       </View>
     </View>
