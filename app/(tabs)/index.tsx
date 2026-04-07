@@ -1,5 +1,6 @@
 import { spacing, theme } from "@/src/constants/theme";
 import { Image, StyleSheet, Text, View } from "react-native";
+import { ProgressBar } from "@/src/components/ProgresBar";
 
 type Props = {
   name: "Isaias";
@@ -37,21 +38,26 @@ export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
         />
       </View>
       <View style={styles.card}>
-        <View style={styles.row}>
-          <View>
-            <Text style={styles.cardTitle}>15km Long Run</Text>
-            <Text style={styles.subtitle}>5:20 - 5:30</Text>
+        <View>
+          <View style={styles.row}>
+            <Image
+              source={
+                imageUrl
+                  ? { uri: imageUrl }
+                  : require("@/assets/images/iconAppWhite.png")
+              }
+              style={styles.avatar}
+            />
+            <View style={{ flexDirection: "column", alignItems: "center" }}>
+              <Text style={styles.cardTitle}>41</Text>
+              <Text style={[styles.subtitle, { color: "white" }]}>km</Text>
+            </View>
           </View>
-          <Image
-          source={
-            imageUrl
-              ? { uri: imageUrl }
-              : require("@/assets/images/iconoRunner.png")
-          }
-          style={styles.avatar}
-        />
         </View>
-        {/* colocar el detalle corto del entrenamiento  */}
+        <View>
+          <Text style={styles.cardTitle}>Meta Semanal</Text>
+          <ProgressBar current={2} total={41} />
+        </View>
       </View>
     </View>
   );
@@ -85,7 +91,14 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.titleMD,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.white,
-    marginBottom: theme.spacing.lg,
+    marginBottom: 0,
+    lineHeight: 34, // 🔥 clave
+  },
+
+  cardGoals: {
+    fontSize: theme.typography.titleLG,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.colors.white,
   },
 
   row: {
@@ -108,11 +121,11 @@ const styles = StyleSheet.create({
   avatar: {
     width: 48,
     height: 48,
-    borderRadius: theme.radius.pill,
   },
 
   textContainer: {
     flex: 1,
+    alignItems: "center",
     justifyContent: "center",
     marginLeft: theme.spacing.md,
   },
@@ -125,7 +138,7 @@ const styles = StyleSheet.create({
 
   subtitle: {
     fontSize: theme.typography.bodySM,
-    color: theme.colors.white,
+    color: theme.colors.textSecondary,
     marginTop: 2,
   },
 
