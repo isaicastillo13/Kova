@@ -2,6 +2,7 @@ import { spacing, theme } from "@/src/constants/theme";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { ProgressBar } from "@/src/components/ProgresBar";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import AnimatedRunner from '@/src/components/AnimatedRunner';
 
 type Props = {
   name: "Isaias";
