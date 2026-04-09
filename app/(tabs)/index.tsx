@@ -14,7 +14,10 @@ type Props = {
 };
 
 export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
- const weekDays = getWeekDaysWithLabels();
+  const completedDays = [0, 1, 3]; // luego esto vendrá de estado
+
+  const weekDays = getWeekDaysWithLabels(completedDays);
+
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -78,7 +81,7 @@ export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
       </View>
 
       <View style={{flexDirection:'column', padding:spacing.sm}} >
-        <Text style={styles.subtitle}>Tu Racha!</Text>
+        <Text style={[styles.subtitle, {marginLeft:spacing.md}, {marginBottom:0}, {marginTop:spacing.sm}]}>Tu Racha!</Text>
         <View style={styles.containerCalendar}>
           <WeeklyCalendar days={weekDays} />
         </View>
@@ -95,7 +98,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xxl,
   },
   containerCalendar: {
-    paddingTop: theme.spacing.xl,
+    paddingTop: theme.spacing.sm,
     backgroundColor: theme.colors.background,
   },
 

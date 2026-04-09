@@ -1,4 +1,4 @@
-export function getWeekDaysWithLabels() {
+export function getWeekDaysWithLabels(completedDays: number[] = []) {
   const today = new Date();
   const day = today.getDay();
   const mondayOffset = day === 0 ? -6 : 1 - day;
@@ -17,7 +17,7 @@ export function getWeekDaysWithLabels() {
     week.push({
       dayNumber: currentDay.getDate(),
       isToday: currentDay.toDateString() === today.toDateString(),
-      isCompleted: false, // luego lo conectas
+      isCompleted: completedDays.includes(i), // 🔥 aquí está la magia
       dayLabel: labels[i],
     });
   }
