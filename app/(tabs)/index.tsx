@@ -4,6 +4,7 @@ import { ProgressBar } from "@/src/components/ProgresBar";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import AnimatedRunner from "@/src/components/AnimatedRunner";
 import WeeklyCalendar from "@/src/components/weeklyCalendar";
+import { getWeekDaysWithLabels } from '@/src/components/utils/date';
 
 type Props = {
   name: "Isaias";
@@ -13,15 +14,7 @@ type Props = {
 };
 
 export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
-  const weekDays = [
-    { dayNumber: 18, isToday: false, isCompleted: true },
-    { dayNumber: 19, isToday: false, isCompleted: true },
-    { dayNumber: 20, isToday: false, isCompleted: false },
-    { dayNumber: 21, isToday: true, isCompleted: true },
-    { dayNumber: 22, isToday: false, isCompleted: false },
-    { dayNumber: 23, isToday: false, isCompleted: false },
-    { dayNumber: 24, isToday: false, isCompleted: false },
-  ];
+ const weekDays = getWeekDaysWithLabels();
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -84,7 +77,7 @@ export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
         </View>
       </View>
 
-      <View style={{flexDirection:'column', padding:spacing.sm }} >
+      <View style={{flexDirection:'column', padding:spacing.sm}} >
         <Text style={styles.subtitle}>Tu Racha!</Text>
         <View style={styles.containerCalendar}>
           <WeeklyCalendar days={weekDays} />
