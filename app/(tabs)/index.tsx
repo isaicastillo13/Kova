@@ -1,105 +1,106 @@
 import { colors, spacing, theme } from "@/src/constants/theme";
-import { Image, StyleSheet, Text, View, Pressable } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { ProgressBar } from "@/src/components/ProgresBar";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import AnimatedRunner from "@/src/components/AnimatedRunner";
 import WeeklyCalendar from "@/src/components/weeklyCalendar";
-import { getWeekDaysWithLabels } from '@/src/components/utils/date';
+import { getWeekDaysWithLabels } from "@/src/components/utils/date";
 
 type Props = {
-  name: "Isaias";
-  date: string;
+  name?: string;
+  date?: string;
   imageUrl?: string;
   onSearchPress?: () => void;
 };
 
-export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
-  const completedDays = [0, 1, 3]; // luego esto vendrá de estado
-
+export default function Header({
+  name = "Isaias",
+  date = "02/04/2026",
+  imageUrl,
+}: Props) {
+  const completedDays = [0, 1, 3];
   const weekDays = getWeekDaysWithLabels(completedDays);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.row}>
-        <Image
-          source={
-            imageUrl
-              ? { uri: imageUrl }
-              : require("../../assets/images/avatar.jpg")
-          }
-          style={styles.avatar}
-        />
+    <View style={styles.screen}>
+      {/* SECCION ROJA UNIFICADA */}
+      <View style={styles.redSection}>
+        {/* TOP ROW */}
+        <View style={styles.topRow}>
+          <Image
+            source={
+              imageUrl
+                ? { uri: imageUrl }
+                : require("../../assets/images/avatar.jpg")
+            }
+            style={styles.avatar}
+          />
 
-        {/* Texto */}
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>Hello, {name || "Isaias"}</Text>
-          <Text style={styles.subtitle}>{date || "02/04/2026"}</Text>
+          <View style={styles.textContainer}>
+            <Text style={styles.greeting}>Buenos días</Text>
+            <Text style={styles.userName}>{name} 👋</Text>
+          </View>
+
+          <Image
+            source={require("@/assets/images/iconAppNaranja.png")}
+            style={styles.appIcon}
+          />
         </View>
 
-        <Image
-          source={
-            imageUrl
-              ? { uri: imageUrl }
-              : require("@/assets/images/iconAppNaranja.png")
-          }
-          style={styles.avatar}
-        />
-      </View>
-      <View style={styles.card}>
-        <View>
-          <View style={styles.row}>
-            <Image
-              source={
-                imageUrl
-                  ? { uri: imageUrl }
-                  : require("@/assets/images/iconAppWhite.png")
-              }
-              style={styles.avatar}
-            />
-            <View style={{ flexDirection: "column", alignItems: "center" }}>
-              <Text style={styles.cardTitle}>41</Text>
-              <Text style={[styles.subtitle, { color: "white" }]}>km</Text>
+        {/* RESUMEN */}
+        <View style={styles.summaryCard}>
+          <View style={styles.summaryRow}>
+            <View style={styles.summaryLeft}>
+              <Image
+                source={require("@/assets/images/iconAppWhite.png")}
+                style={styles.appIcon}
+              />
+
+              <View style={styles.kmContainer}>
+                <Text style={styles.cardTitle}>41</Text>
+                <Text style={styles.cardSubtitleWhite}>km</Text>
+              </View>
             </View>
           </View>
-        </View>
-        <View>
+
           <Text style={styles.label}>1 de 7 sesiones completadas</Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: spacing.sm,
-              borderRadius: theme.radius.sm,
-            }}
-          >
-            <View style={{ flex: 1 }}>
+
+          <View style={styles.progressRow}>
+            <View style={styles.progressWrapper}>
               <ProgressBar current={2} total={41} />
             </View>
             <AntDesign name="trophy" size={24} color="white" />
           </View>
         </View>
-      </View>
 
-      <View style={{flexDirection:'column', padding:spacing.sm}} >
-        <Text style={[styles.subtitle, {marginLeft:spacing.md}, {marginBottom:0}, {marginTop:spacing.sm}]}>Tu Racha!</Text>
-        <View style={styles.containerCalendar}>
-          <WeeklyCalendar days={weekDays} />
+        {/* RACHA */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitleWhite}>Tu racha</Text>
+          <View style={styles.containerCalendar}>
+            <WeeklyCalendar days={weekDays} />
+          </View>
         </View>
       </View>
-      <View >
-        {/* texto */}
-        <Text>Entrenamiendo de Hoy</Text>
-        {/* card */}
-        <View style={styles.card} >
-          <Text>Intervalos</Text>
-          <View>
-          <Text>Rodaje de Velocidad</Text>
-          <Text>Martes - 55min - Dificultad Media</Text>
-          </View>
-          <View>
-            <Text>6x400</Text>
-            <Text>FC 160 - 175</Text>
-            <Text>Finalizado</Text>
+
+      {/* CONTENIDO */}
+      <View style={styles.content}>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Entrenamiento de hoy</Text>
+
+          <View style={styles.workoutCard}>
+            <Text style={styles.workoutType}>Intervalos</Text>
+
+            <View style={styles.workoutBlock}>
+              <Text style={styles.workoutTitle}>Rodaje de Velocidad</Text>
+              <Text style={styles.workoutMeta}>
+                Martes · 55 min · Dificultad media
+              </Text>
+            </View>
+
+            <View style={styles.workoutBlock}>
+              <Text style={styles.workoutMetric}>6x400</Text>
+              <Text style={styles.workoutMeta}>FC 160 - 175</Text>
+              <Text style={styles.workoutDone}>Finalizado</Text>
+            </View>
           </View>
         </View>
       </View>
@@ -108,40 +109,98 @@ export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
     backgroundColor: theme.colors.background,
-    paddingTop: spacing.xxxl,
-    paddingHorizontal: spacing.xxl,
-  },
-  containerCalendar: {
-    paddingTop: theme.spacing.sm,
-    backgroundColor: theme.colors.background,
   },
 
-  screenTitle: {
-    fontSize: theme.typography.titleLG,
+  redSection: {
+    backgroundColor: colors.primary,
+    paddingTop: spacing.xxxl,
+    paddingBottom: spacing.xl,
+    paddingHorizontal: spacing.xxl,
+    gap: spacing.lg,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+  },
+
+  topRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  content: {
+    flex: 1,
+    paddingHorizontal: spacing.xxl,
+    paddingTop: spacing.lg,
+    gap: spacing.lg,
+  },
+
+  section: {
+    gap: spacing.sm,
+  },
+
+  sectionTitle: {
+    fontSize: theme.typography.titleSM,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.xl,
   },
 
-  card: {
-    backgroundColor: theme.colors.primary,
-    borderRadius: theme.radius.xl,
-    padding: theme.spacing.xxl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    ...theme.shadows.card,
+  sectionTitleWhite: {
+    fontSize: theme.typography.titleSM,
+    fontWeight: theme.fontWeight.bold,
+    color: "rgba(255,255,255,0.85)",
+    marginLeft: spacing.xs,
   },
 
-  cardBody: {
-    backgroundColor: theme.colors.primary,
+  avatar: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+  },
+
+  appIcon: {
+    width: 48,
+    height: 48,
+  },
+
+  textContainer: {
+    flex: 1,
+    marginLeft: spacing.md,
+  },
+
+  greeting: {
+    fontSize: theme.typography.bodyMD,
+    color: "rgba(255,255,255,0.7)",
+    marginBottom: 4,
+  },
+
+  userName: {
+    fontSize: theme.typography.titleLG,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.colors.white,
+  },
+
+  summaryCard: {
     borderRadius: theme.radius.xl,
     padding: theme.spacing.xxl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    ...theme.shadows.card,
+    backgroundColor: "transparent",
+  },
+
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: spacing.md,
+  },
+
+  summaryLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+  },
+
+  kmContainer: {
+    alignItems: "center",
   },
 
   cardTitle: {
@@ -149,65 +208,81 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.white,
     marginBottom: 0,
-    lineHeight: 34, // 🔥 clave
+    lineHeight: 34,
   },
 
-  cardGoals: {
-    fontSize: theme.typography.titleLG,
-    fontWeight: theme.fontWeight.bold,
+  cardSubtitleWhite: {
+    fontSize: theme.typography.bodySM,
     color: theme.colors.white,
-  },
-
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: theme.spacing.md,
+    marginTop: 0,
+    lineHeight: 14,
   },
 
   label: {
-    fontSize: theme.typography.titleSM,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.white,
-    marginBottom: theme.spacing.sm,
-  },
-
-  value: {
     fontSize: theme.typography.bodyMD,
     fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
+    color: theme.colors.white,
+    marginBottom: spacing.sm,
   },
 
-  avatar: {
-    width: 48,
-    height: 48,
-  },
-
-  textContainer: {
-    flex: 1,
+  progressRow: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginLeft: theme.spacing.md,
+    gap: spacing.sm,
   },
 
-  title: {
+  progressWrapper: {
+    flex: 1,
+  },
+
+  containerCalendar: {
+    paddingTop: theme.spacing.sm,
+    backgroundColor: "transparent",
+  },
+
+  workoutCard: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radius.xl,
+    padding: theme.spacing.xxl,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    ...theme.shadows.card,
+  },
+
+  workoutType: {
+    fontSize: theme.typography.titleSM,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.colors.text,
+    marginBottom: spacing.md,
+  },
+
+  workoutBlock: {
+    marginBottom: spacing.md,
+  },
+
+  workoutTitle: {
     fontSize: theme.typography.bodyLG,
     fontWeight: theme.fontWeight.semibold,
     color: theme.colors.text,
+    marginBottom: 4,
   },
 
-  subtitle: {
+  workoutMeta: {
     fontSize: theme.typography.bodySM,
     color: theme.colors.textSecondary,
-    marginTop: 2,
   },
 
-  iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: theme.radius.pill,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    alignItems: "center",
-    justifyContent: "center",
+  workoutMetric: {
+    fontSize: theme.typography.bodyLG,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.colors.text,
+    marginBottom: 4,
+  },
+
+  workoutDone: {
+    fontSize: theme.typography.bodySM,
+    fontWeight: theme.fontWeight.semibold,
+    color: theme.colors.primary,
+    marginTop: 4,
   },
 });
