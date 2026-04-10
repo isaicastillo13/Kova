@@ -1,9 +1,7 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { spacing, theme } from "@/src/constants/theme";
-
-type Status = "pending" | "completed";
 
 type Props = {
   type: string;
@@ -13,7 +11,6 @@ type Props = {
   difficulty: string;
   metric: string;
   heartRate: string;
-  status?: Status;
 };
 
 export default function TodayWorkout({
@@ -24,22 +21,18 @@ export default function TodayWorkout({
   difficulty,
   metric,
   heartRate,
-  status = "pending",
 }: Props) {
-  const isCompleted = status === "completed";
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  const toggleCompleted = () => {
+    setIsCompleted(!isCompleted);
+  };
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.type}>{type}</Text>
-
-        {isCompleted && (
-          <View style={styles.badge}>
-            <AntDesign name="check-circle" size={16} color={theme.colors.primary} />
-            <Text style={styles.badgeText}>Completado</Text>
-          </View>
-        )}
       </View>
 
       {/* Main info */}
@@ -55,6 +48,35 @@ export default function TodayWorkout({
         <Text style={styles.metric}>{metric}</Text>
         <Text style={styles.meta}>{heartRate}</Text>
       </View>
+
+      {/* ✅ CHECKBOX */}
+      <Pressable
+        style={[
+          styles.checkboxContainer,
+          isCompleted && styles.checkboxCompleted,
+        ]}
+        onPress={toggleCompleted}
+      >
+        <View
+          style={[
+            styles.checkbox,
+            isCompleted && styles.checkboxChecked,
+          ]}
+        >
+          {isCompleted && (
+            <AntDesign name="check" size={14} color="white" />
+          )}
+        </View>
+
+        <Text
+          style={[
+            styles.checkboxText,
+            isCompleted && styles.checkboxTextCompleted,
+          ]}
+        >
+          {isCompleted ? "Completado" : "Marcar como completado"}
+        </Text>
+      </Pressable>
     </View>
   );
 }
@@ -116,4 +138,43 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
     marginBottom: 4,
   },
+
+  checkboxContainer: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginTop: spacing.md,
+  paddingTop: spacing.sm,
+  borderTopWidth: 1,
+  borderTopColor: theme.colors.border,
+},
+
+checkboxCompleted: {
+  opacity: 0.9,
+},
+
+checkbox: {
+  width: 22,
+  height: 22,
+  borderRadius: 6,
+  borderWidth: 2,
+  borderColor: theme.colors.border,
+  alignItems: "center",
+  justifyContent: "center",
+  marginRight: spacing.sm,
+},
+
+checkboxChecked: {
+  backgroundColor: "#22C55E", // verde éxito 🔥
+  borderColor: "#22C55E",
+},
+
+checkboxText: {
+  fontSize: theme.typography.bodySM,
+  color: theme.colors.textSecondary,
+},
+
+checkboxTextCompleted: {
+  color: "#22C55E",
+  fontWeight: theme.fontWeight.semibold,
+},
 });

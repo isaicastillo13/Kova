@@ -85,7 +85,6 @@ export default function Header({
             difficulty="Media"
             metric="6x400"
             heartRate="FC 160 - 175"
-            status="completed"
           />
         </View>
         <View style={styles.content}>
