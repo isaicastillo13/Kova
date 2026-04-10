@@ -22,9 +22,8 @@ export default function Header({
 
   return (
     <View style={styles.screen}>
-      {/* SECCION ROJA UNIFICADA */}
-      <View style={styles.redSection}>
-        {/* TOP ROW */}
+      {/* TOP SECTION */}
+      <View style={styles.topSection}>
         <View style={styles.topRow}>
           <Image
             source={
@@ -40,24 +39,28 @@ export default function Header({
             <Text style={styles.userName}>{name} 👋</Text>
           </View>
 
-          <Image
-            source={require("@/assets/images/iconAppNaranja.png")}
-            style={styles.appIcon}
-          />
+          <View style={styles.appIconWrapper}>
+            <Image
+              source={require("@/assets/images/iconAppNaranja.png")}
+              style={styles.appIcon}
+            />
+          </View>
         </View>
 
         {/* RESUMEN */}
         <View style={styles.summaryCard}>
           <View style={styles.summaryRow}>
             <View style={styles.summaryLeft}>
-              <Image
-                source={require("@/assets/images/iconAppWhite.png")}
-                style={styles.appIcon}
-              />
+              <View style={styles.summaryIconWrapper}>
+                <Image
+                  source={require("@/assets/images/iconAppWhite.png")}
+                  style={styles.summaryIcon}
+                />
+              </View>
 
               <View style={styles.kmContainer}>
                 <Text style={styles.cardTitle}>41</Text>
-                <Text style={styles.cardSubtitleWhite}>km</Text>
+                <Text style={styles.cardSubtitle}>km</Text>
               </View>
             </View>
           </View>
@@ -68,29 +71,31 @@ export default function Header({
             <View style={styles.progressWrapper}>
               <ProgressBar current={2} total={41} />
             </View>
-            <AntDesign name="trophy" size={24} color="white" />
+            <View style={styles.trophyWrapper}>
+              <AntDesign name="trophy" size={20} color={theme.colors.primary} />
+            </View>
           </View>
         </View>
 
         {/* RACHA */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitleWhite}>Tu racha</Text>
+          <Text style={styles.sectionTitle}>Tu racha</Text>
           <View style={styles.containerCalendar}>
             <WeeklyCalendar days={weekDays} />
           </View>
         </View>
       </View>
 
-      {/* CONTENIDO */}
+      {/* CONTENT */}
       <View style={styles.content}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Entrenamiento de hoy</Text>
+          <Text style={styles.sectionTitleDark}>Entrenamiento de hoy</Text>
 
           <View style={styles.workoutCard}>
             <Text style={styles.workoutType}>Intervalos</Text>
 
             <View style={styles.workoutBlock}>
-              <Text style={styles.workoutTitle}>Rodaje de Velocidad</Text>
+              <Text style={styles.workoutTitle}>Rodaje de velocidad</Text>
               <Text style={styles.workoutMeta}>
                 Martes · 55 min · Dificultad media
               </Text>
@@ -111,17 +116,17 @@ export default function Header({
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: "#F7F7F8",
   },
 
-  redSection: {
-    backgroundColor: colors.primary,
+  topSection: {
+    backgroundColor: theme.colors.white,
     paddingTop: spacing.xxxl,
     paddingBottom: spacing.xl,
     paddingHorizontal: spacing.xxl,
     gap: spacing.lg,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
   },
 
   topRow: {
@@ -146,11 +151,10 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
 
-  sectionTitleWhite: {
+  sectionTitleDark: {
     fontSize: theme.typography.titleSM,
     fontWeight: theme.fontWeight.bold,
-    color: "rgba(255,255,255,0.85)",
-    marginLeft: spacing.xs,
+    color: theme.colors.text,
   },
 
   avatar: {
@@ -159,9 +163,18 @@ const styles = StyleSheet.create({
     borderRadius: 26,
   },
 
+  appIconWrapper: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: theme.colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   appIcon: {
-    width: 48,
-    height: 48,
+    width: 26,
+    height: 26,
   },
 
   textContainer: {
@@ -171,20 +184,25 @@ const styles = StyleSheet.create({
 
   greeting: {
     fontSize: theme.typography.bodyMD,
-    color: "rgba(255,255,255,0.7)",
+    color: theme.colors.textSecondary,
     marginBottom: 4,
   },
 
   userName: {
     fontSize: theme.typography.titleLG,
     fontWeight: theme.fontWeight.bold,
-    color: theme.colors.white,
+    color: theme.colors.text,
   },
 
   summaryCard: {
+    backgroundColor: theme.colors.white,
     borderRadius: theme.radius.xl,
     padding: theme.spacing.xxl,
-    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    borderLeftWidth: 4,
+    borderLeftColor: theme.colors.primary,
+    ...theme.shadows.card,
   },
 
   summaryRow: {
@@ -199,6 +217,20 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
 
+  summaryIconWrapper: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: theme.colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  summaryIcon: {
+    width: 24,
+    height: 24,
+  },
+
   kmContainer: {
     alignItems: "center",
   },
@@ -206,14 +238,14 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: theme.typography.titleMD,
     fontWeight: theme.fontWeight.bold,
-    color: theme.colors.white,
+    color: theme.colors.text,
     marginBottom: 0,
     lineHeight: 34,
   },
 
-  cardSubtitleWhite: {
+  cardSubtitle: {
     fontSize: theme.typography.bodySM,
-    color: theme.colors.white,
+    color: theme.colors.textSecondary,
     marginTop: 0,
     lineHeight: 14,
   },
@@ -221,7 +253,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: theme.typography.bodyMD,
     fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.white,
+    color: theme.colors.text,
     marginBottom: spacing.sm,
   },
 
@@ -235,13 +267,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
+  trophyWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: theme.colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   containerCalendar: {
     paddingTop: theme.spacing.sm,
     backgroundColor: "transparent",
   },
 
   workoutCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.white,
     borderRadius: theme.radius.xl,
     padding: theme.spacing.xxl,
     borderWidth: 1,
