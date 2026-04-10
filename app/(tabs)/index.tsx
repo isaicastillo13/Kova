@@ -38,12 +38,19 @@ export default function Header({
             <Text style={styles.greeting}>Buenos días</Text>
             <Text style={styles.userName}>{name} 👋</Text>
           </View>
+          
 
           <View style={styles.appIconWrapper}>
             <Image
               source={require("@/assets/images/iconAppNaranja.png")}
               style={styles.appIcon}
             />
+          </View>
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Tu racha</Text>
+          <View style={styles.containerCalendar}>
+            <WeeklyCalendar days={weekDays} />
           </View>
         </View>
 
@@ -78,12 +85,7 @@ export default function Header({
         </View>
 
         {/* RACHA */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tu racha</Text>
-          <View style={styles.containerCalendar}>
-            <WeeklyCalendar days={weekDays} />
-          </View>
-        </View>
+        
       </View>
 
       {/* CONTENT */}
