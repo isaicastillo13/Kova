@@ -44,10 +44,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: spacing.xxl,
     paddingTop: spacing.xxxl,
     paddingBottom: spacing.lg,
-    backgroundColor: theme.colors.white,
   },
 
   avatar: {
