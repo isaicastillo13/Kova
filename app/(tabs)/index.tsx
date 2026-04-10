@@ -1,5 +1,5 @@
 import { colors, spacing, theme } from "@/src/constants/theme";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, Pressable } from "react-native";
 import { ProgressBar } from "@/src/components/ProgresBar";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import AnimatedRunner from "@/src/components/AnimatedRunner";
@@ -86,6 +86,23 @@ export default function Header({ name, date, imageUrl, onSearchPress }: Props) {
           <WeeklyCalendar days={weekDays} />
         </View>
       </View>
+      <View >
+        {/* texto */}
+        <Text>Entrenamiendo de Hoy</Text>
+        {/* card */}
+        <View style={styles.card} >
+          <Text>Intervalos</Text>
+          <View>
+          <Text>Rodaje de Velocidad</Text>
+          <Text>Martes - 55min - Dificultad Media</Text>
+          </View>
+          <View>
+            <Text>6x400</Text>
+            <Text>FC 160 - 175</Text>
+            <Text>Finalizado</Text>
+          </View>
+        </View>
+      </View>
     </View>
   );
 }
@@ -110,6 +127,15 @@ const styles = StyleSheet.create({
   },
 
   card: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.radius.xl,
+    padding: theme.spacing.xxl,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    ...theme.shadows.card,
+  },
+
+  cardBody: {
     backgroundColor: theme.colors.primary,
     borderRadius: theme.radius.xl,
     padding: theme.spacing.xxl,
