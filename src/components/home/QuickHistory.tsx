@@ -16,8 +16,6 @@ type Props = {
 export default function QuickHistory({ activities }: Props) {
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Última actividad</Text>
-
       <View style={styles.contentHistory}>
         {activities.map((item) => (
           <View key={item.id} style={styles.card}>

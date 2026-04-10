@@ -155,7 +155,7 @@ checkboxCompleted: {
 checkbox: {
   width: 22,
   height: 22,
-  borderRadius: 6,
+  borderRadius: 99,
   borderWidth: 2,
   borderColor: theme.colors.border,
   alignItems: "center",

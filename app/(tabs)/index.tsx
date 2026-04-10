@@ -28,6 +28,18 @@ const activities = [
     title: "Intervalos",
     subtitle: "6x400 · FC 160-175",
   },
+  {
+    id: "3",
+    dateLabel: "Hace 2 días",
+    title: "Intervalos",
+    subtitle: "6x400 · FC 160-175",
+  },
+  {
+    id: "4",
+    dateLabel: "Hace 2 días",
+    title: "Intervalos",
+    subtitle: "6x400 · FC 160-175",
+  },
 ];
 
 export default function Header({
@@ -87,9 +99,18 @@ export default function Header({
             heartRate="FC 160 - 175"
           />
         </View>
-        <View style={styles.content}>
-          <QuickHistory activities={activities} />;
+        <View>
+          <Text style={styles.sectionTitle}>Última actividad</Text>
         </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 16 }}
+          style={styles.content}
+        >
+          <QuickHistory activities={activities} />;
+        </ScrollView>
       </View>
     </ScrollView>
   );
@@ -119,9 +140,8 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: spacing.xxl,
-    paddingTop: spacing.lg,
+    paddingVertical: spacing.lg,
     gap: spacing.lg,
-    
   },
 
   section: {
