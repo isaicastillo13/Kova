@@ -1,9 +1,12 @@
-import { colors, spacing, theme } from "@/src/constants/theme";
-import { Image, StyleSheet, Text, View } from "react-native";
+import HomeHeader from "@/src/components/home/Header";
+import MiniSummary from "@/src/components/home/MiniSummary";
+import TodayWorkout from "@/src/components/home/TodayWorkout";
 import { ProgressBar } from "@/src/components/ProgresBar";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import WeeklyCalendar from "@/src/components/weeklyCalendar";
 import { getWeekDaysWithLabels } from "@/src/components/utils/date";
+import WeeklyCalendar from "@/src/components/weeklyCalendar";
+import { spacing, theme } from "@/src/constants/theme";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   name?: string;
@@ -24,29 +27,8 @@ export default function Header({
     <View style={styles.screen}>
       {/* TOP SECTION */}
       <View style={styles.topSection}>
-        <View style={styles.topRow}>
-          <Image
-            source={
-              imageUrl
-                ? { uri: imageUrl }
-                : require("../../assets/images/avatar.jpg")
-            }
-            style={styles.avatar}
-          />
+        <HomeHeader name="Isaias" greeting="Buenos días" />
 
-          <View style={styles.textContainer}>
-            <Text style={styles.greeting}>Buenos días</Text>
-            <Text style={styles.userName}>{name} 👋</Text>
-          </View>
-          
-
-          <View style={styles.appIconWrapper}>
-            <Image
-              source={require("@/assets/images/iconAppNaranja.png")}
-              style={styles.appIcon}
-            />
-          </View>
-        </View>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Tu racha</Text>
           <View style={styles.containerCalendar}>
@@ -83,33 +65,28 @@ export default function Header({
             </View>
           </View>
         </View>
+        <MiniSummary
+          streakDays={4}
+          completedSessions={3}
+          totalSessions={7}
+          totalTime="2h"
+        />
 
         {/* RACHA */}
-        
       </View>
 
       {/* CONTENT */}
       <View style={styles.content}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitleDark}>Entrenamiento de hoy</Text>
-
-          <View style={styles.workoutCard}>
-            <Text style={styles.workoutType}>Intervalos</Text>
-
-            <View style={styles.workoutBlock}>
-              <Text style={styles.workoutTitle}>Rodaje de velocidad</Text>
-              <Text style={styles.workoutMeta}>
-                Martes · 55 min · Dificultad media
-              </Text>
-            </View>
-
-            <View style={styles.workoutBlock}>
-              <Text style={styles.workoutMetric}>6x400</Text>
-              <Text style={styles.workoutMeta}>FC 160 - 175</Text>
-              <Text style={styles.workoutDone}>Finalizado</Text>
-            </View>
-          </View>
-        </View>
+        <TodayWorkout
+          type="Intervalos"
+          title="Rodaje de velocidad"
+          day="Martes"
+          duration="55 min"
+          difficulty="Media"
+          metric="6x400"
+          heartRate="FC 160 - 175"
+          status="completed"
+        />
       </View>
     </View>
   );
