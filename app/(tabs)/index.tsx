@@ -1,12 +1,12 @@
 import HomeHeader from "@/src/components/home/Header";
 import MiniSummary from "@/src/components/home/MiniSummary";
+import QuickHistory from "@/src/components/home/QuickHistory";
 import TodayWorkout from "@/src/components/home/TodayWorkout";
-import { ProgressBar } from "@/src/components/ProgresBar";
+import WeeklyGoalCard from "@/src/components/home/WeeklyGoalCard";
 import { getWeekDaysWithLabels } from "@/src/components/utils/date";
 import WeeklyCalendar from "@/src/components/weeklyCalendar";
 import { spacing, theme } from "@/src/constants/theme";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   name?: string;
@@ -14,6 +14,21 @@ type Props = {
   imageUrl?: string;
   onSearchPress?: () => void;
 };
+
+const activities = [
+  {
+    id: "1",
+    dateLabel: "Ayer",
+    title: "Rodaje suave",
+    subtitle: "5 km · 30 min",
+  },
+  {
+    id: "2",
+    dateLabel: "Hace 2 días",
+    title: "Intervalos",
+    subtitle: "6x400 · FC 160-175",
+  },
+];
 
 export default function Header({
   name = "Isaias",
@@ -24,71 +39,60 @@ export default function Header({
   const weekDays = getWeekDaysWithLabels(completedDays);
 
   return (
-    <View style={styles.screen}>
-      {/* TOP SECTION */}
-      <View style={styles.topSection}>
-        <HomeHeader name="Isaias" greeting="Buenos días" />
+    <ScrollView
+      style={{ flex: 1 }}
+      contentContainerStyle={{ paddingBottom: 40 }}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.screen}>
+        {/* TOP SECTION */}
+        <View style={styles.topSection}>
+          <HomeHeader name="Isaias" greeting="Buenos días" />
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tu racha</Text>
-          <View style={styles.containerCalendar}>
-            <WeeklyCalendar days={weekDays} />
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Tu racha</Text>
+            <View style={styles.containerCalendar}>
+              <WeeklyCalendar days={weekDays} />
+            </View>
           </View>
+
+          {/* RESUMEN */}
+          <WeeklyGoalCard
+            distance={41}
+            unit="km"
+            completedSessions={1}
+            totalSessions={7}
+            progressCurrent={2}
+            progressTotal={41}
+          />
+
+          <MiniSummary
+            streakDays={4}
+            completedSessions={3}
+            totalSessions={7}
+            totalTime="2h"
+          />
+
+          {/* RACHA */}
         </View>
-
-        {/* RESUMEN */}
-        <View style={styles.summaryCard}>
-          <View style={styles.summaryRow}>
-            <View style={styles.summaryLeft}>
-              <View style={styles.summaryIconWrapper}>
-                <Image
-                  source={require("@/assets/images/iconAppWhite.png")}
-                  style={styles.summaryIcon}
-                />
-              </View>
-
-              <View style={styles.kmContainer}>
-                <Text style={styles.cardTitle}>41</Text>
-                <Text style={styles.cardSubtitle}>km</Text>
-              </View>
-            </View>
-          </View>
-
-          <Text style={styles.label}>1 de 7 sesiones completadas</Text>
-
-          <View style={styles.progressRow}>
-            <View style={styles.progressWrapper}>
-              <ProgressBar current={2} total={41} />
-            </View>
-            <View style={styles.trophyWrapper}>
-              <AntDesign name="trophy" size={20} color={theme.colors.primary} />
-            </View>
-          </View>
+        {/* CONTENT */}
+        <View style={styles.content}>
+          <TodayWorkout
+            type="Intervalos"
+            title="Rodaje de velocidad"
+            day="Martes"
+            duration="55 min"
+            difficulty="Media"
+            metric="6x400"
+            heartRate="FC 160 - 175"
+            status="completed"
+          />
         </View>
-        <MiniSummary
-          streakDays={4}
-          completedSessions={3}
-          totalSessions={7}
-          totalTime="2h"
-        />
-
-        {/* RACHA */}
+        <View style={styles.content}>
+          <QuickHistory activities={activities} />;
+        </View>
       </View>
-
-      {/* CONTENT */}
-      <View style={styles.content}>
-        <TodayWorkout
-          type="Intervalos"
-          title="Rodaje de velocidad"
-          day="Martes"
-          duration="55 min"
-          difficulty="Media"
-          metric="6x400"
-          heartRate="FC 160 - 175"
-          status="completed"
-        />
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -118,6 +122,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xxl,
     paddingTop: spacing.lg,
     gap: spacing.lg,
+    
   },
 
   section: {
