@@ -71,6 +71,7 @@ export default function Header({
           {/* RESUMEN */}
           <WeeklyGoalCard
             distance={41}
+            goal={60}
             unit="km"
             completedSessions={1}
             totalSessions={7}

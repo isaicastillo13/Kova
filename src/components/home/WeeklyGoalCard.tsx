@@ -6,6 +6,7 @@ import { spacing, theme } from "@/src/constants/theme";
 
 type Props = {
   distance: number;
+  goal: number;
   unit?: string;
   completedSessions: number;
   totalSessions: number;
@@ -15,6 +16,7 @@ type Props = {
 
 export default function WeeklyGoalCard({
   distance,
+  goal,
   unit = "km",
   completedSessions,
   totalSessions,
@@ -33,7 +35,7 @@ export default function WeeklyGoalCard({
           </View>
 
           <View style={styles.kmContainer}>
-            <Text style={styles.cardTitle}>{distance}/60</Text>
+            <Text style={styles.cardTitle}>{distance}/{goal}</Text>
             <Text style={styles.cardSubtitle}>{unit}</Text>
           </View>
         </View>
