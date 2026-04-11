@@ -88,26 +88,31 @@ export default function Header({
           {/* RACHA */}
         </View>
         {/* CONTENT */}
-        <View style={styles.content}>
-          <TodayWorkout
-            type="Intervalos"
-            title="Rodaje de velocidad"
-            day="Martes"
-            duration="55 min"
-            difficulty="Media"
-            metric="6x400"
-            heartRate="FC 160 - 175"
-          />
-        </View>
+      </View>
+      <View style={[styles.content, { marginVertical: 0 }]}>
+        <Text style={styles.sectionTitle}>Entrenamiento de hoy</Text>
+      </View>
+      <View style={[styles.content, { marginVertical: 0 }]}>
+        <TodayWorkout
+          type="Intervalos"
+          title="Rodaje de velocidad"
+          day="Martes"
+          duration="55 min"
+          difficulty="Media"
+          metric="6x400"
+          heartRate="FC 160 - 175"
+        />
+      </View>
+
+      <View style={styles.content}>
         <View>
           <Text style={styles.sectionTitle}>Última actividad</Text>
         </View>
 
         <ScrollView
           horizontal
+          decelerationRate="fast"
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16 }}
-          style={styles.content}
         >
           <QuickHistory activities={activities} />;
         </ScrollView>

@@ -33,7 +33,7 @@ export default function WeeklyGoalCard({
           </View>
 
           <View style={styles.kmContainer}>
-            <Text style={styles.cardTitle}>{distance}</Text>
+            <Text style={styles.cardTitle}>{distance}/60</Text>
             <Text style={styles.cardSubtitle}>{unit}</Text>
           </View>
         </View>

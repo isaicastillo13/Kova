@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.lg,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    ...theme.shadows.card,
+    // ...theme.shadows.card,
   },
 
   date: {
