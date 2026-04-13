@@ -2,7 +2,7 @@ import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { ProgressBar } from "@/src/components/ProgresBar";
-import { spacing, theme } from "@/src/constants/theme";
+import { spacing, theme, typography } from "@/src/constants/theme";
 
 type Props = {
   distance: number;
@@ -35,7 +35,12 @@ export default function WeeklyGoalCard({
           </View>
 
           <View style={styles.kmContainer}>
-            <Text style={styles.cardTitle}>{distance}/{goal}</Text>
+            <Text style={styles.cardTitle}>
+              {distance}
+              <Text style={{ color: theme.colors.textSecondary, fontSize: typography.titleSM }}>
+                / {goal}
+              </Text>
+            </Text>
             <Text style={styles.cardSubtitle}>{unit}</Text>
           </View>
         </View>

@@ -7,116 +7,86 @@ import { getWeekDaysWithLabels } from "@/src/components/utils/date";
 import WeeklyCalendar from "@/src/components/weeklyCalendar";
 import { spacing, theme } from "@/src/constants/theme";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useHomeStore } from "@/src/store/home-store";
 
-type Props = {
-  name?: string;
-  date?: string;
-  imageUrl?: string;
-  onSearchPress?: () => void;
-};
+export default function HomeScreen() {
 
-const activities = [
-  {
-    id: "1",
-    dateLabel: "Ayer",
-    title: "Rodaje suave",
-    subtitle: "5 km · 30 min",
-  },
-  {
-    id: "2",
-    dateLabel: "Hace 2 días",
-    title: "Intervalos",
-    subtitle: "6x400 · FC 160-175",
-  },
-  {
-    id: "3",
-    dateLabel: "Hace 2 días",
-    title: "Intervalos",
-    subtitle: "6x400 · FC 160-175",
-  },
-  {
-    id: "4",
-    dateLabel: "Hace 2 días",
-    title: "Intervalos",
-    subtitle: "6x400 · FC 160-175",
-  },
-];
+  const {
+    weeklyGoal,
+    todayWorkout,
+    completedDays,
+    activities,
+    toggleTodayWorkout,
+  } = useHomeStore();
 
-export default function Header({
-  name = "Isaias",
-  date = "02/04/2026",
-  imageUrl,
-}: Props) {
-  const completedDays = [0, 1, 3];
   const weekDays = getWeekDaysWithLabels(completedDays);
 
   return (
     <ScrollView
       style={{ flex: 1 }}
-      contentContainerStyle={{ paddingBottom: 40 }}
+      contentContainerStyle={{ paddingBottom: 60 }}
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.screen}>
-        {/* TOP SECTION */}
+        {/* TOP */}
         <View style={styles.topSection}>
           <HomeHeader name="Isaias" greeting="Buenos días" />
 
+          {/* CALENDARIO */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tu racha</Text>
-            <View style={styles.containerCalendar}>
-              <WeeklyCalendar days={weekDays} />
-            </View>
+            <WeeklyCalendar days={weekDays} />
           </View>
 
-          {/* RESUMEN */}
+          {/* META SEMANAL */}
           <WeeklyGoalCard
-            distance={41}
-            goal={60}
-            unit="km"
-            completedSessions={1}
-            totalSessions={7}
-            progressCurrent={2}
-            progressTotal={41}
+            distance={weeklyGoal.distance}
+            goal={weeklyGoal.goal}
+            unit={weeklyGoal.unit}
+            completedSessions={weeklyGoal.completedSessions}
+            totalSessions={weeklyGoal.totalSessions}
+            progressCurrent={weeklyGoal.progressCurrent}
+            progressTotal={weeklyGoal.progressTotal}
           />
 
+          {/* MINI RESUMEN */}
           <MiniSummary
-            streakDays={4}
-            completedSessions={3}
-            totalSessions={7}
+            streakDays={4} // luego lo conectamos dinámico
+            completedSessions={weeklyGoal.completedSessions}
+            totalSessions={weeklyGoal.totalSessions}
             totalTime="2h"
           />
-
-          {/* RACHA */}
         </View>
-        {/* CONTENT */}
-      </View>
-      <View style={[styles.content, { marginVertical: 0 }]}>
-        <Text style={styles.sectionTitle}>Entrenamiento de hoy</Text>
-      </View>
-      <View style={[styles.content, { marginVertical: 0 }]}>
-        <TodayWorkout
-          type="Intervalos"
-          title="Rodaje de velocidad"
-          day="Martes"
-          duration="55 min"
-          difficulty="Media"
-          metric="6x400"
-          heartRate="FC 160 - 175"
-        />
-      </View>
 
-      <View style={styles.content}>
-        <View>
+        {/* ENTRENAMIENTO */}
+        <View style={styles.content}>
+          <Text style={styles.sectionTitle}>Entrenamiento de hoy</Text>
+
+          <TodayWorkout
+            type={todayWorkout.type}
+            title={todayWorkout.title}
+            day={todayWorkout.day}
+            duration={todayWorkout.duration}
+            difficulty={todayWorkout.difficulty}
+            metric={todayWorkout.metric}
+            heartRate={todayWorkout.heartRate}
+            status={todayWorkout.status}
+            onToggleComplete={toggleTodayWorkout}
+          />
+        </View>
+
+        {/* HISTORIAL */}
+        <View style={styles.content}>
           <Text style={styles.sectionTitle}>Última actividad</Text>
-        </View>
 
-        <ScrollView
-          horizontal
-          decelerationRate="fast"
-          showsHorizontalScrollIndicator={false}
-        >
-          <QuickHistory activities={activities} />;
-        </ScrollView>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingRight: 20 }}
+          >
+            <QuickHistory activities={activities} />
+          </ScrollView>
+        </View>
       </View>
     </ScrollView>
   );
