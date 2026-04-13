@@ -1,14 +1,10 @@
 import React from "react";
-import {
-  Pressable,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { spacing, theme } from "@/src/constants/theme";
 import { useOnboardingStore } from "@/src/store/onboarding-store";
+import { generatePlan } from "@/src/services/generatePlan";
+import { useHomeStore } from "@/src/store/home-store";
 
 const types = [
   { label: "Running", value: "running" },
@@ -21,22 +17,31 @@ export default function OnboardingTypeScreen() {
   const router = useRouter();
 
   const trainingType = useOnboardingStore((state) => state.trainingType);
-  const setTrainingType = useOnboardingStore(
-    (state) => state.setTrainingType
-  );
+  const setHomeState = useHomeStore.setState;
+  const onboarding = useOnboardingStore();
+  const setTrainingType = useOnboardingStore((state) => state.setTrainingType);
   const completeOnboarding = useOnboardingStore(
-    (state) => state.completeOnboarding
+    (state) => state.completeOnboarding,
   );
 
   const handleFinish = () => {
-    if (!trainingType) return;
+  if (!trainingType) return;
 
-    completeOnboarding();
+  const plan = generatePlan({
+    goal: onboarding.goal!,
+    level: onboarding.level!,
+    days: onboarding.days,
+    duration: onboarding.duration!,
+    trainingType: onboarding.trainingType!,
+  });
 
-    // 👇 ya no vuelve al onboarding
-    router.replace("/(tabs)");
-  };
+  // 👇 inyectamos el plan en el Home
+  useHomeStore.getState().setPlanFromOnboarding(plan);
 
+  completeOnboarding();
+
+  router.replace("/(tabs)");
+};
   const handleBack = () => {
     router.back();
   };
@@ -47,7 +52,9 @@ export default function OnboardingTypeScreen() {
         {/* TOP */}
         <View>
           <Text style={styles.step}>Paso 5 de 5</Text>
-          <Text style={styles.title}>¿Qué tipo de entrenamiento prefieres?</Text>
+          <Text style={styles.title}>
+            ¿Qué tipo de entrenamiento prefieres?
+          </Text>
           <Text style={styles.subtitle}>
             Esto nos ayuda a definir tu plan principal.
           </Text>

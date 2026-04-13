@@ -23,20 +23,29 @@ type TodayWorkout = {
   status: WorkoutStatus;
 };
 
+type WeeklyGoal = {
+  distance: number;
+  unit: string;
+  progressCurrent: number;
+  progressTotal: number;
+  completedSessions: number;
+  totalSessions: number;
+};
+
+type GeneratedPlan = {
+  weeklyGoal: WeeklyGoal;
+  todayWorkout: TodayWorkout;
+};
+
 type HomeState = {
-  weeklyGoal: {
-    distance: number;
-    goal: number;
-    unit: string;
-    progressCurrent: number;
-    progressTotal: number;
-    completedSessions: number;
-    totalSessions: number;
-  };
+  weeklyGoal: WeeklyGoal;
   todayWorkout: TodayWorkout;
   completedDays: number[];
   activities: Activity[];
+
   toggleTodayWorkout: () => void;
+  setPlanFromOnboarding: (plan: GeneratedPlan) => void;
+  resetHomeProgress: () => void;
 };
 
 export const useHomeStore = create<HomeState>()(
@@ -44,11 +53,10 @@ export const useHomeStore = create<HomeState>()(
     (set, get) => ({
       weeklyGoal: {
         distance: 41,
-        goal: 50,
         unit: "km",
-        progressCurrent: 2,
+        progressCurrent: 0,
         progressTotal: 41,
-        completedSessions: 1,
+        completedSessions: 0,
         totalSessions: 7,
       },
 
@@ -64,13 +72,39 @@ export const useHomeStore = create<HomeState>()(
       },
 
       completedDays: [],
-
       activities: [],
+
+      setPlanFromOnboarding: (plan) => {
+        set({
+          weeklyGoal: plan.weeklyGoal,
+          todayWorkout: {
+            ...plan.todayWorkout,
+            status: "pending",
+          },
+          completedDays: [],
+          activities: [],
+        });
+      },
+
+      resetHomeProgress: () => {
+        set((state) => ({
+          weeklyGoal: {
+            ...state.weeklyGoal,
+            progressCurrent: 0,
+            completedSessions: 0,
+          },
+          todayWorkout: {
+            ...state.todayWorkout,
+            status: "pending",
+          },
+          completedDays: [],
+          activities: [],
+        }));
+      },
 
       toggleTodayWorkout: () => {
         const state = get();
         const isCompleted = state.todayWorkout.status === "completed";
-
         const todayIndex = getTodayIndex();
 
         const updatedCompletedDays = isCompleted
@@ -80,6 +114,10 @@ export const useHomeStore = create<HomeState>()(
         const updatedCompletedSessions = isCompleted
           ? Math.max(state.weeklyGoal.completedSessions - 1, 0)
           : state.weeklyGoal.completedSessions + 1;
+
+        const updatedProgressCurrent = isCompleted
+          ? Math.max(state.weeklyGoal.progressCurrent - 1, 0)
+          : state.weeklyGoal.progressCurrent + 1;
 
         const updatedActivities = isCompleted
           ? state.activities.filter((item) => item.id !== "today-workout")
@@ -103,12 +141,13 @@ export const useHomeStore = create<HomeState>()(
           weeklyGoal: {
             ...state.weeklyGoal,
             completedSessions: updatedCompletedSessions,
+            progressCurrent: updatedProgressCurrent,
           },
         });
       },
     }),
     {
-      name: "home-storage", // 👈 clave en AsyncStorage
+      name: "home-storage",
       storage: createJSONStorage(() => AsyncStorage),
     }
   )
