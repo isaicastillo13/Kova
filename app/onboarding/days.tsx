@@ -10,33 +10,25 @@ import { useRouter } from "expo-router";
 import { spacing, theme } from "@/src/constants/theme";
 import { useOnboardingStore } from "@/src/store/onboarding-store";
 
-const levels = [
-  {
-    label: "Principiante",
-    value: "principiante",
-    description: "Estás comenzando o entrenas muy poco.",
-  },
-  {
-    label: "Intermedio",
-    value: "intermedio",
-    description: "Ya entrenas con cierta frecuencia.",
-  },
-  {
-    label: "Avanzado",
-    value: "avanzado",
-    description: "Tienes buena base y toleras más carga.",
-  },
-] as const;
+const days = [
+  { label: "L", value: 0 },
+  { label: "M", value: 1 },
+  { label: "X", value: 2 },
+  { label: "J", value: 3 },
+  { label: "V", value: 4 },
+  { label: "S", value: 5 },
+  { label: "D", value: 6 },
+];
 
-export default function OnboardingLevelScreen() {
+export default function OnboardingDaysScreen() {
   const router = useRouter();
 
-  const level = useOnboardingStore((state) => state.level);
-  const setLevel = useOnboardingStore((state) => state.setLevel);
+  const selectedDays = useOnboardingStore((state) => state.days);
+  const toggleDay = useOnboardingStore((state) => state.toggleDay);
 
   const handleContinue = () => {
-    if (!level) return;
-    router.push("/onboarding/days");
+    if (selectedDays.length === 0) return;
+    router.push("/onboarding/duration");
   };
 
   const handleBack = () => {
@@ -46,49 +38,43 @@ export default function OnboardingLevelScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <View style={styles.top}>
-          <Text style={styles.step}>Paso 2 de 5</Text>
-          <Text style={styles.title}>¿Cuál es tu nivel actual?</Text>
+        {/* TOP */}
+        <View>
+          <Text style={styles.step}>Paso 3 de 5</Text>
+          <Text style={styles.title}>¿Qué días puedes entrenar?</Text>
           <Text style={styles.subtitle}>
-            Esto nos ayuda a ajustar la intensidad del plan.
+            Puedes seleccionar varios días.
           </Text>
         </View>
 
-        <View style={styles.options}>
-          {levels.map((item) => {
-            const isSelected = level === item.value;
+        {/* DÍAS */}
+        <View style={styles.daysContainer}>
+          {days.map((day) => {
+            const isSelected = selectedDays.includes(day.value);
 
             return (
               <Pressable
-                key={item.value}
+                key={day.value}
                 style={[
-                  styles.optionCard,
-                  isSelected && styles.optionCardSelected,
+                  styles.dayCircle,
+                  isSelected && styles.dayCircleSelected,
                 ]}
-                onPress={() => setLevel(item.value)}
+                onPress={() => toggleDay(day.value)}
               >
                 <Text
                   style={[
-                    styles.optionTitle,
-                    isSelected && styles.optionTitleSelected,
+                    styles.dayText,
+                    isSelected && styles.dayTextSelected,
                   ]}
                 >
-                  {item.label}
-                </Text>
-
-                <Text
-                  style={[
-                    styles.optionDescription,
-                    isSelected && styles.optionDescriptionSelected,
-                  ]}
-                >
-                  {item.description}
+                  {day.label}
                 </Text>
               </Pressable>
             );
           })}
         </View>
 
+        {/* FOOTER */}
         <View style={styles.footer}>
           <Pressable style={styles.secondaryButton} onPress={handleBack}>
             <Text style={styles.secondaryButtonText}>Volver</Text>
@@ -97,10 +83,10 @@ export default function OnboardingLevelScreen() {
           <Pressable
             style={[
               styles.primaryButton,
-              !level && styles.primaryButtonDisabled,
+              selectedDays.length === 0 && styles.primaryButtonDisabled,
             ]}
             onPress={handleContinue}
-            disabled={!level}
+            disabled={selectedDays.length === 0}
           >
             <Text style={styles.primaryButtonText}>Continuar</Text>
           </Pressable>
@@ -122,11 +108,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xxl,
     paddingBottom: spacing.xxl,
     justifyContent: "space-between",
-    backgroundColor: theme.colors.background,
-  },
-
-  top: {
-    marginTop: spacing.lg,
   },
 
   step: {
@@ -145,56 +126,44 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: theme.typography.bodyMD,
     color: theme.colors.textSecondary,
-    lineHeight: 22,
   },
 
-  options: {
-    gap: spacing.md,
-    marginTop: spacing.xxl,
-    flex: 1,
-    justifyContent: "center",
+  daysContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: spacing.xxxl,
   },
 
-  optionCard: {
-    backgroundColor: theme.colors.white,
+  dayCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderRadius: theme.radius.xl,
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
-    ...theme.shadows.card,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: theme.colors.white,
   },
 
-  optionCardSelected: {
+  dayCircleSelected: {
+    backgroundColor: theme.colors.primary,
     borderColor: theme.colors.primary,
-    backgroundColor: theme.colors.primaryLight,
   },
 
-  optionTitle: {
-    fontSize: theme.typography.bodyLG,
-    fontWeight: theme.fontWeight.semibold,
+  dayText: {
+    fontSize: theme.typography.bodyMD,
+    fontWeight: theme.fontWeight.medium,
     color: theme.colors.text,
-    marginBottom: 4,
   },
 
-  optionTitleSelected: {
-    color: theme.colors.primaryDark,
-  },
-
-  optionDescription: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
-    lineHeight: 20,
-  },
-
-  optionDescriptionSelected: {
-    color: theme.colors.primaryDark,
+  dayTextSelected: {
+    color: theme.colors.white,
+    fontWeight: theme.fontWeight.bold,
   },
 
   footer: {
     flexDirection: "row",
     gap: spacing.md,
-    marginTop: spacing.xl,
   },
 
   secondaryButton: {

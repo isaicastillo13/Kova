@@ -10,33 +10,22 @@ import { useRouter } from "expo-router";
 import { spacing, theme } from "@/src/constants/theme";
 import { useOnboardingStore } from "@/src/store/onboarding-store";
 
-const levels = [
-  {
-    label: "Principiante",
-    value: "principiante",
-    description: "Estás comenzando o entrenas muy poco.",
-  },
-  {
-    label: "Intermedio",
-    value: "intermedio",
-    description: "Ya entrenas con cierta frecuencia.",
-  },
-  {
-    label: "Avanzado",
-    value: "avanzado",
-    description: "Tienes buena base y toleras más carga.",
-  },
-] as const;
+const durations = [
+  { label: "30 min", value: 30 },
+  { label: "45 min", value: 45 },
+  { label: "60 min", value: 60 },
+  { label: "90 min", value: 90 },
+];
 
-export default function OnboardingLevelScreen() {
+export default function OnboardingDurationScreen() {
   const router = useRouter();
 
-  const level = useOnboardingStore((state) => state.level);
-  const setLevel = useOnboardingStore((state) => state.setLevel);
+  const duration = useOnboardingStore((state) => state.duration);
+  const setDuration = useOnboardingStore((state) => state.setDuration);
 
   const handleContinue = () => {
-    if (!level) return;
-    router.push("/onboarding/days");
+    if (!duration) return;
+    router.push("/onboarding/type");
   };
 
   const handleBack = () => {
@@ -46,17 +35,19 @@ export default function OnboardingLevelScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <View style={styles.top}>
-          <Text style={styles.step}>Paso 2 de 5</Text>
-          <Text style={styles.title}>¿Cuál es tu nivel actual?</Text>
+        {/* TOP */}
+        <View>
+          <Text style={styles.step}>Paso 4 de 5</Text>
+          <Text style={styles.title}>¿Cuánto tiempo tienes por sesión?</Text>
           <Text style={styles.subtitle}>
-            Esto nos ayuda a ajustar la intensidad del plan.
+            Esto define la duración de cada entrenamiento.
           </Text>
         </View>
 
+        {/* OPCIONES */}
         <View style={styles.options}>
-          {levels.map((item) => {
-            const isSelected = level === item.value;
+          {durations.map((item) => {
+            const isSelected = duration === item.value;
 
             return (
               <Pressable
@@ -65,30 +56,22 @@ export default function OnboardingLevelScreen() {
                   styles.optionCard,
                   isSelected && styles.optionCardSelected,
                 ]}
-                onPress={() => setLevel(item.value)}
+                onPress={() => setDuration(item.value)}
               >
                 <Text
                   style={[
-                    styles.optionTitle,
-                    isSelected && styles.optionTitleSelected,
+                    styles.optionText,
+                    isSelected && styles.optionTextSelected,
                   ]}
                 >
                   {item.label}
-                </Text>
-
-                <Text
-                  style={[
-                    styles.optionDescription,
-                    isSelected && styles.optionDescriptionSelected,
-                  ]}
-                >
-                  {item.description}
                 </Text>
               </Pressable>
             );
           })}
         </View>
 
+        {/* FOOTER */}
         <View style={styles.footer}>
           <Pressable style={styles.secondaryButton} onPress={handleBack}>
             <Text style={styles.secondaryButtonText}>Volver</Text>
@@ -97,10 +80,10 @@ export default function OnboardingLevelScreen() {
           <Pressable
             style={[
               styles.primaryButton,
-              !level && styles.primaryButtonDisabled,
+              !duration && styles.primaryButtonDisabled,
             ]}
             onPress={handleContinue}
-            disabled={!level}
+            disabled={!duration}
           >
             <Text style={styles.primaryButtonText}>Continuar</Text>
           </Pressable>
@@ -122,11 +105,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xxl,
     paddingBottom: spacing.xxl,
     justifyContent: "space-between",
-    backgroundColor: theme.colors.background,
-  },
-
-  top: {
-    marginTop: spacing.lg,
   },
 
   step: {
@@ -145,12 +123,11 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: theme.typography.bodyMD,
     color: theme.colors.textSecondary,
-    lineHeight: 22,
   },
 
   options: {
     gap: spacing.md,
-    marginTop: spacing.xxl,
+    marginTop: spacing.xxxl,
     flex: 1,
     justifyContent: "center",
   },
@@ -161,7 +138,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
     borderRadius: theme.radius.xl,
     paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
+    alignItems: "center",
     ...theme.shadows.card,
   },
 
@@ -170,31 +147,20 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primaryLight,
   },
 
-  optionTitle: {
+  optionText: {
     fontSize: theme.typography.bodyLG,
-    fontWeight: theme.fontWeight.semibold,
+    fontWeight: theme.fontWeight.medium,
     color: theme.colors.text,
-    marginBottom: 4,
   },
 
-  optionTitleSelected: {
+  optionTextSelected: {
     color: theme.colors.primaryDark,
-  },
-
-  optionDescription: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
-    lineHeight: 20,
-  },
-
-  optionDescriptionSelected: {
-    color: theme.colors.primaryDark,
+    fontWeight: theme.fontWeight.bold,
   },
 
   footer: {
     flexDirection: "row",
     gap: spacing.md,
-    marginTop: spacing.xl,
   },
 
   secondaryButton: {

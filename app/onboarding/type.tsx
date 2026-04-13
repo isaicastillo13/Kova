@@ -10,33 +10,31 @@ import { useRouter } from "expo-router";
 import { spacing, theme } from "@/src/constants/theme";
 import { useOnboardingStore } from "@/src/store/onboarding-store";
 
-const levels = [
-  {
-    label: "Principiante",
-    value: "principiante",
-    description: "Estás comenzando o entrenas muy poco.",
-  },
-  {
-    label: "Intermedio",
-    value: "intermedio",
-    description: "Ya entrenas con cierta frecuencia.",
-  },
-  {
-    label: "Avanzado",
-    value: "avanzado",
-    description: "Tienes buena base y toleras más carga.",
-  },
+const types = [
+  { label: "Running", value: "running" },
+  { label: "Swimming", value: "swimming" },
+  { label: "Fuerza", value: "strength" },
+  { label: "Mixto", value: "mixed" },
 ] as const;
 
-export default function OnboardingLevelScreen() {
+export default function OnboardingTypeScreen() {
   const router = useRouter();
 
-  const level = useOnboardingStore((state) => state.level);
-  const setLevel = useOnboardingStore((state) => state.setLevel);
+  const trainingType = useOnboardingStore((state) => state.trainingType);
+  const setTrainingType = useOnboardingStore(
+    (state) => state.setTrainingType
+  );
+  const completeOnboarding = useOnboardingStore(
+    (state) => state.completeOnboarding
+  );
 
-  const handleContinue = () => {
-    if (!level) return;
-    router.push("/onboarding/days");
+  const handleFinish = () => {
+    if (!trainingType) return;
+
+    completeOnboarding();
+
+    // 👇 ya no vuelve al onboarding
+    router.replace("/(tabs)");
   };
 
   const handleBack = () => {
@@ -46,17 +44,19 @@ export default function OnboardingLevelScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <View style={styles.top}>
-          <Text style={styles.step}>Paso 2 de 5</Text>
-          <Text style={styles.title}>¿Cuál es tu nivel actual?</Text>
+        {/* TOP */}
+        <View>
+          <Text style={styles.step}>Paso 5 de 5</Text>
+          <Text style={styles.title}>¿Qué tipo de entrenamiento prefieres?</Text>
           <Text style={styles.subtitle}>
-            Esto nos ayuda a ajustar la intensidad del plan.
+            Esto nos ayuda a definir tu plan principal.
           </Text>
         </View>
 
+        {/* OPCIONES */}
         <View style={styles.options}>
-          {levels.map((item) => {
-            const isSelected = level === item.value;
+          {types.map((item) => {
+            const isSelected = trainingType === item.value;
 
             return (
               <Pressable
@@ -65,30 +65,22 @@ export default function OnboardingLevelScreen() {
                   styles.optionCard,
                   isSelected && styles.optionCardSelected,
                 ]}
-                onPress={() => setLevel(item.value)}
+                onPress={() => setTrainingType(item.value)}
               >
                 <Text
                   style={[
-                    styles.optionTitle,
-                    isSelected && styles.optionTitleSelected,
+                    styles.optionText,
+                    isSelected && styles.optionTextSelected,
                   ]}
                 >
                   {item.label}
-                </Text>
-
-                <Text
-                  style={[
-                    styles.optionDescription,
-                    isSelected && styles.optionDescriptionSelected,
-                  ]}
-                >
-                  {item.description}
                 </Text>
               </Pressable>
             );
           })}
         </View>
 
+        {/* FOOTER */}
         <View style={styles.footer}>
           <Pressable style={styles.secondaryButton} onPress={handleBack}>
             <Text style={styles.secondaryButtonText}>Volver</Text>
@@ -97,12 +89,12 @@ export default function OnboardingLevelScreen() {
           <Pressable
             style={[
               styles.primaryButton,
-              !level && styles.primaryButtonDisabled,
+              !trainingType && styles.primaryButtonDisabled,
             ]}
-            onPress={handleContinue}
-            disabled={!level}
+            onPress={handleFinish}
+            disabled={!trainingType}
           >
-            <Text style={styles.primaryButtonText}>Continuar</Text>
+            <Text style={styles.primaryButtonText}>Finalizar</Text>
           </Pressable>
         </View>
       </View>
@@ -122,11 +114,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xxl,
     paddingBottom: spacing.xxl,
     justifyContent: "space-between",
-    backgroundColor: theme.colors.background,
-  },
-
-  top: {
-    marginTop: spacing.lg,
   },
 
   step: {
@@ -145,12 +132,11 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: theme.typography.bodyMD,
     color: theme.colors.textSecondary,
-    lineHeight: 22,
   },
 
   options: {
     gap: spacing.md,
-    marginTop: spacing.xxl,
+    marginTop: spacing.xxxl,
     flex: 1,
     justifyContent: "center",
   },
@@ -161,7 +147,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
     borderRadius: theme.radius.xl,
     paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
+    alignItems: "center",
     ...theme.shadows.card,
   },
 
@@ -170,31 +156,20 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primaryLight,
   },
 
-  optionTitle: {
+  optionText: {
     fontSize: theme.typography.bodyLG,
-    fontWeight: theme.fontWeight.semibold,
+    fontWeight: theme.fontWeight.medium,
     color: theme.colors.text,
-    marginBottom: 4,
   },
 
-  optionTitleSelected: {
+  optionTextSelected: {
     color: theme.colors.primaryDark,
-  },
-
-  optionDescription: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
-    lineHeight: 20,
-  },
-
-  optionDescriptionSelected: {
-    color: theme.colors.primaryDark,
+    fontWeight: theme.fontWeight.bold,
   },
 
   footer: {
     flexDirection: "row",
     gap: spacing.md,
-    marginTop: spacing.xl,
   },
 
   secondaryButton: {
