@@ -1,12 +1,8 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
-type Goal =
-  | "resistencia"
-  | "rendimiento"
-  | "mantenerme"
-  | "competencia";
+type Goal = "resistencia" | "rendimiento" | "mantenerme" | "competencia";
 
 type Level = "principiante" | "intermedio" | "avanzado";
 
@@ -26,6 +22,7 @@ type OnboardingState = {
   setDuration: (duration: number) => void;
   setTrainingType: (type: TrainingType) => void;
   completeOnboarding: () => void;
+  resetOnboarding: () => void;
 };
 
 export const useOnboardingStore = create<OnboardingState>()(
@@ -48,9 +45,7 @@ export const useOnboardingStore = create<OnboardingState>()(
         const exists = current.includes(day);
 
         set({
-          days: exists
-            ? current.filter((d) => d !== day)
-            : [...current, day],
+          days: exists ? current.filter((d) => d !== day) : [...current, day],
         });
       },
 
@@ -59,10 +54,20 @@ export const useOnboardingStore = create<OnboardingState>()(
       setTrainingType: (type) => set({ trainingType: type }),
 
       completeOnboarding: () => set({ completed: true }),
+
+      resetOnboarding: () =>
+        set({
+          goal: undefined,
+          level: undefined,
+          days: [],
+          duration: undefined,
+          trainingType: undefined,
+          completed: false,
+        }),
     }),
     {
       name: "onboarding-storage",
       storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
+    },
+  ),
 );
