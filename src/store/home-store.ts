@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getTodayIndex } from "@/src/components/utils/date";
 
 type WorkoutStatus = "pending" | "completed";
 
@@ -70,7 +71,7 @@ export const useHomeStore = create<HomeState>()(
         const state = get();
         const isCompleted = state.todayWorkout.status === "completed";
 
-        const todayIndex = 0; // luego lo hacemos dinámico
+        const todayIndex = getTodayIndex();
 
         const updatedCompletedDays = isCompleted
           ? state.completedDays.filter((day) => day !== todayIndex)

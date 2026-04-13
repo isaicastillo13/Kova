@@ -24,3 +24,8 @@ export function getWeekDaysWithLabels(completedDays: number[] = []) {
 
   return week;
 }
+
+export function getTodayIndex(): number {
+  const today = new Date().getDay(); // 0-6 (domingo a sábado)
+  return today === 0 ? 6 : today - 1;
+}
