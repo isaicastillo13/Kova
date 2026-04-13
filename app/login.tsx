@@ -1,6 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import { theme } from "@/src/constants/theme";
+import { useOnboardingStore } from "@/src/store/onboarding-store";
+import { Link, useRouter } from "expo-router";
+import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -9,19 +13,17 @@ import {
   Text,
   TextInput,
   View,
-  Image,
-} from 'react-native';
-import { Link, useRouter } from 'expo-router';
-import { theme } from '@/src/constants/theme';
+} from "react-native";
 
 export default function LoginScreen() {
   const router = useRouter();
+  const completed = useOnboardingStore((state) => state.completed);
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const isButtonDisabled = useMemo(() => {
@@ -35,24 +37,22 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     let hasError = false;
 
-    setEmailError('');
-    setPasswordError('');
+    setEmailError("");
+    setPasswordError("");
 
     if (!email.trim()) {
-      setEmailError('El correo es obligatorio');
+      setEmailError("El correo es obligatorio");
       hasError = true;
-
     } else if (!validateEmail(email.trim())) {
-      setEmailError('Ingresa un correo válido');
+      setEmailError("Ingresa un correo válido");
       hasError = true;
     }
 
     if (!password.trim()) {
-      setPasswordError('La contraseña es obligatoria');
+      setPasswordError("La contraseña es obligatoria");
       hasError = true;
-      
     } else if (password.trim().length < 6) {
-      setPasswordError('La contraseña debe tener al menos 6 caracteres');
+      setPasswordError("La contraseña debe tener al menos 6 caracteres");
       hasError = true;
     }
 
@@ -62,11 +62,15 @@ export default function LoginScreen() {
       setIsLoading(true);
 
       // Simulación de login
-      await new Promise(resolve => setTimeout(resolve, 1200));
+      await new Promise((resolve) => setTimeout(resolve, 1200));
 
-      router.replace('/(tabs)');
+      if (completed) {
+        router.replace("/(tabs)");
+      } else {
+        router.replace("/onboarding");
+      }
     } catch (error) {
-      setPasswordError('No se pudo iniciar sesión. Intenta nuevamente.');
+      setPasswordError("No se pudo iniciar sesión. Intenta nuevamente.");
     } finally {
       setIsLoading(false);
     }
@@ -76,21 +80,19 @@ export default function LoginScreen() {
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
         style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <View style={styles.container}>
-            <View style={styles.header}>
+          <View style={styles.header}>
             <View style={styles.logoCircle}>
-
               <Image
-              source={require('@/assets/images/iconAppWhite.png')}
-              style={{ width: 40, height: 40 }}
-              resizeMode="contain"
+                source={require("@/assets/images/iconAppWhite.png")}
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
               />
             </View>
             <Text style={styles.brand}>Kova</Text>
-          
-            </View>
+          </View>
 
           <View>
             <Text style={styles.title}>Iniciar sesión</Text>
@@ -102,31 +104,35 @@ export default function LoginScreen() {
               <Text style={styles.label}>Correo electrónico</Text>
               <TextInput
                 value={email}
-                onChangeText={text => {
+                onChangeText={(text) => {
                   setEmail(text);
-                  if (emailError) setEmailError('');
+                  if (emailError) setEmailError("");
                 }}
                 placeholder="tucorreo@email.com"
                 placeholderTextColor={theme.colors.textMuted}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
-                style={[
-                  styles.input,
-                  !!emailError && styles.inputError,
-                ]}
+                style={[styles.input, !!emailError && styles.inputError]}
               />
-              {!!emailError && <Text style={styles.errorText}>{emailError}</Text>}
+              {!!emailError && (
+                <Text style={styles.errorText}>{emailError}</Text>
+              )}
             </View>
 
             <View style={styles.formGroup}>
               <Text style={styles.label}>Contraseña</Text>
-              <View style={[styles.passwordWrapper, !!passwordError && styles.inputError]}>
+              <View
+                style={[
+                  styles.passwordWrapper,
+                  !!passwordError && styles.inputError,
+                ]}
+              >
                 <TextInput
                   value={password}
-                  onChangeText={text => {
+                  onChangeText={(text) => {
                     setPassword(text);
-                    if (passwordError) setPasswordError('');
+                    if (passwordError) setPasswordError("");
                   }}
                   placeholder="••••••••"
                   placeholderTextColor={theme.colors.textMuted}
@@ -135,9 +141,9 @@ export default function LoginScreen() {
                   autoCorrect={false}
                   style={styles.passwordInput}
                 />
-                <Pressable onPress={() => setShowPassword(prev => !prev)}>
+                <Pressable onPress={() => setShowPassword((prev) => !prev)}>
                   <Text style={styles.showPasswordText}>
-                    {showPassword ? 'Ocultar' : 'Ver'}
+                    {showPassword ? "Ocultar" : "Ver"}
                   </Text>
                 </Pressable>
               </View>
@@ -190,12 +196,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: theme.spacing.xxl,
     backgroundColor: theme.colors.background,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: theme.spacing.xxxl,
   },
   logoCircle: {
@@ -203,8 +209,8 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: theme.radius.pill,
     backgroundColor: theme.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: theme.spacing.lg,
   },
   logoText: {
@@ -221,7 +227,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: theme.typography.bodyMD,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
   card: {
     backgroundColor: theme.colors.white,
@@ -267,9 +273,9 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
     borderRadius: theme.radius.lg,
     paddingHorizontal: theme.spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     backgroundColor: theme.colors.white,
   },
   passwordInput: {
@@ -292,7 +298,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.bodySM,
   },
   forgotWrapper: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginBottom: theme.spacing.xl,
   },
   forgotText: {
@@ -304,8 +310,8 @@ const styles = StyleSheet.create({
     height: 54,
     borderRadius: theme.radius.lg,
     backgroundColor: theme.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: theme.spacing.xl,
   },
   loginButtonDisabled: {
@@ -317,9 +323,9 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.bold,
   },
   footerRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   footerText: {
     color: theme.colors.textSecondary,
