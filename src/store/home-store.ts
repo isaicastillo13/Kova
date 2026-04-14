@@ -1,9 +1,19 @@
-import { getTodayIndex } from "@/src/components/utils/date";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getTodayIndex } from "@/src/components/utils/date";
 
 type WorkoutStatus = "pending" | "completed";
+
+type DayWorkoutType = "running" | "swimming" | "strength" | "mixed" | "rest";
+
+type DayWorkout = {
+  day: number;
+  type: DayWorkoutType;
+  title: string;
+  km?: number;
+  duration?: number;
+};
 
 type Activity = {
   id: string;
@@ -36,11 +46,13 @@ type WeeklyGoal = {
 type GeneratedPlan = {
   weeklyGoal: WeeklyGoal;
   todayWorkout: TodayWorkout;
+  weekPlan: DayWorkout[];
 };
 
 type HomeState = {
   weeklyGoal: WeeklyGoal;
   todayWorkout: TodayWorkout;
+  weekPlan: DayWorkout[];
   completedDays: number[];
   activities: Activity[];
 
@@ -49,12 +61,31 @@ type HomeState = {
   resetHomeProgress: () => void;
 };
 
+function buildTodayWorkoutFromDay(dayWorkout: DayWorkout): TodayWorkout {
+  const isRest = dayWorkout.type === "rest";
+
+  return {
+    type: isRest ? "Descanso" : dayWorkout.type,
+    title: dayWorkout.title,
+    day: "Hoy",
+    duration: isRest ? "—" : `${dayWorkout.duration ?? 0} min`,
+    difficulty: isRest ? "Recuperación" : "Media",
+    metric: isRest
+      ? "Sin carga"
+      : dayWorkout.type === "running"
+      ? `${dayWorkout.km ?? 0} km`
+      : "Sesión",
+    heartRate: isRest ? "Recuperación" : "FC 140-160",
+    km: dayWorkout.km ?? 0,
+    status: "pending",
+  };
+}
+
 export const useHomeStore = create<HomeState>()(
   persist(
     (set, get) => ({
       weeklyGoal: {
         distance: 41,
-        goal: 41,
         unit: "km",
         progressCurrent: 0,
         progressTotal: 41,
@@ -65,44 +96,63 @@ export const useHomeStore = create<HomeState>()(
       todayWorkout: {
         type: "Intervalos",
         title: "Rodaje de velocidad",
-        day: "Martes",
+        day: "Hoy",
         duration: "55 min",
         difficulty: "Media",
         metric: "6x400",
         heartRate: "FC 160 - 175",
-        status: "pending",
         km: 6,
+        status: "pending",
       },
+
+      weekPlan: [],
 
       completedDays: [],
       activities: [],
 
       setPlanFromOnboarding: (plan) => {
+        const todayIndex = getTodayIndex();
+        const todayFromPlan =
+          plan.weekPlan.find((item) => item.day === todayIndex) ??
+          plan.weekPlan[0];
+
         set({
           weeklyGoal: plan.weeklyGoal,
-          todayWorkout: {
-            ...plan.todayWorkout,
-            status: "pending",
-          },
+          todayWorkout: todayFromPlan
+            ? buildTodayWorkoutFromDay(todayFromPlan)
+            : {
+                ...plan.todayWorkout,
+                km: plan.todayWorkout.km ?? 0,
+                status: "pending",
+              },
+          weekPlan: plan.weekPlan,
           completedDays: [],
           activities: [],
         });
       },
 
       resetHomeProgress: () => {
-        set((state) => ({
+        const state = get();
+        const todayIndex = getTodayIndex();
+        const todayFromPlan =
+          state.weekPlan.find((item) => item.day === todayIndex) ??
+          state.weekPlan[0];
+
+        set({
           weeklyGoal: {
             ...state.weeklyGoal,
             progressCurrent: 0,
             completedSessions: 0,
           },
-          todayWorkout: {
-            ...state.todayWorkout,
-            status: "pending",
-          },
+          todayWorkout: todayFromPlan
+            ? buildTodayWorkoutFromDay(todayFromPlan)
+            : {
+                ...state.todayWorkout,
+                status: "pending",
+              },
           completedDays: [],
           activities: [],
-        }));
+        });
       },
 
       toggleTodayWorkout: () => {
@@ -110,6 +160,14 @@ export const useHomeStore = create<HomeState>()(
         const isCompleted = state.todayWorkout.status === "completed";
         const todayIndex = getTodayIndex();
         const workoutKm = state.todayWorkout.km ?? 0;
+
+        // Si hoy es descanso, no hacer nada
+        if (
+          state.todayWorkout.type.toLowerCase() === "descanso" ||
+          state.todayWorkout.km === 0
+        ) {
+          return;
+        }
 
         const updatedCompletedDays = isCompleted
           ? state.completedDays.filter((day) => day !== todayIndex)
@@ -122,9 +180,6 @@ export const useHomeStore = create<HomeState>()(
         const updatedProgressCurrent = isCompleted
           ? Math.max(state.weeklyGoal.progressCurrent - workoutKm, 0)
           : state.weeklyGoal.progressCurrent + workoutKm;
-
-        console.log("todayWorkout", state.todayWorkout);
-        console.log("workoutKm", state.todayWorkout.km);
 
         const updatedActivities = isCompleted
           ? state.activities.filter((item) => item.id !== "today-workout")
@@ -156,6 +211,6 @@ export const useHomeStore = create<HomeState>()(
     {
       name: "home-storage",
       storage: createJSONStorage(() => AsyncStorage),
-    },
-  ),
+    }
+  )
 );

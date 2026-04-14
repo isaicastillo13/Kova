@@ -6,6 +6,7 @@ import { useOnboardingStore } from "@/src/store/onboarding-store";
 import { generatePlan } from "@/src/services/generatePlan";
 import { useHomeStore } from "@/src/store/home-store";
 
+
 const types = [
   { label: "Running", value: "running" },
   { label: "Swimming", value: "swimming" },
@@ -27,6 +28,9 @@ export default function OnboardingTypeScreen() {
   const handleFinish = () => {
   if (!trainingType) return;
 
+  const onboarding = useOnboardingStore.getState();
+  const setPlanFromOnboarding = useHomeStore.getState().setPlanFromOnboarding;
+
   const plan = generatePlan({
     goal: onboarding.goal!,
     level: onboarding.level!,
@@ -35,9 +39,7 @@ export default function OnboardingTypeScreen() {
     trainingType: onboarding.trainingType!,
   });
 
-  // 👇 inyectamos el plan en el Home
-  useHomeStore.getState().setPlanFromOnboarding(plan);
-
+  setPlanFromOnboarding(plan);
   completeOnboarding();
 
   router.replace("/(tabs)");
