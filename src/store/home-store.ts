@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getTodayIndex } from "@/src/components/utils/date";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type WorkoutStatus = "pending" | "completed";
 
@@ -20,6 +20,7 @@ type TodayWorkout = {
   difficulty: string;
   metric: string;
   heartRate: string;
+  km: number;
   status: WorkoutStatus;
 };
 
@@ -53,6 +54,7 @@ export const useHomeStore = create<HomeState>()(
     (set, get) => ({
       weeklyGoal: {
         distance: 41,
+        goal: 41,
         unit: "km",
         progressCurrent: 0,
         progressTotal: 41,
@@ -69,6 +71,7 @@ export const useHomeStore = create<HomeState>()(
         metric: "6x400",
         heartRate: "FC 160 - 175",
         status: "pending",
+        km: 6,
       },
 
       completedDays: [],
@@ -106,6 +109,7 @@ export const useHomeStore = create<HomeState>()(
         const state = get();
         const isCompleted = state.todayWorkout.status === "completed";
         const todayIndex = getTodayIndex();
+        const workoutKm = state.todayWorkout.km ?? 0;
 
         const updatedCompletedDays = isCompleted
           ? state.completedDays.filter((day) => day !== todayIndex)
@@ -116,8 +120,11 @@ export const useHomeStore = create<HomeState>()(
           : state.weeklyGoal.completedSessions + 1;
 
         const updatedProgressCurrent = isCompleted
-          ? Math.max(state.weeklyGoal.progressCurrent - 1, 0)
-          : state.weeklyGoal.progressCurrent + 1;
+          ? Math.max(state.weeklyGoal.progressCurrent - workoutKm, 0)
+          : state.weeklyGoal.progressCurrent + workoutKm;
+
+        console.log("todayWorkout", state.todayWorkout);
+        console.log("workoutKm", state.todayWorkout.km);
 
         const updatedActivities = isCompleted
           ? state.activities.filter((item) => item.id !== "today-workout")
@@ -149,6 +156,6 @@ export const useHomeStore = create<HomeState>()(
     {
       name: "home-storage",
       storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
+    },
+  ),
 );

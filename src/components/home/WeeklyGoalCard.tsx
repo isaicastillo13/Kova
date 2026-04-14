@@ -36,9 +36,9 @@ export default function WeeklyGoalCard({
 
           <View style={styles.kmContainer}>
             <Text style={styles.cardTitle}>
-              {distance}
+              {progressCurrent}
               <Text style={{ color: theme.colors.textSecondary, fontSize: typography.titleSM }}>
-                / {goal}
+                / {progressTotal}
               </Text>
             </Text>
             <Text style={styles.cardSubtitle}>{unit}</Text>

@@ -9,6 +9,7 @@ type TodayWorkout = {
   metric: string;
   heartRate: string;
   status: WorkoutStatus;
+  km: number;
 };
 
 type WeeklyGoal = {
@@ -67,6 +68,7 @@ export function generatePlan(input: Input): GeneratedPlan {
       metric: input.trainingType === "running" ? "5 km" : "Sesión",
       heartRate: "FC 140-160",
       status: "pending",
+      km: input.trainingType === "running" ? 5 : 0,
     },
   };
 }
