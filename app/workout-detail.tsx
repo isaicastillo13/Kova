@@ -1,11 +1,13 @@
-import React from "react";
-import {StyleSheet, Text, View, ScrollView } from "react-native";
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { theme } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
+import React from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function WorkoutDetailScreen() {
   const todayWorkout = useHomeStore((state) => state.todayWorkout);
+  const isRestDay =
+    todayWorkout.type.toLowerCase() === "descanso" || todayWorkout.km === 0;
 
   return (
     <SafeAreaProvider style={styles.safeArea}>
@@ -19,13 +21,16 @@ export default function WorkoutDetailScreen() {
           <Text style={styles.type}>{todayWorkout.type}</Text>
           <Text style={styles.title}>{todayWorkout.title}</Text>
           <Text style={styles.meta}>
-            {todayWorkout.day} · {todayWorkout.duration} · {todayWorkout.difficulty}
+            {todayWorkout.day} · {todayWorkout.duration} ·{" "}
+            {todayWorkout.difficulty}
           </Text>
         </View>
 
         {/* RESUMEN */}
         <View style={styles.summaryCard}>
-          <Text style={styles.summaryLabel}>Métrica</Text>
+          <Text style={styles.summaryLabel}>
+            {isRestDay ? "Enfoque del día" : "Métrica"}
+          </Text>
           <Text style={styles.summaryValue}>{todayWorkout.metric}</Text>
 
           <View style={styles.summaryDivider} />
@@ -36,7 +41,9 @@ export default function WorkoutDetailScreen() {
 
         {/* BLOQUES */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Detalle del entrenamiento</Text>
+          <Text style={styles.sectionTitle}>
+            {isRestDay ? "Detalle del día" : "Detalle del entrenamiento"}
+          </Text>
 
           {todayWorkout.details && todayWorkout.details.length > 0 ? (
             todayWorkout.details.map((block, index) => (

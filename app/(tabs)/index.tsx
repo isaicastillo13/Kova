@@ -76,6 +76,7 @@ export default function HomeScreen() {
               status={todayWorkout.status}
               onToggleComplete={toggleTodayWorkout}
               onPress={() => router.push("/workout-detail")}
+              km={todayWorkout.km}
             />
           </View>
 

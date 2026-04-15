@@ -16,6 +16,7 @@ type Props = {
   status: Status;
   onToggleComplete: () => void;
   onPress: () => void;
+   km: number;
 };
 
 export default function TodayWorkout({
@@ -29,32 +30,35 @@ export default function TodayWorkout({
   status,
   onToggleComplete,
   onPress,
+  km,
 }: Props) {
   const isCompleted = status === "completed";
+  const isRestDay = type.toLowerCase() === "descanso" || km === 0;
 
   return (
-    <Pressable style={styles.container} onPress={onPress}>
+  <Pressable style={styles.container} onPress={onPress}>
+    <View style={styles.header}>
+      <Text style={styles.type}>{type}</Text>
+    </View>
 
-      <View style={styles.header}>
-        <Text style={styles.type}>{type}</Text>
+    <View style={styles.block}>
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.meta}>
+        {day} · {duration} · {difficulty}
+      </Text>
+    </View>
+
+    <View style={styles.block}>
+      <Text style={styles.metric}>{metric}</Text>
+      <Text style={styles.meta}>{heartRate}</Text>
+    </View>
+
+    {isRestDay ? (
+      <View style={styles.restBadgeContainer}>
+        <Text style={styles.restBadgeText}>Día de recuperación</Text>
       </View>
-
-      <View style={styles.block}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.meta}>
-          {day} · {duration} · {difficulty}
-        </Text>
-      </View>
-
-      <View style={styles.block}>
-        <Text style={styles.metric}>{metric}</Text>
-        <Text style={styles.meta}>{heartRate}</Text>
-      </View>
-
-      <Pressable
-        style={styles.checkboxContainer}
-        onPress={onToggleComplete}
-      >
+    ) : (
+      <Pressable style={styles.checkboxContainer} onPress={onToggleComplete}>
         <View
           style={[
             styles.checkbox,
@@ -75,8 +79,9 @@ export default function TodayWorkout({
           {isCompleted ? "Completado" : "Marcar como completado"}
         </Text>
       </Pressable>
-    </Pressable>
-  );
+    )}
+  </Pressable>
+);
 }
 
 const styles = StyleSheet.create({
@@ -159,4 +164,16 @@ const styles = StyleSheet.create({
     color: theme.colors.success,
     fontWeight: theme.fontWeight.semibold,
   },
+  restBadgeContainer: {
+  marginTop: spacing.md,
+  paddingTop: spacing.sm,
+  borderTopWidth: 1,
+  borderTopColor: theme.colors.border,
+},
+
+restBadgeText: {
+  fontSize: theme.typography.bodySM,
+  color: theme.colors.textSecondary,
+  fontWeight: theme.fontWeight.semibold,
+},
 });
