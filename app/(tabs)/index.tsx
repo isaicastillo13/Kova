@@ -8,6 +8,7 @@ import WeeklyCalendar from "@/src/components/weeklyCalendar";
 import { spacing, theme } from "@/src/constants/theme";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useHomeStore } from "@/src/store/home-store";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
 
@@ -20,6 +21,7 @@ export default function HomeScreen() {
   } = useHomeStore();
 
   const weekDays = getWeekDaysWithLabels(completedDays);
+  const router = useRouter();
 
   return (
     <ScrollView
@@ -72,6 +74,7 @@ export default function HomeScreen() {
             heartRate={todayWorkout.heartRate}
             status={todayWorkout.status}
             onToggleComplete={toggleTodayWorkout}
+            onPress={() => router.push("/workout-detail")}
           />
         </View>
 
