@@ -7,12 +7,26 @@ type WorkoutStatus = "pending" | "completed";
 
 type DayWorkoutType = "running" | "swimming" | "strength" | "mixed" | "rest";
 
+type WorkoutDetailBlockType =
+  | "warmup"
+  | "main"
+  | "recovery"
+  | "cooldown"
+  | "notes";
+
+type WorkoutDetailBlock = {
+  type: WorkoutDetailBlockType;
+  label: string;
+  description: string;
+};
+
 type DayWorkout = {
   day: number;
   type: DayWorkoutType;
   title: string;
   km?: number;
   duration?: number;
+  details?: WorkoutDetailBlock[];
 };
 
 type Activity = {
@@ -32,6 +46,7 @@ type TodayWorkout = {
   heartRate: string;
   km: number;
   status: WorkoutStatus;
+  details?: WorkoutDetailBlock[];
 };
 
 type WeeklyGoal = {
@@ -78,6 +93,7 @@ function buildTodayWorkoutFromDay(dayWorkout: DayWorkout): TodayWorkout {
     heartRate: isRest ? "Recuperación" : "FC 140-160",
     km: dayWorkout.km ?? 0,
     status: "pending",
+    details: dayWorkout.details ?? [],
   };
 }
 
