@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
@@ -9,6 +8,8 @@ import {
 import { useRouter } from "expo-router";
 import { spacing, theme } from "@/src/constants/theme";
 import { useOnboardingStore } from "@/src/store/onboarding-store";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 const levels = [
   {
@@ -44,7 +45,7 @@ export default function OnboardingLevelScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaProvider style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.top}>
           <Text style={styles.step}>Paso 2 de 5</Text>
@@ -106,7 +107,7 @@ export default function OnboardingLevelScreen() {
           </Pressable>
         </View>
       </View>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
@@ -9,6 +8,8 @@ import {
 import { useRouter } from "expo-router";
 import { spacing, theme } from "@/src/constants/theme";
 import { useOnboardingStore } from "@/src/store/onboarding-store";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 const durations = [
   { label: "30 min", value: 30 },
@@ -33,7 +34,7 @@ export default function OnboardingDurationScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaProvider style={styles.safeArea}>
       <View style={styles.container}>
         {/* TOP */}
         <View>
@@ -89,7 +90,7 @@ export default function OnboardingDurationScreen() {
           </Pressable>
         </View>
       </View>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

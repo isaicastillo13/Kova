@@ -1,10 +1,12 @@
 import React from "react";
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { spacing, theme } from "@/src/constants/theme";
 import { useOnboardingStore } from "@/src/store/onboarding-store";
 import { generatePlan } from "@/src/services/generatePlan";
 import { useHomeStore } from "@/src/store/home-store";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 
 const types = [
@@ -49,7 +51,7 @@ export default function OnboardingTypeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaProvider style={styles.safeArea}>
       <View style={styles.container}>
         {/* TOP */}
         <View>
@@ -107,7 +109,7 @@ export default function OnboardingTypeScreen() {
           </Pressable>
         </View>
       </View>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

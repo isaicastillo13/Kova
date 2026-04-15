@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
@@ -9,6 +8,8 @@ import {
 import { useRouter } from "expo-router";
 import { spacing, theme } from "@/src/constants/theme";
 import { useOnboardingStore } from "@/src/store/onboarding-store";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 const days = [
   { label: "L", value: 0 },
@@ -36,7 +37,7 @@ export default function OnboardingDaysScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaProvider style={styles.safeArea}>
       <View style={styles.container}>
         {/* TOP */}
         <View>
@@ -92,7 +93,7 @@ export default function OnboardingDaysScreen() {
           </Pressable>
         </View>
       </View>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 

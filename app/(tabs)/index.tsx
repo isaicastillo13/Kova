@@ -6,12 +6,12 @@ import WeeklyGoalCard from "@/src/components/home/WeeklyGoalCard";
 import { getWeekDaysWithLabels } from "@/src/components/utils/date";
 import WeeklyCalendar from "@/src/components/weeklyCalendar";
 import { spacing, theme } from "@/src/constants/theme";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useHomeStore } from "@/src/store/home-store";
 import { useRouter } from "expo-router";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
-
   const {
     weeklyGoal,
     todayWorkout,
@@ -24,78 +24,81 @@ export default function HomeScreen() {
   const router = useRouter();
 
   return (
-    <ScrollView
-      style={{ flex: 1 }}
-      contentContainerStyle={{ paddingBottom: 60 }}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.screen}>
-        {/* TOP */}
-        <View style={styles.topSection}>
-          <HomeHeader name="Isaias" greeting="Buenos días" />
+    <SafeAreaProvider style={styles.screen}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 60 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.screen}>
+          {/* TOP */}
+          <View style={styles.topSection}>
+            <HomeHeader name="Isaias" greeting="Buenos días" />
 
-          {/* CALENDARIO */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Tu racha</Text>
-            <WeeklyCalendar days={weekDays} />
+            {/* CALENDARIO */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Tu racha</Text>
+              <WeeklyCalendar days={weekDays} />
+            </View>
+
+            {/* META SEMANAL */}
+            <WeeklyGoalCard
+              distance={weeklyGoal.distance}
+              goal={weeklyGoal.distance}
+              unit={weeklyGoal.unit}
+              completedSessions={weeklyGoal.completedSessions}
+              totalSessions={weeklyGoal.totalSessions}
+              progressCurrent={weeklyGoal.progressCurrent}
+              progressTotal={weeklyGoal.progressTotal}
+            />
+
+            {/* MINI RESUMEN */}
+            <MiniSummary
+              streakDays={4} // luego lo conectamos dinámico
+              completedSessions={weeklyGoal.completedSessions}
+              totalSessions={weeklyGoal.totalSessions}
+              totalTime="2h"
+            />
           </View>
 
-          {/* META SEMANAL */}
-          <WeeklyGoalCard
-            distance={weeklyGoal.distance}
-            goal={weeklyGoal.distance}
-            unit={weeklyGoal.unit}
-            completedSessions={weeklyGoal.completedSessions}
-            totalSessions={weeklyGoal.totalSessions}
-            progressCurrent={weeklyGoal.progressCurrent}
-            progressTotal={weeklyGoal.progressTotal}
-          />
+          {/* ENTRENAMIENTO */}
+          <View style={styles.content}>
+            <Text style={styles.sectionTitle}>Entrenamiento de hoy</Text>
 
-          {/* MINI RESUMEN */}
-          <MiniSummary
-            streakDays={4} // luego lo conectamos dinámico
-            completedSessions={weeklyGoal.completedSessions}
-            totalSessions={weeklyGoal.totalSessions}
-            totalTime="2h"
-          />
+            <TodayWorkout
+              type={todayWorkout.type}
+              title={todayWorkout.title}
+              day={todayWorkout.day}
+              duration={todayWorkout.duration}
+              difficulty={todayWorkout.difficulty}
+              metric={todayWorkout.metric}
+              heartRate={todayWorkout.heartRate}
+              status={todayWorkout.status}
+              onToggleComplete={toggleTodayWorkout}
+              onPress={() => router.push("/workout-detail")}
+            />
+          </View>
+
+          {/* HISTORIAL */}
+          <View style={styles.content}>
+            <Text style={styles.sectionTitle}>Última actividad</Text>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingRight: 20 }}
+            >
+              <QuickHistory activities={activities} />
+            </ScrollView>
+          </View>
         </View>
-
-        {/* ENTRENAMIENTO */}
-        <View style={styles.content}>
-          <Text style={styles.sectionTitle}>Entrenamiento de hoy</Text>
-
-          <TodayWorkout
-            type={todayWorkout.type}
-            title={todayWorkout.title}
-            day={todayWorkout.day}
-            duration={todayWorkout.duration}
-            difficulty={todayWorkout.difficulty}
-            metric={todayWorkout.metric}
-            heartRate={todayWorkout.heartRate}
-            status={todayWorkout.status}
-            onToggleComplete={toggleTodayWorkout}
-            onPress={() => router.push("/workout-detail")}
-          />
-        </View>
-
-        {/* HISTORIAL */}
-        <View style={styles.content}>
-          <Text style={styles.sectionTitle}>Última actividad</Text>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingRight: 20 }}
-          >
-            <QuickHistory activities={activities} />
-          </ScrollView>
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
+
   screen: {
     flex: 1,
     backgroundColor: "#F7F7F8",
