@@ -3,6 +3,7 @@ import MiniSummary from "@/src/components/home/MiniSummary";
 import QuickHistory from "@/src/components/home/QuickHistory";
 import TodayWorkout from "@/src/components/home/TodayWorkout";
 import WeeklyGoalCard from "@/src/components/home/WeeklyGoalCard";
+import WeeklyPlan from "@/src/components/home/WeeklyPlan";
 import { getWeekDaysWithLabels } from "@/src/components/utils/date";
 import WeeklyCalendar from "@/src/components/weeklyCalendar";
 import { spacing, theme } from "@/src/constants/theme";
@@ -18,6 +19,7 @@ export default function HomeScreen() {
     completedDays,
     activities,
     toggleTodayWorkout,
+    weekPlan,
   } = useHomeStore();
 
   const weekDays = getWeekDaysWithLabels(completedDays);
@@ -91,7 +93,11 @@ export default function HomeScreen() {
             >
               <QuickHistory activities={activities} />
             </ScrollView>
+            
           </View>
+          <View style={styles.content}>
+              <WeeklyPlan weekPlan={weekPlan} />
+            </View>
         </View>
       </ScrollView>
     </SafeAreaProvider>
@@ -99,7 +105,6 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-
   screen: {
     flex: 1,
     backgroundColor: "#F7F7F8",
