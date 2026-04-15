@@ -15,6 +15,7 @@ type Props = {
   heartRate: string;
   status: Status;
   onToggleComplete: () => void;
+  onPress: () => void;
 };
 
 export default function TodayWorkout({
@@ -27,11 +28,13 @@ export default function TodayWorkout({
   heartRate,
   status,
   onToggleComplete,
+  onPress,
 }: Props) {
   const isCompleted = status === "completed";
 
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={onPress}>
+
       <View style={styles.header}>
         <Text style={styles.type}>{type}</Text>
       </View>
@@ -72,7 +75,7 @@ export default function TodayWorkout({
           {isCompleted ? "Completado" : "Marcar como completado"}
         </Text>
       </Pressable>
-    </View>
+    </Pressable>
   );
 }
 
