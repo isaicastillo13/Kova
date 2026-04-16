@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 import { spacing, theme } from "@/src/constants/theme";
 
 type DayWorkoutType = "running" | "swimming" | "strength" | "mixed" | "rest";
@@ -14,11 +14,20 @@ type DayWorkout = {
 
 type Props = {
   weekPlan: DayWorkout[];
+  onPressDay?: (workout: DayWorkout) => void;
 };
 
-const dayLabels = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+const dayLabels = [
+  "Lunes",
+  "Martes",
+  "Miércoles",
+  "Jueves",
+  "Viernes",
+  "Sábado",
+  "Domingo",
+];
 
-export default function WeeklyPlan({ weekPlan }: Props) {
+export default function WeeklyPlan({ weekPlan, onPressDay }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Plan semanal</Text>
@@ -28,19 +37,18 @@ export default function WeeklyPlan({ weekPlan }: Props) {
           const isRest = item.type === "rest";
 
           return (
-            <View key={item.day} style={styles.card}>
+            <Pressable
+              key={item.day}
+              style={styles.card}
+              onPress={() => onPressDay?.(item)}
+            >
               <View style={styles.left}>
                 <Text style={styles.day}>{dayLabels[item.day]}</Text>
                 <Text style={styles.title}>{item.title}</Text>
               </View>
 
               <View style={styles.right}>
-                <Text
-                  style={[
-                    styles.type,
-                    isRest && styles.restType,
-                  ]}
-                >
+                <Text style={[styles.type, isRest && styles.restType]}>
                   {isRest ? "Descanso" : item.type}
                 </Text>
 
@@ -48,11 +56,11 @@ export default function WeeklyPlan({ weekPlan }: Props) {
                   {isRest
                     ? "—"
                     : item.type === "running" || item.type === "mixed"
-                    ? `${item.km ?? 0} km`
-                    : `${item.duration ?? 0} min`}
+                      ? `${item.km ?? 0} km`
+                      : `${item.duration ?? 0} min`}
                 </Text>
               </View>
-            </View>
+            </Pressable>
           );
         })}
       </View>

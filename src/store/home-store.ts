@@ -68,17 +68,19 @@ type HomeState = {
   weeklyGoal: WeeklyGoal;
   todayWorkout: TodayWorkout;
   weekPlan: DayWorkout[];
+  selectedWorkout: DayWorkout | null;
   completedDays: number[];
   activities: Activity[];
 
   toggleTodayWorkout: () => void;
   setPlanFromOnboarding: (plan: GeneratedPlan) => void;
   resetHomeProgress: () => void;
+  setSelectedWorkout: (workout: DayWorkout | null) => void;
+  clearSelectedWorkout: () => void;
 };
 
 function buildTodayWorkoutFromDay(dayWorkout: DayWorkout): TodayWorkout {
   const isRest = dayWorkout.type === "rest";
-
   return {
     type: isRest ? "Descanso" : dayWorkout.type,
     title: dayWorkout.title,
@@ -122,6 +124,7 @@ export const useHomeStore = create<HomeState>()(
       },
 
       weekPlan: [],
+      selectedWorkout: null,
 
       completedDays: [],
       activities: [],
@@ -170,6 +173,14 @@ export const useHomeStore = create<HomeState>()(
           activities: [],
         });
       },
+
+      setSelectedWorkout: (workout) => {
+  set({ selectedWorkout: workout });
+},
+
+clearSelectedWorkout: () => {
+  set({ selectedWorkout: null });
+},
 
       toggleTodayWorkout: () => {
         const state = get();

@@ -1,13 +1,47 @@
 import { theme } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
-import React from "react";
+import React, { useEffect } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function WorkoutDetailScreen() {
   const todayWorkout = useHomeStore((state) => state.todayWorkout);
+  const selectedWorkout = useHomeStore((state) => state.selectedWorkout);
+  const clearSelectedWorkout = useHomeStore(
+    (state) => state.clearSelectedWorkout,
+  );
+  useEffect(() => {
+    return () => {
+      clearSelectedWorkout();
+    };
+  }, [clearSelectedWorkout]);
+
+  const workout = selectedWorkout
+    ? {
+        type:
+          selectedWorkout.type === "rest" ? "Descanso" : selectedWorkout.type,
+        title: selectedWorkout.title,
+        day: "Plan semanal",
+        duration:
+          selectedWorkout.type === "rest"
+            ? "—"
+            : `${selectedWorkout.duration ?? 0} min`,
+        difficulty: selectedWorkout.type === "rest" ? "Recuperación" : "Media",
+        metric:
+          selectedWorkout.type === "running" || selectedWorkout.type === "mixed"
+            ? `${selectedWorkout.km ?? 0} km`
+            : selectedWorkout.type === "rest"
+              ? "Sin carga"
+              : "Sesión",
+        heartRate:
+          selectedWorkout.type === "rest" ? "Recuperación" : "FC 140-160",
+        km: selectedWorkout.km ?? 0,
+        details: selectedWorkout.details ?? [],
+      }
+    : todayWorkout;
+
   const isRestDay =
-    todayWorkout.type.toLowerCase() === "descanso" || todayWorkout.km === 0;
+    workout.type.toLowerCase() === "descanso" || workout.km === 0;
 
   return (
     <SafeAreaProvider style={styles.safeArea}>
@@ -18,11 +52,10 @@ export default function WorkoutDetailScreen() {
       >
         {/* HEADER */}
         <View style={styles.header}>
-          <Text style={styles.type}>{todayWorkout.type}</Text>
-          <Text style={styles.title}>{todayWorkout.title}</Text>
+          <Text style={styles.type}>{workout.type}</Text>
+          <Text style={styles.title}>{workout.title}</Text>
           <Text style={styles.meta}>
-            {todayWorkout.day} · {todayWorkout.duration} ·{" "}
-            {todayWorkout.difficulty}
+            {workout.day} · {workout.duration} · {workout.difficulty}
           </Text>
         </View>
 
@@ -31,12 +64,12 @@ export default function WorkoutDetailScreen() {
           <Text style={styles.summaryLabel}>
             {isRestDay ? "Enfoque del día" : "Métrica"}
           </Text>
-          <Text style={styles.summaryValue}>{todayWorkout.metric}</Text>
+          <Text style={styles.summaryValue}>{workout.metric}</Text>
 
           <View style={styles.summaryDivider} />
 
           <Text style={styles.summaryLabel}>Rango objetivo</Text>
-          <Text style={styles.summaryValue}>{todayWorkout.heartRate}</Text>
+          <Text style={styles.summaryValue}>{workout.heartRate}</Text>
         </View>
 
         {/* BLOQUES */}
@@ -45,8 +78,8 @@ export default function WorkoutDetailScreen() {
             {isRestDay ? "Detalle del día" : "Detalle del entrenamiento"}
           </Text>
 
-          {todayWorkout.details && todayWorkout.details.length > 0 ? (
-            todayWorkout.details.map((block, index) => (
+          {workout.details && workout.details.length > 0 ? (
+            workout.details.map((block, index) => (
               <View key={`${block.type}-${index}`} style={styles.blockCard}>
                 <Text style={styles.blockLabel}>{block.label}</Text>
                 <Text style={styles.blockDescription}>{block.description}</Text>

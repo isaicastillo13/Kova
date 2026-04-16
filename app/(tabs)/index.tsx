@@ -20,6 +20,7 @@ export default function HomeScreen() {
     activities,
     toggleTodayWorkout,
     weekPlan,
+    setSelectedWorkout,
   } = useHomeStore();
 
   const weekDays = getWeekDaysWithLabels(completedDays);
@@ -96,7 +97,13 @@ export default function HomeScreen() {
             
           </View>
           <View style={styles.content}>
-              <WeeklyPlan weekPlan={weekPlan} />
+              <WeeklyPlan
+  weekPlan={weekPlan}
+  onPressDay={(workout) => {
+    setSelectedWorkout(workout);
+    router.push("/workout-detail");
+  }}
+/>
             </View>
         </View>
       </ScrollView>
