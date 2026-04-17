@@ -234,7 +234,8 @@ function getHeartRate(kind: SessionKind) {
 function getWorkoutDetails(
   kind: SessionKind,
   km: number,
-  duration: number
+  duration: number,
+  level: Level
 ): WorkoutDetailBlock[] {
   switch (kind) {
     case "easy_run":
@@ -247,7 +248,12 @@ function getWorkoutDetails(
         {
           type: "main",
           label: "Bloque principal",
-          description: `Rodaje continuo de ${km} km a ritmo cómodo y estable`,
+          description: `Rodaje continuo de ${km} km a ritmo conversacional, sin forzar.`,
+        },
+        {
+          type: "notes",
+          label: "Objetivo",
+          description: "Construir base aeróbica y mantener técnica estable.",
         },
         {
           type: "cooldown",
@@ -256,22 +262,39 @@ function getWorkoutDetails(
         },
       ];
 
-    case "intervals":
+    case "intervals": {
+      const prescription =
+        level === "principiante"
+          ? "4x100 a ritmo controlado"
+          : level === "intermedio"
+          ? "6x400 a ritmo 5K"
+          : "8x400 a ritmo 5K-10K";
+
+      const recovery =
+        level === "principiante"
+          ? "1 min caminando o trote muy suave entre repeticiones"
+          : "90 seg suaves entre repeticiones";
+
       return [
         {
           type: "warmup",
           label: "Calentamiento",
-          description: "10 min suaves + movilidad + 3 progresiones cortas",
+          description: "10 min suaves + movilidad dinámica + 3 progresiones cortas",
         },
         {
           type: "main",
           label: "Bloque principal",
-          description: `4x100 a ritmo controlado. Volumen total aproximado: ${km} km`,
+          description: `${prescription}. Volumen total aproximado: ${km} km`,
         },
         {
           type: "recovery",
           label: "Recuperación",
-          description: "1 min suave entre repeticiones",
+          description: recovery,
+        },
+        {
+          type: "notes",
+          label: "Pace / intención",
+          description: "Buscar ritmo firme, controlado y técnicamente limpio, no salir demasiado rápido.",
         },
         {
           type: "cooldown",
@@ -279,8 +302,16 @@ function getWorkoutDetails(
           description: "8 min suaves y estiramientos ligeros",
         },
       ];
+    }
 
-    case "tempo":
+    case "tempo": {
+      const tempoBlock =
+        level === "principiante"
+          ? "10-12 min sostenidos a ritmo moderado-alto"
+          : level === "intermedio"
+          ? "15-20 min sostenidos a ritmo umbral controlado"
+          : "20-25 min sostenidos a ritmo umbral";
+
       return [
         {
           type: "warmup",
@@ -290,7 +321,12 @@ function getWorkoutDetails(
         {
           type: "main",
           label: "Bloque principal",
-          description: `Bloque tempo continuo dentro de una sesión de ${km} km`,
+          description: `${tempoBlock} dentro de una sesión total de ${km} km`,
+        },
+        {
+          type: "notes",
+          label: "Pace / intención",
+          description: "Ritmo exigente pero sostenible; debes sentir esfuerzo estable, no sprint.",
         },
         {
           type: "cooldown",
@@ -298,23 +334,29 @@ function getWorkoutDetails(
           description: "5-8 min suaves al terminar",
         },
       ];
+    }
 
     case "long_run":
       return [
         {
           type: "warmup",
-          label: "Calentamiento",
-          description: "8 min suaves antes de entrar en ritmo",
+          label: "Inicio",
+          description: "Comienza muy suave durante los primeros 8-10 min",
         },
         {
           type: "main",
           label: "Bloque principal",
-          description: `Rodaje largo de ${km} km con enfoque aeróbico`,
+          description: `Rodaje largo de ${km} km con enfoque aeróbico y ritmo constante.`,
         },
         {
           type: "notes",
-          label: "Notas",
-          description: "Mantén ritmo conversacional y técnica relajada",
+          label: "Objetivo",
+          description: "Construir resistencia, mantener control y evitar aceleraciones innecesarias.",
+        },
+        {
+          type: "cooldown",
+          label: "Cierre",
+          description: "5 min suaves + hidratación y recuperación",
         },
       ];
 
@@ -323,17 +365,17 @@ function getWorkoutDetails(
         {
           type: "warmup",
           label: "Activación",
-          description: "5-8 min de movilidad y activación general",
+          description: "5-8 min de movilidad, activación de core y glúteos",
         },
         {
           type: "main",
           label: "Bloque principal",
-          description: "Trabajo de fuerza por bloques: empuje, tracción, pierna y core",
+          description: "3 bloques de fuerza: pierna, empuje/tracción y core. 3-4 series por ejercicio.",
         },
         {
           type: "notes",
-          label: "Notas",
-          description: `Duración estimada: ${duration} min`,
+          label: "Objetivo",
+          description: `Sesión de ${duration} min enfocada en control, técnica y estabilidad.`,
         },
       ];
 
@@ -347,7 +389,12 @@ function getWorkoutDetails(
         {
           type: "main",
           label: "Bloque principal",
-          description: "Trabajo técnico con énfasis en eficiencia de brazada",
+          description: "Trabajo técnico de brazada, respiración y alineación corporal.",
+        },
+        {
+          type: "notes",
+          label: "Objetivo",
+          description: "Mejorar eficiencia antes que velocidad.",
         },
         {
           type: "cooldown",
@@ -366,12 +413,17 @@ function getWorkoutDetails(
         {
           type: "main",
           label: "Bloque principal",
-          description: "Series aeróbicas sostenidas con descansos cortos",
+          description: "Series aeróbicas sostenidas con descansos cortos y ritmo uniforme.",
+        },
+        {
+          type: "notes",
+          label: "Objetivo",
+          description: "Construir resistencia manteniendo técnica eficiente.",
         },
         {
           type: "cooldown",
           label: "Vuelta a la calma",
-          description: "100m suaves y técnica ligera",
+          description: "100m suaves y movilidad ligera",
         },
       ];
 
@@ -380,12 +432,12 @@ function getWorkoutDetails(
         {
           type: "main",
           label: "Bloque principal",
-          description: `Sesión combinada de acondicionamiento de ${duration} min`,
+          description: `Sesión combinada de ${duration} min: cardio suave + fuerza básica + movilidad.`,
         },
         {
           type: "notes",
-          label: "Notas",
-          description: "Alterna cardio suave, fuerza básica y movilidad",
+          label: "Objetivo",
+          description: "Mejorar acondicionamiento general sin concentrar toda la carga en una sola capacidad.",
         },
       ];
 
@@ -394,7 +446,7 @@ function getWorkoutDetails(
         {
           type: "notes",
           label: "Recuperación",
-          description: "Día de descanso o movilidad ligera",
+          description: "Día de descanso o movilidad ligera. Prioriza sueño, hidratación y descarga.",
         },
       ];
 
@@ -481,7 +533,7 @@ export function generatePlan(input: Input): GeneratedPlan {
         title: getSessionTitle(kind),
         km: currentKm,
         duration: input.duration,
-        details: getWorkoutDetails(kind, currentKm, input.duration),
+        details: getWorkoutDetails(kind, currentKm, input.duration, input.level),
       });
 
       trainingDayCounter += 1;
@@ -490,7 +542,7 @@ export function generatePlan(input: Input): GeneratedPlan {
         day: i,
         type: "rest",
         title: "Descanso",
-        details: getWorkoutDetails("rest", 0, input.duration),
+        details: getWorkoutDetails("rest", 0, input.duration, input.level),
       });
     }
   }
