@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { theme } from '@/src/constants/theme';
-import { useRouter } from 'expo-router';
-import { useOnboardingStore } from '@/src/store/onboarding-store';
-import { useHomeStore } from '@/src/store/home-store';
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { theme } from "@/src/constants/theme";
+import { useRouter } from "expo-router";
+import { useOnboardingStore } from "@/src/store/onboarding-store";
+import { useHomeStore } from "@/src/store/home-store";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function ProfileScreen() {
     resetOnboarding();
     resetHome();
 
-    router.replace('/onboarding');
+    router.replace("/onboarding");
   };
 
   return (
@@ -28,6 +28,13 @@ export default function ProfileScreen() {
       <Pressable style={styles.button} onPress={handleReset}>
         <Text style={styles.buttonText}>Rehacer onboarding</Text>
       </Pressable>
+
+      <Pressable
+        style={styles.button}
+        onPress={() => router.push("../edit-plan")}
+      >
+        <Text style={styles.buttonText}>Editar plan</Text>
+      </Pressable>
     </View>
   );
 }
@@ -36,8 +43,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: theme.spacing.xxl,
   },
 
@@ -51,7 +58,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: theme.typography.bodyMD,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: theme.spacing.xl,
   },
 
