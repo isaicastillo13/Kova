@@ -23,6 +23,21 @@ export default function HomeScreen() {
     setSelectedWorkout,
   } = useHomeStore();
 
+  const totalMinutes = weekPlan.reduce((acc, item) => {
+    if (item.type === "rest") return acc;
+    return acc + (item.duration ?? 0);
+  }, 0);
+
+  const totalHours = Math.floor(totalMinutes / 60);
+  const remainingMinutes = totalMinutes % 60;
+
+  const formattedTotalTime =
+    totalHours > 0
+      ? `${totalHours}h${remainingMinutes > 0 ? ` ${remainingMinutes}m` : ""}`
+      : `${remainingMinutes}m`;
+
+  const streakDays = completedDays.length;
+
   const weekDays = getWeekDaysWithLabels(completedDays);
   const router = useRouter();
 
@@ -57,10 +72,10 @@ export default function HomeScreen() {
 
             {/* MINI RESUMEN */}
             <MiniSummary
-              streakDays={4} // luego lo conectamos dinámico
+              streakDays={streakDays} // luego lo conectamos dinámico
               completedSessions={weeklyGoal.completedSessions}
               totalSessions={weeklyGoal.totalSessions}
-              totalTime="2h"
+              totalTime={formattedTotalTime}
             />
           </View>
 
@@ -94,17 +109,16 @@ export default function HomeScreen() {
             >
               <QuickHistory activities={activities} />
             </ScrollView>
-            
           </View>
           <View style={styles.content}>
-              <WeeklyPlan
-  weekPlan={weekPlan}
-  onPressDay={(workout) => {
-    setSelectedWorkout(workout);
-    router.push("/workout-detail");
-  }}
-/>
-            </View>
+            <WeeklyPlan
+              weekPlan={weekPlan}
+              onPressDay={(workout) => {
+                setSelectedWorkout(workout);
+                router.push("/workout-detail");
+              }}
+            />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaProvider>
