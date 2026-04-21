@@ -61,8 +61,6 @@ export default function HomeScreen() {
 
             {/* META SEMANAL */}
             <WeeklyGoalCard
-              distance={weeklyGoal.distance}
-              goal={weeklyGoal.distance}
               unit={weeklyGoal.unit}
               completedSessions={weeklyGoal.completedSessions}
               totalSessions={weeklyGoal.totalSessions}

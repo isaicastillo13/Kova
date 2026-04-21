@@ -5,8 +5,6 @@ import { ProgressBar } from "@/src/components/ProgresBar";
 import { spacing, theme, typography } from "@/src/constants/theme";
 
 type Props = {
-  distance: number;
-  goal: number;
   unit?: string;
   completedSessions: number;
   totalSessions: number;
@@ -15,8 +13,6 @@ type Props = {
 };
 
 export default function WeeklyGoalCard({
-  distance,
-  goal,
   unit = "km",
   completedSessions,
   totalSessions,
@@ -37,7 +33,13 @@ export default function WeeklyGoalCard({
           <View style={styles.kmContainer}>
             <Text style={styles.cardTitle}>
               {progressCurrent}
-              <Text style={{ color: theme.colors.textSecondary, fontSize: typography.titleSM }}>
+              <Text
+                style={{
+                  color: theme.colors.textSecondary,
+                  fontSize: typography.titleSM,
+                }}
+              >
+                {" "}
                 / {progressTotal}
               </Text>
             </Text>
