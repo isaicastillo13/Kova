@@ -14,6 +14,17 @@ type Props = {
 };
 
 export default function QuickHistory({ activities }: Props) {
+  if (!activities.length) {
+    return (
+      <View style={styles.emptyCard}>
+        <Text style={styles.emptyTitle}>Aún no tienes actividades</Text>
+        <Text style={styles.emptySubtitle}>
+          Completa tu primer entrenamiento para verlo aquí.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.contentHistory}>
@@ -33,25 +44,19 @@ const styles = StyleSheet.create({
   container: {
     gap: spacing.sm,
   },
+
   contentHistory: {
-    gap: spacing.sm,
-    display: "flex",
     flexDirection: "row",
-  },
-  sectionTitle: {
-    fontSize: theme.typography.titleSM,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
-    marginBottom: spacing.sm,
+    gap: spacing.sm,
   },
 
   card: {
+    minWidth: 180,
     backgroundColor: theme.colors.white,
     padding: spacing.md,
     borderRadius: theme.radius.lg,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    // ...theme.shadows.card,
   },
 
   date: {
@@ -70,5 +75,26 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.bodySM,
     color: theme.colors.textSecondary,
     marginTop: 2,
+  },
+
+  emptyCard: {
+    backgroundColor: theme.colors.white,
+    padding: spacing.lg,
+    borderRadius: theme.radius.lg,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+  },
+
+  emptyTitle: {
+    fontSize: theme.typography.bodyMD,
+    fontWeight: theme.fontWeight.semibold,
+    color: theme.colors.text,
+    marginBottom: 4,
+  },
+
+  emptySubtitle: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.textSecondary,
+    lineHeight: 20,
   },
 });
