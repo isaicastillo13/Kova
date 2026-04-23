@@ -4,10 +4,12 @@ import QuickHistory from "@/src/components/home/QuickHistory";
 import TodayWorkout from "@/src/components/home/TodayWorkout";
 import WeeklyGoalCard from "@/src/components/home/WeeklyGoalCard";
 import WeeklyPlan from "@/src/components/home/WeeklyPlan";
+import PlanContextCard from "@/src/components/PlanContextCard";
 import { getWeekDaysWithLabels } from "@/src/components/utils/date";
 import WeeklyCalendar from "@/src/components/weeklyCalendar";
 import { spacing, theme } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
+import { useOnboardingStore } from "@/src/store/onboarding-store";
 import { useRouter } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -40,6 +42,31 @@ export default function HomeScreen() {
 
   const weekDays = getWeekDaysWithLabels(completedDays);
   const router = useRouter();
+  const { goal, level, days, duration, trainingType } = useOnboardingStore();
+  const formattedGoal =
+    goal === "resistencia"
+      ? "Resistencia"
+      : goal === "rendimiento"
+        ? "Rendimiento"
+        : goal === "mantenerme"
+          ? "Mantenerme activo"
+          : goal === "competencia"
+            ? "Competencia"
+            : "No definido";
+
+  const formattedTrainingType =
+    trainingType === "running"
+      ? "Running"
+      : trainingType === "swimming"
+        ? "Swimming"
+        : trainingType === "strength"
+          ? "Fuerza"
+          : trainingType === "mixed"
+            ? "Mixto"
+            : "No definido";
+
+  const trainingDaysPerWeek = days.length;
+  const formattedDuration = duration ? `${duration} min` : "No definido";
 
   return (
     <SafeAreaProvider style={styles.screen}>
@@ -70,10 +97,26 @@ export default function HomeScreen() {
 
             {/* MINI RESUMEN */}
             <MiniSummary
-              streakDays={streakDays} // luego lo conectamos dinámico
+              streakDays={streakDays}
               completedSessions={weeklyGoal.completedSessions}
               totalSessions={weeklyGoal.totalSessions}
               totalTime={formattedTotalTime}
+            />
+
+            <PlanContextCard
+              goal={formattedGoal}
+              trainingType={formattedTrainingType}
+              daysPerWeek={trainingDaysPerWeek}
+              duration={formattedDuration}
+              level={
+                level === "principiante"
+                  ? "Principiante"
+                  : level === "intermedio"
+                    ? "Intermedio"
+                    : level === "avanzado"
+                      ? "Avanzado"
+                      : "No definido"
+              }
             />
           </View>
 
