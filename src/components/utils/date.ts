@@ -26,6 +26,41 @@ export function getWeekDaysWithLabels(completedDays: number[] = []) {
 }
 
 export function getTodayIndex(): number {
-  const today = new Date().getDay(); // 0-6 (domingo a sábado)
+  const today = new Date().getDay(); // 0-6 (domingo-sábado)
   return today === 0 ? 6 : today - 1;
+}
+
+export function getTodayDateString(): string {
+  const today = new Date();
+  return formatDateToYYYYMMDD(today);
+}
+
+export function formatDateToYYYYMMDD(date: Date): string {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function getPreviousDateString(dateString: string): string {
+  const date = new Date(dateString);
+  date.setDate(date.getDate() - 1);
+  return formatDateToYYYYMMDD(date);
+}
+
+export function calculateStreak(completedDates: string[]): number {
+  if (!completedDates.length) return 0;
+
+  const uniqueDates = [...new Set(completedDates)].sort().reverse();
+  const dateSet = new Set(uniqueDates);
+
+  let streak = 0;
+  let currentDate = getTodayDateString();
+
+  while (dateSet.has(currentDate)) {
+    streak += 1;
+    currentDate = getPreviousDateString(currentDate);
+  }
+
+  return streak; // 🔥 ESTA LÍNEA ES CLAVE
 }

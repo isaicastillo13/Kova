@@ -5,7 +5,7 @@ import TodayWorkout from "@/src/components/home/TodayWorkout";
 import WeeklyGoalCard from "@/src/components/home/WeeklyGoalCard";
 import WeeklyPlan from "@/src/components/home/WeeklyPlan";
 import PlanContextCard from "@/src/components/PlanContextCard";
-import { getWeekDaysWithLabels } from "@/src/components/utils/date";
+import { getWeekDaysWithLabels, calculateStreak } from "@/src/components/utils/date";
 import WeeklyCalendar from "@/src/components/weeklyCalendar";
 import { spacing, theme } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
@@ -19,6 +19,7 @@ export default function HomeScreen() {
     weeklyGoal,
     todayWorkout,
     completedDays,
+    completedDates,
     activities,
     toggleTodayWorkout,
     weekPlan,
@@ -38,7 +39,7 @@ export default function HomeScreen() {
       ? `${totalHours}h${remainingMinutes > 0 ? ` ${remainingMinutes}m` : ""}`
       : `${remainingMinutes}m`;
 
-  const streakDays = completedDays.length;
+  const streakDays = calculateStreak(completedDates);
 
   const weekDays = getWeekDaysWithLabels(completedDays);
   const router = useRouter();
@@ -380,3 +381,4 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
+

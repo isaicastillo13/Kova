@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { getTodayDateString, getTodayIndex } from "@/src/components/utils/date";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getTodayIndex } from "@/src/components/utils/date";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type WorkoutStatus = "pending" | "completed";
 
@@ -70,6 +70,7 @@ type HomeState = {
   weekPlan: DayWorkout[];
   selectedWorkout: DayWorkout | null;
   completedDays: number[];
+  completedDates: string[];
   activities: Activity[];
 
   toggleTodayWorkout: () => void;
@@ -89,9 +90,9 @@ function buildTodayWorkoutFromDay(dayWorkout: DayWorkout): TodayWorkout {
     difficulty: isRest ? "Recuperación" : "Media",
     metric: isRest
       ? "Sin carga"
-      : dayWorkout.type === "running"
-      ? `${dayWorkout.km ?? 0} km`
-      : "Sesión",
+      : dayWorkout.type === "running" || dayWorkout.type === "mixed"
+        ? `${dayWorkout.km ?? 0} km`
+        : "Sesión",
     heartRate: isRest ? "Recuperación" : "FC 140-160",
     km: dayWorkout.km ?? 0,
     status: "pending",
@@ -127,6 +128,7 @@ export const useHomeStore = create<HomeState>()(
       selectedWorkout: null,
 
       completedDays: [],
+      completedDates: [],
       activities: [],
 
       setPlanFromOnboarding: (plan) => {
@@ -145,7 +147,9 @@ export const useHomeStore = create<HomeState>()(
                 status: "pending",
               },
           weekPlan: plan.weekPlan,
+          selectedWorkout: null,
           completedDays: [],
+          completedDates: [],
           activities: [],
         });
       },
@@ -169,29 +173,31 @@ export const useHomeStore = create<HomeState>()(
                 ...state.todayWorkout,
                 status: "pending",
               },
+          selectedWorkout: null,
           completedDays: [],
+          completedDates: [],
           activities: [],
         });
       },
 
       setSelectedWorkout: (workout) => {
-  set({ selectedWorkout: workout });
-},
+        set({ selectedWorkout: workout });
+      },
 
-clearSelectedWorkout: () => {
-  set({ selectedWorkout: null });
-},
+      clearSelectedWorkout: () => {
+        set({ selectedWorkout: null });
+      },
 
       toggleTodayWorkout: () => {
         const state = get();
         const isCompleted = state.todayWorkout.status === "completed";
         const todayIndex = getTodayIndex();
+        const todayDate = getTodayDateString();
         const workoutKm = state.todayWorkout.km ?? 0;
 
-        // Si hoy es descanso, no hacer nada
         if (
           state.todayWorkout.type.toLowerCase() === "descanso" ||
-          state.todayWorkout.km === 0
+          workoutKm <= 0
         ) {
           return;
         }
@@ -200,13 +206,23 @@ clearSelectedWorkout: () => {
           ? state.completedDays.filter((day) => day !== todayIndex)
           : [...new Set([...state.completedDays, todayIndex])];
 
+        const updatedCompletedDates = isCompleted
+          ? state.completedDates.filter((date) => date !== todayDate)
+          : [...new Set([...state.completedDates, todayDate])];
+
         const updatedCompletedSessions = isCompleted
           ? Math.max(state.weeklyGoal.completedSessions - 1, 0)
-          : state.weeklyGoal.completedSessions + 1;
+          : Math.min(
+              state.weeklyGoal.completedSessions + 1,
+              state.weeklyGoal.totalSessions,
+            );
 
         const updatedProgressCurrent = isCompleted
           ? Math.max(state.weeklyGoal.progressCurrent - workoutKm, 0)
-          : state.weeklyGoal.progressCurrent + workoutKm;
+          : Math.min(
+              state.weeklyGoal.progressCurrent + workoutKm,
+              state.weeklyGoal.progressTotal,
+            );
 
         const updatedActivities = isCompleted
           ? state.activities.filter((item) => item.id !== "today-workout")
@@ -226,6 +242,7 @@ clearSelectedWorkout: () => {
             status: isCompleted ? "pending" : "completed",
           },
           completedDays: updatedCompletedDays,
+          completedDates: updatedCompletedDates,
           activities: updatedActivities,
           weeklyGoal: {
             ...state.weeklyGoal,
@@ -238,6 +255,6 @@ clearSelectedWorkout: () => {
     {
       name: "home-storage",
       storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
+    },
+  ),
 );
