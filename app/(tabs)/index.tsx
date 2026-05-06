@@ -84,6 +84,11 @@ export default function HomeScreen() {
           {/* TOP */}
           <View style={styles.topSection}>
             <HomeHeader name="Isaias" greeting="Buenos días" />
+             <HomeInsight
+              streakDays={streakDays}
+              todayWorkout={todayWorkout}
+              weeklyGoal={weeklyGoal}
+            />
 
             {/* CALENDARIO */}
             <View style={styles.section}>
@@ -106,11 +111,6 @@ export default function HomeScreen() {
               completedSessions={weeklyGoal.completedSessions}
               totalSessions={weeklyGoal.totalSessions}
               totalTime={formattedTotalTime}
-            />
-            <HomeInsight
-              streakDays={streakDays}
-              todayWorkout={todayWorkout}
-              weeklyGoal={weeklyGoal}
             />
 
             <PlanContextCard
