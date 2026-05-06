@@ -1,11 +1,15 @@
 import HomeHeader from "@/src/components/home/Header";
+import HomeInsight from "@/src/components/home/HomeInsight";
 import MiniSummary from "@/src/components/home/MiniSummary";
 import QuickHistory from "@/src/components/home/QuickHistory";
 import TodayWorkout from "@/src/components/home/TodayWorkout";
 import WeeklyGoalCard from "@/src/components/home/WeeklyGoalCard";
 import WeeklyPlan from "@/src/components/home/WeeklyPlan";
 import PlanContextCard from "@/src/components/PlanContextCard";
-import { getWeekDaysWithLabels, calculateStreak } from "@/src/components/utils/date";
+import {
+  calculateStreak,
+  getWeekDaysWithLabels,
+} from "@/src/components/utils/date";
 import WeeklyCalendar from "@/src/components/weeklyCalendar";
 import { spacing, theme } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
@@ -102,6 +106,11 @@ export default function HomeScreen() {
               completedSessions={weeklyGoal.completedSessions}
               totalSessions={weeklyGoal.totalSessions}
               totalTime={formattedTotalTime}
+            />
+            <HomeInsight
+              streakDays={streakDays}
+              todayWorkout={todayWorkout}
+              weeklyGoal={weeklyGoal}
             />
 
             <PlanContextCard
@@ -381,4 +390,3 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
-
