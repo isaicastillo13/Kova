@@ -34,6 +34,9 @@ type Activity = {
   title: string;
   subtitle: string;
   dateLabel: string;
+  type: string;
+  km: number;
+  duration: string;
 };
 
 type TodayWorkout = {
@@ -224,16 +227,21 @@ export const useHomeStore = create<HomeState>()(
               state.weeklyGoal.progressTotal,
             );
 
+        const activityId = `workout-${todayDate}`;
+
         const updatedActivities = isCompleted
-          ? state.activities.filter((item) => item.id !== "today-workout")
+          ? state.activities.filter((item) => item.id !== activityId)
           : [
               {
-                id: "today-workout",
+                id: activityId,
                 dateLabel: "Hoy",
                 title: state.todayWorkout.title,
                 subtitle: `${state.todayWorkout.metric} · ${state.todayWorkout.duration}`,
+                type: state.todayWorkout.type,
+                km: workoutKm,
+                duration: state.todayWorkout.duration,
               },
-              ...state.activities,
+              ...state.activities.filter((item) => item.id !== activityId),
             ];
 
         set({

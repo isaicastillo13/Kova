@@ -7,11 +7,22 @@ type Activity = {
   title: string;
   subtitle: string;
   dateLabel: string;
+  type: string;
+  km: number;
+  duration: string;
 };
 
 type Props = {
   activities: Activity[];
 };
+
+function formatType(type: string) {
+  if (type.toLowerCase() === "running") return "Running";
+  if (type.toLowerCase() === "swimming") return "Swimming";
+  if (type.toLowerCase() === "strength") return "Fuerza";
+  if (type.toLowerCase() === "mixed") return "Mixto";
+  return type;
+}
 
 export default function QuickHistory({ activities }: Props) {
   if (!activities.length) {
@@ -30,8 +41,21 @@ export default function QuickHistory({ activities }: Props) {
       <View style={styles.contentHistory}>
         {activities.map((item) => (
           <View key={item.id} style={styles.card}>
-            <Text style={styles.date}>{item.dateLabel}</Text>
+            <View style={styles.topRow}>
+              <Text style={styles.date}>{item.dateLabel}</Text>
+              <Text style={styles.badge}>{formatType(item.type)}</Text>
+            </View>
+
             <Text style={styles.title}>{item.title}</Text>
+
+            <View style={styles.metricsRow}>
+              <Text style={styles.metric}>
+                {item.km > 0 ? `${item.km} km` : "Sesión"}
+              </Text>
+              <Text style={styles.dot}>•</Text>
+              <Text style={styles.metric}>{item.duration}</Text>
+            </View>
+
             <Text style={styles.subtitle}>{item.subtitle}</Text>
           </View>
         ))}
@@ -51,7 +75,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    minWidth: 180,
+    minWidth: 200,
     backgroundColor: theme.colors.white,
     padding: spacing.md,
     borderRadius: theme.radius.lg,
@@ -59,22 +83,53 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
   },
 
+  topRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing.sm,
+    gap: spacing.sm,
+  },
+
   date: {
     fontSize: theme.typography.bodySM,
     color: theme.colors.textSecondary,
-    marginBottom: 2,
+  },
+
+  badge: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.primary,
+    fontWeight: theme.fontWeight.semibold,
   },
 
   title: {
     fontSize: theme.typography.bodyMD,
     fontWeight: theme.fontWeight.semibold,
     color: theme.colors.text,
+    marginBottom: spacing.xs,
+  },
+
+  metricsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    marginBottom: spacing.xs,
+  },
+
+  metric: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.text,
+    fontWeight: theme.fontWeight.medium,
+  },
+
+  dot: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.textSecondary,
   },
 
   subtitle: {
     fontSize: theme.typography.bodySM,
     color: theme.colors.textSecondary,
-    marginTop: 2,
   },
 
   emptyCard: {
