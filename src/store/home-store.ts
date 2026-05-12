@@ -14,19 +14,35 @@ type WorkoutDetailBlockType =
   | "cooldown"
   | "notes";
 
-type WorkoutDetailBlock = {
-  type: WorkoutDetailBlockType;
-  label: string;
-  description: string;
-};
+type WorkoutCategory =
+  | "easy_run"
+  | "intervals"
+  | "tempo"
+  | "long_run"
+  | "strength"
+  | "swim_technique"
+  | "swim_endurance"
+  | "mixed_conditioning"
+  | "rest";
 
 type DayWorkout = {
   day: number;
   type: DayWorkoutType;
+  category: WorkoutCategory;
   title: string;
+  description: string;
+  intensity: "baja" | "media" | "alta" | "recuperación";
   km?: number;
   duration?: number;
+  targetPace?: string;
+  targetHeartRate?: string;
   details?: WorkoutDetailBlock[];
+};
+
+type WorkoutDetailBlock = {
+  type: WorkoutDetailBlockType;
+  label: string;
+  description: string;
 };
 
 type Activity = {
@@ -41,12 +57,15 @@ type Activity = {
 
 type TodayWorkout = {
   type: string;
+  category?: WorkoutCategory;
   title: string;
+  description?: string;
   day: string;
   duration: string;
   difficulty: string;
   metric: string;
   heartRate: string;
+  targetPace?: string;
   km: number;
   status: WorkoutStatus;
   details?: WorkoutDetailBlock[];
@@ -85,18 +104,24 @@ type HomeState = {
 
 function buildTodayWorkoutFromDay(dayWorkout: DayWorkout): TodayWorkout {
   const isRest = dayWorkout.type === "rest";
+
   return {
     type: isRest ? "Descanso" : dayWorkout.type,
+    category: dayWorkout.category,
     title: dayWorkout.title,
+    description: dayWorkout.description,
     day: "Hoy",
     duration: isRest ? "—" : `${dayWorkout.duration ?? 0} min`,
-    difficulty: isRest ? "Recuperación" : "Media",
+    difficulty: dayWorkout.intensity,
     metric: isRest
       ? "Sin carga"
       : dayWorkout.type === "running" || dayWorkout.type === "mixed"
         ? `${dayWorkout.km ?? 0} km`
         : "Sesión",
-    heartRate: isRest ? "Recuperación" : "FC 140-160",
+    heartRate: isRest
+      ? "Recuperación"
+      : (dayWorkout.targetHeartRate ?? "FC 140-160"),
+    targetPace: dayWorkout.targetPace,
     km: dayWorkout.km ?? 0,
     status: "pending",
     details: dayWorkout.details ?? [],

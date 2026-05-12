@@ -554,6 +554,106 @@ function getTodayIndex(): number {
   return jsDay === 0 ? 6 : jsDay - 1; // lunes 0
 }
 
+function getSessionMeta(
+  category: WorkoutCategory,
+  level: Level,
+): {
+  title: string;
+  description: string;
+  intensity: "baja" | "media" | "alta" | "recuperación";
+  targetHeartRate: string;
+  targetPace?: string;
+} {
+  switch (category) {
+    case "easy_run":
+      return {
+        title: "Rodaje suave",
+        description: "Sesión aeróbica cómoda para construir base y constancia.",
+        intensity: "baja",
+        targetHeartRate: "FC 135-150",
+        targetPace: "Ritmo conversacional",
+      };
+
+    case "intervals":
+      return {
+        title: level === "principiante" ? "Intervalos cortos" : "Intervalos",
+        description:
+          "Trabajo de velocidad controlada con recuperaciones activas.",
+        intensity: level === "avanzado" ? "alta" : "media",
+        targetHeartRate: "FC 160-175",
+        targetPace:
+          level === "principiante"
+            ? "Rápido pero controlado"
+            : "Ritmo aproximado 5K",
+      };
+
+    case "tempo":
+      return {
+        title: "Tempo controlado",
+        description:
+          "Bloque sostenido a intensidad moderada-alta para mejorar tolerancia al esfuerzo.",
+        intensity: "media",
+        targetHeartRate: "FC 150-165",
+        targetPace: "Ritmo fuerte sostenible",
+      };
+
+    case "long_run":
+      return {
+        title: "Fondo progresivo",
+        description:
+          "Sesión larga de baja intensidad para mejorar resistencia aeróbica.",
+        intensity: "media",
+        targetHeartRate: "FC 135-155",
+        targetPace: "Ritmo cómodo y constante",
+      };
+
+    case "strength":
+      return {
+        title: "Fuerza funcional",
+        description:
+          "Trabajo de fuerza general para mejorar estabilidad, potencia y prevención de lesiones.",
+        intensity: "media",
+        targetHeartRate: "Control técnico",
+      };
+
+    case "swim_technique":
+      return {
+        title: "Técnica en piscina",
+        description:
+          "Sesión enfocada en eficiencia de brazada, respiración y posición corporal.",
+        intensity: "baja",
+        targetHeartRate: "Suave / técnico",
+      };
+
+    case "swim_endurance":
+      return {
+        title: "Resistencia en piscina",
+        description:
+          "Series aeróbicas sostenidas para mejorar capacidad cardiovascular en agua.",
+        intensity: "media",
+        targetHeartRate: "Moderado",
+      };
+
+    case "mixed_conditioning":
+      return {
+        title: "Acondicionamiento mixto",
+        description:
+          "Combinación de cardio, fuerza y movilidad para desarrollo general.",
+        intensity: "media",
+        targetHeartRate: "FC 140-160",
+      };
+
+    case "rest":
+      return {
+        title: "Descanso",
+        description:
+          "Día de recuperación para asimilar la carga de entrenamiento.",
+        intensity: "recuperación",
+        targetHeartRate: "Recuperación",
+      };
+  }
+}
+
 export function generatePlan(input: Input): GeneratedPlan {
   const sessionsPerWeek = input.days.length;
   const weekPlan: DayWorkout[] = [];
@@ -587,6 +687,8 @@ export function generatePlan(input: Input): GeneratedPlan {
           ? (kmDistribution[trainingDayCounter] ?? 0)
           : 0;
 
+      const meta = getSessionMeta(kind, input.level);
+
       weekPlan.push({
         day: i,
         type:
@@ -597,9 +699,14 @@ export function generatePlan(input: Input): GeneratedPlan {
               : kind === "mixed_conditioning"
                 ? "mixed"
                 : "running",
-        title: getSessionTitle(kind),
+        category: kind,
+        title: meta.title,
+        description: meta.description,
+        intensity: meta.intensity,
         km: currentKm,
         duration: input.duration,
+        targetPace: meta.targetPace,
+        targetHeartRate: meta.targetHeartRate,
         details: getWorkoutDetails(
           kind,
           currentKm,
@@ -610,10 +717,16 @@ export function generatePlan(input: Input): GeneratedPlan {
 
       trainingDayCounter += 1;
     } else {
+      const restMeta = getSessionMeta("rest", input.level);
+
       weekPlan.push({
         day: i,
         type: "rest",
-        title: "Descanso",
+        category: "rest",
+        title: restMeta.title,
+        description: restMeta.description,
+        intensity: restMeta.intensity,
+        targetHeartRate: restMeta.targetHeartRate,
         details: getWorkoutDetails("rest", 0, input.duration, input.level),
       });
     }
