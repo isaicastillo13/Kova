@@ -1,11 +1,6 @@
 type WorkoutStatus = "pending" | "completed";
 
-type DayWorkoutType =
-  | "running"
-  | "swimming"
-  | "strength"
-  | "mixed"
-  | "rest";
+type DayWorkoutType = "running" | "swimming" | "strength" | "mixed" | "rest";
 
 type WorkoutDetailBlockType =
   | "warmup"
@@ -20,12 +15,28 @@ type WorkoutDetailBlock = {
   description: string;
 };
 
+type WorkoutCategory =
+  | "easy_run"
+  | "intervals"
+  | "tempo"
+  | "long_run"
+  | "strength"
+  | "swim_technique"
+  | "swim_endurance"
+  | "mixed_conditioning"
+  | "rest";
+
 type DayWorkout = {
   day: number;
   type: DayWorkoutType;
+  category: WorkoutCategory;
   title: string;
+  description: string;
+  intensity: "baja" | "media" | "alta" | "recuperación";
   km?: number;
   duration?: number;
+  targetPace?: string;
+  targetHeartRate?: string;
   details?: WorkoutDetailBlock[];
 };
 
@@ -126,7 +137,7 @@ function distributeKm(totalKm: number, sessions: number) {
 function getRunningSessionKinds(
   goal: Goal,
   level: Level,
-  sessions: number
+  sessions: number,
 ): SessionKind[] {
   if (sessions <= 0) return [];
 
@@ -135,15 +146,25 @@ function getRunningSessionKinds(
       return sessions === 1
         ? ["easy_run"]
         : sessions === 2
-        ? ["easy_run", "intervals"]
-        : ["easy_run", "easy_run", "long_run", ...Array(Math.max(sessions - 3, 0)).fill("easy_run")];
+          ? ["easy_run", "intervals"]
+          : [
+              "easy_run",
+              "easy_run",
+              "long_run",
+              ...Array(Math.max(sessions - 3, 0)).fill("easy_run"),
+            ];
     }
 
     return sessions === 1
       ? ["easy_run"]
       : sessions === 2
-      ? ["easy_run", "long_run"]
-      : ["easy_run", "easy_run", "long_run", ...Array(Math.max(sessions - 3, 0)).fill("easy_run")];
+        ? ["easy_run", "long_run"]
+        : [
+            "easy_run",
+            "easy_run",
+            "long_run",
+            ...Array(Math.max(sessions - 3, 0)).fill("easy_run"),
+          ];
   }
 
   if (level === "intermedio") {
@@ -151,13 +172,25 @@ function getRunningSessionKinds(
       if (sessions === 1) return ["tempo"];
       if (sessions === 2) return ["easy_run", "tempo"];
       if (sessions === 3) return ["easy_run", "intervals", "long_run"];
-      return ["easy_run", "intervals", "easy_run", "long_run", ...Array(Math.max(sessions - 4, 0)).fill("easy_run")];
+      return [
+        "easy_run",
+        "intervals",
+        "easy_run",
+        "long_run",
+        ...Array(Math.max(sessions - 4, 0)).fill("easy_run"),
+      ];
     }
 
     if (sessions === 1) return ["easy_run"];
     if (sessions === 2) return ["easy_run", "long_run"];
     if (sessions === 3) return ["easy_run", "tempo", "long_run"];
-    return ["easy_run", "tempo", "easy_run", "long_run", ...Array(Math.max(sessions - 4, 0)).fill("easy_run")];
+    return [
+      "easy_run",
+      "tempo",
+      "easy_run",
+      "long_run",
+      ...Array(Math.max(sessions - 4, 0)).fill("easy_run"),
+    ];
   }
 
   // avanzado
@@ -165,19 +198,38 @@ function getRunningSessionKinds(
     if (sessions <= 2) return ["tempo", "long_run"];
     if (sessions === 3) return ["easy_run", "intervals", "long_run"];
     if (sessions === 4) return ["easy_run", "intervals", "tempo", "long_run"];
-    return ["easy_run", "intervals", "easy_run", "tempo", "long_run", ...Array(Math.max(sessions - 5, 0)).fill("easy_run")];
+    return [
+      "easy_run",
+      "intervals",
+      "easy_run",
+      "tempo",
+      "long_run",
+      ...Array(Math.max(sessions - 5, 0)).fill("easy_run"),
+    ];
   }
 
   if (goal === "rendimiento") {
     if (sessions <= 2) return ["easy_run", "tempo"];
     if (sessions === 3) return ["easy_run", "intervals", "long_run"];
-    return ["easy_run", "intervals", "easy_run", "long_run", ...Array(Math.max(sessions - 4, 0)).fill("easy_run")];
+    return [
+      "easy_run",
+      "intervals",
+      "easy_run",
+      "long_run",
+      ...Array(Math.max(sessions - 4, 0)).fill("easy_run"),
+    ];
   }
 
   if (sessions === 1) return ["easy_run"];
   if (sessions === 2) return ["easy_run", "long_run"];
   if (sessions === 3) return ["easy_run", "tempo", "long_run"];
-  return ["easy_run", "tempo", "easy_run", "long_run", ...Array(Math.max(sessions - 4, 0)).fill("easy_run")];
+  return [
+    "easy_run",
+    "tempo",
+    "easy_run",
+    "long_run",
+    ...Array(Math.max(sessions - 4, 0)).fill("easy_run"),
+  ];
 }
 
 function getSessionTitle(kind: SessionKind): string {
@@ -235,7 +287,7 @@ function getWorkoutDetails(
   kind: SessionKind,
   km: number,
   duration: number,
-  level: Level
+  level: Level,
 ): WorkoutDetailBlock[] {
   switch (kind) {
     case "easy_run":
@@ -267,8 +319,8 @@ function getWorkoutDetails(
         level === "principiante"
           ? "4x100 a ritmo controlado"
           : level === "intermedio"
-          ? "6x400 a ritmo 5K"
-          : "8x400 a ritmo 5K-10K";
+            ? "6x400 a ritmo 5K"
+            : "8x400 a ritmo 5K-10K";
 
       const recovery =
         level === "principiante"
@@ -279,7 +331,8 @@ function getWorkoutDetails(
         {
           type: "warmup",
           label: "Calentamiento",
-          description: "10 min suaves + movilidad dinámica + 3 progresiones cortas",
+          description:
+            "10 min suaves + movilidad dinámica + 3 progresiones cortas",
         },
         {
           type: "main",
@@ -294,7 +347,8 @@ function getWorkoutDetails(
         {
           type: "notes",
           label: "Pace / intención",
-          description: "Buscar ritmo firme, controlado y técnicamente limpio, no salir demasiado rápido.",
+          description:
+            "Buscar ritmo firme, controlado y técnicamente limpio, no salir demasiado rápido.",
         },
         {
           type: "cooldown",
@@ -309,8 +363,8 @@ function getWorkoutDetails(
         level === "principiante"
           ? "10-12 min sostenidos a ritmo moderado-alto"
           : level === "intermedio"
-          ? "15-20 min sostenidos a ritmo umbral controlado"
-          : "20-25 min sostenidos a ritmo umbral";
+            ? "15-20 min sostenidos a ritmo umbral controlado"
+            : "20-25 min sostenidos a ritmo umbral";
 
       return [
         {
@@ -326,7 +380,8 @@ function getWorkoutDetails(
         {
           type: "notes",
           label: "Pace / intención",
-          description: "Ritmo exigente pero sostenible; debes sentir esfuerzo estable, no sprint.",
+          description:
+            "Ritmo exigente pero sostenible; debes sentir esfuerzo estable, no sprint.",
         },
         {
           type: "cooldown",
@@ -351,7 +406,8 @@ function getWorkoutDetails(
         {
           type: "notes",
           label: "Objetivo",
-          description: "Construir resistencia, mantener control y evitar aceleraciones innecesarias.",
+          description:
+            "Construir resistencia, mantener control y evitar aceleraciones innecesarias.",
         },
         {
           type: "cooldown",
@@ -370,7 +426,8 @@ function getWorkoutDetails(
         {
           type: "main",
           label: "Bloque principal",
-          description: "3 bloques de fuerza: pierna, empuje/tracción y core. 3-4 series por ejercicio.",
+          description:
+            "3 bloques de fuerza: pierna, empuje/tracción y core. 3-4 series por ejercicio.",
         },
         {
           type: "notes",
@@ -389,7 +446,8 @@ function getWorkoutDetails(
         {
           type: "main",
           label: "Bloque principal",
-          description: "Trabajo técnico de brazada, respiración y alineación corporal.",
+          description:
+            "Trabajo técnico de brazada, respiración y alineación corporal.",
         },
         {
           type: "notes",
@@ -413,7 +471,8 @@ function getWorkoutDetails(
         {
           type: "main",
           label: "Bloque principal",
-          description: "Series aeróbicas sostenidas con descansos cortos y ritmo uniforme.",
+          description:
+            "Series aeróbicas sostenidas con descansos cortos y ritmo uniforme.",
         },
         {
           type: "notes",
@@ -437,7 +496,8 @@ function getWorkoutDetails(
         {
           type: "notes",
           label: "Objetivo",
-          description: "Mejorar acondicionamiento general sin concentrar toda la carga en una sola capacidad.",
+          description:
+            "Mejorar acondicionamiento general sin concentrar toda la carga en una sola capacidad.",
         },
       ];
 
@@ -446,7 +506,8 @@ function getWorkoutDetails(
         {
           type: "notes",
           label: "Recuperación",
-          description: "Día de descanso o movilidad ligera. Prioriza sueño, hidratación y descarga.",
+          description:
+            "Día de descanso o movilidad ligera. Prioriza sueño, hidratación y descarga.",
         },
       ];
 
@@ -459,7 +520,7 @@ function getKindsForTrainingType(
   trainingType: TrainingType,
   goal: Goal,
   level: Level,
-  sessions: number
+  sessions: number,
 ): SessionKind[] {
   if (trainingType === "running") {
     return getRunningSessionKinds(goal, level, sessions);
@@ -471,12 +532,16 @@ function getKindsForTrainingType(
 
   if (trainingType === "swimming") {
     return Array.from({ length: sessions }, (_, i) =>
-      i % 2 === 0 ? "swim_technique" : "swim_endurance"
+      i % 2 === 0 ? "swim_technique" : "swim_endurance",
     );
   }
 
   // mixed
-  const mixedBase: SessionKind[] = ["easy_run", "strength", "mixed_conditioning"];
+  const mixedBase: SessionKind[] = [
+    "easy_run",
+    "strength",
+    "mixed_conditioning",
+  ];
   const result: SessionKind[] = [];
   for (let i = 0; i < sessions; i++) {
     result.push(mixedBase[i % mixedBase.length]);
@@ -495,7 +560,9 @@ export function generatePlan(input: Input): GeneratedPlan {
 
   const totalKm =
     input.trainingType === "running" || input.trainingType === "mixed"
-      ? Math.round(getWeeklyKmBase(input.level, input.goal) * (sessionsPerWeek / 3))
+      ? Math.round(
+          getWeeklyKmBase(input.level, input.goal) * (sessionsPerWeek / 3),
+        )
       : 0;
 
   const kmDistribution = distributeKm(totalKm, sessionsPerWeek);
@@ -503,7 +570,7 @@ export function generatePlan(input: Input): GeneratedPlan {
     input.trainingType,
     input.goal,
     input.level,
-    sessionsPerWeek
+    sessionsPerWeek,
   );
 
   let trainingDayCounter = 0;
@@ -517,7 +584,7 @@ export function generatePlan(input: Input): GeneratedPlan {
         kind === "tempo" ||
         kind === "long_run" ||
         kind === "mixed_conditioning"
-          ? kmDistribution[trainingDayCounter] ?? 0
+          ? (kmDistribution[trainingDayCounter] ?? 0)
           : 0;
 
       weekPlan.push({
@@ -526,14 +593,19 @@ export function generatePlan(input: Input): GeneratedPlan {
           kind === "strength"
             ? "strength"
             : kind === "swim_technique" || kind === "swim_endurance"
-            ? "swimming"
-            : kind === "mixed_conditioning"
-            ? "mixed"
-            : "running",
+              ? "swimming"
+              : kind === "mixed_conditioning"
+                ? "mixed"
+                : "running",
         title: getSessionTitle(kind),
         km: currentKm,
         duration: input.duration,
-        details: getWorkoutDetails(kind, currentKm, input.duration, input.level),
+        details: getWorkoutDetails(
+          kind,
+          currentKm,
+          input.duration,
+          input.level,
+        ),
       });
 
       trainingDayCounter += 1;
@@ -553,12 +625,12 @@ export function generatePlan(input: Input): GeneratedPlan {
     today.type === "rest"
       ? "rest"
       : today.type === "strength"
-      ? "strength"
-      : today.type === "swimming"
-      ? "swim_endurance"
-      : today.type === "mixed"
-      ? "mixed_conditioning"
-      : "easy_run";
+        ? "strength"
+        : today.type === "swimming"
+          ? "swim_endurance"
+          : today.type === "mixed"
+            ? "mixed_conditioning"
+            : "easy_run";
 
   return {
     weeklyGoal: {
@@ -573,14 +645,15 @@ export function generatePlan(input: Input): GeneratedPlan {
       type: today.type === "rest" ? "Descanso" : today.type,
       title: today.title,
       day: "Hoy",
-      duration: today.type === "rest" ? "—" : `${today.duration ?? input.duration} min`,
+      duration:
+        today.type === "rest" ? "—" : `${today.duration ?? input.duration} min`,
       difficulty: getDifficulty(input.level, todayKind),
       metric:
         today.type === "running" || today.type === "mixed"
           ? `${today.km ?? 0} km`
           : today.type === "rest"
-          ? "Sin carga"
-          : "Sesión",
+            ? "Sin carga"
+            : "Sesión",
       heartRate: getHeartRate(todayKind),
       status: "pending",
       km: today.km ?? 0,
