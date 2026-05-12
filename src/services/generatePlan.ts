@@ -654,6 +654,52 @@ function getSessionMeta(
   }
 }
 
+function getKmWeight(kind: SessionKind): number {
+  switch (kind) {
+    case "easy_run":
+      return 1;
+
+    case "intervals":
+      return 0.75;
+
+    case "tempo":
+      return 0.9;
+
+    case "long_run":
+      return 1.4;
+
+    case "mixed_conditioning":
+      return 0.7;
+
+    default:
+      return 0;
+  }
+}
+
+function distributeKmBySessionKind(totalKm: number, kinds: SessionKind[]) {
+  const weights = kinds.map(getKmWeight);
+  const totalWeight = weights.reduce((acc, weight) => acc + weight, 0);
+
+  if (totalWeight === 0) {
+    return kinds.map(() => 0);
+  }
+
+  const rawDistribution = weights.map((weight) =>
+    Math.round((weight / totalWeight) * totalKm),
+  );
+
+  const difference = totalKm - rawDistribution.reduce((acc, km) => acc + km, 0);
+
+  if (difference !== 0) {
+    const longRunIndex = kinds.findIndex((kind) => kind === "long_run");
+    const targetIndex = longRunIndex >= 0 ? longRunIndex : 0;
+
+    rawDistribution[targetIndex] += difference;
+  }
+
+  return rawDistribution;
+}
+
 export function generatePlan(input: Input): GeneratedPlan {
   const sessionsPerWeek = input.days.length;
   const weekPlan: DayWorkout[] = [];
@@ -665,13 +711,15 @@ export function generatePlan(input: Input): GeneratedPlan {
         )
       : 0;
 
-  const kmDistribution = distributeKm(totalKm, sessionsPerWeek);
   const kinds = getKindsForTrainingType(
     input.trainingType,
     input.goal,
     input.level,
     sessionsPerWeek,
   );
+
+  const kmDistribution = distributeKmBySessionKind(totalKm, kinds);
+ 
 
   let trainingDayCounter = 0;
 
