@@ -1,5 +1,3 @@
-import { blue } from "react-native-reanimated/lib/typescript/Colors";
-
 export const colors = {
   primary: "#d00a0c",
   primaryDark: "#a10809",
@@ -19,7 +17,7 @@ export const colors = {
 
   white: "#ffffff",
   black: "#404040",
-  blue: "#1a1a2e"
+  blue: "#1a1a2e",
 };
 
 export const spacing = {

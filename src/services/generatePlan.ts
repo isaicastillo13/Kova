@@ -1,98 +1,55 @@
-type WorkoutStatus = "pending" | "completed";
+import type {
+  DayWorkout,
+  GeneratePlanInput,
+  GeneratedPlan,
+  InjuryHistory,
+  Level,
+  RaceDistance,
+  TodayWorkout,
+  WorkoutCategory,
+  WorkoutDetailBlock,
+} from "@/src/types/training";
 
-type DayWorkoutType = "running" | "swimming" | "strength" | "mixed" | "rest";
+type RunningSessionKind = Extract<
+  WorkoutCategory,
+  "easy_run" | "intervals" | "tempo" | "long_run" | "rest"
+>;
 
-type WorkoutDetailBlockType =
-  | "warmup"
-  | "main"
-  | "recovery"
-  | "cooldown"
-  | "notes";
+function getTodayIndex(): number {
+  const jsDay = new Date().getDay();
+  return jsDay === 0 ? 6 : jsDay - 1;
+}
 
-type WorkoutDetailBlock = {
-  type: WorkoutDetailBlockType;
-  label: string;
-  description: string;
-};
+function formatIntensity(intensity: DayWorkout["intensity"]) {
+  return intensity.charAt(0).toUpperCase() + intensity.slice(1);
+}
 
-type WorkoutCategory =
-  | "easy_run"
-  | "intervals"
-  | "tempo"
-  | "long_run"
-  | "strength"
-  | "swim_technique"
-  | "swim_endurance"
-  | "mixed_conditioning"
-  | "rest";
+function resolveRaceDistance(input: GeneratePlanInput): RaceDistance {
+  if (input.raceDistance) return input.raceDistance;
 
-type DayWorkout = {
-  day: number;
-  type: DayWorkoutType;
-  category: WorkoutCategory;
-  title: string;
-  description: string;
-  intensity: "baja" | "media" | "alta" | "recuperación";
-  km?: number;
-  duration?: number;
-  targetPace?: string;
-  targetHeartRate?: string;
-  details?: WorkoutDetailBlock[];
-};
+  if (input.goal === "competencia") return "10k";
+  if (input.goal === "rendimiento") return "5k";
 
-type TodayWorkout = {
-  type: string;
-  title: string;
-  day: string;
-  duration: string;
-  difficulty: string;
-  metric: string;
-  heartRate: string;
-  status: WorkoutStatus;
-  km: number;
-  details?: WorkoutDetailBlock[];
-};
+  return "general";
+}
 
-type WeeklyGoal = {
-  distance: number;
-  unit: string;
-  progressCurrent: number;
-  progressTotal: number;
-  completedSessions: number;
-  totalSessions: number;
-};
+function getRaceDistanceLabel(raceDistance: RaceDistance) {
+  switch (raceDistance) {
+    case "5k":
+      return "5K";
+    case "10k":
+      return "10K";
+    case "21k":
+      return "21K";
+    case "42k":
+      return "maratón";
+    default:
+      return "base aeróbica";
+  }
+}
 
-type GeneratedPlan = {
-  weeklyGoal: WeeklyGoal;
-  todayWorkout: TodayWorkout;
-  weekPlan: DayWorkout[];
-};
-
-type Goal = "resistencia" | "rendimiento" | "mantenerme" | "competencia";
-type Level = "principiante" | "intermedio" | "avanzado";
-type TrainingType = "running" | "swimming" | "strength" | "mixed";
-
-type Input = {
-  goal: Goal;
-  level: Level;
-  days: number[];
-  duration: number;
-  trainingType: TrainingType;
-};
-
-type SessionKind =
-  | "easy_run"
-  | "intervals"
-  | "tempo"
-  | "long_run"
-  | "strength"
-  | "swim_technique"
-  | "swim_endurance"
-  | "mixed_conditioning"
-  | "rest";
-
-function getWeeklyKmBase(level: Level, goal: Goal) {
-  const matrix: Record<Level, Record<Goal, number>> = {
+function getBaseWeeklyKm(level: Level, goal: GeneratePlanInput["goal"]) {
+  const matrix: Record<Level, Record<GeneratePlanInput["goal"], number>> = {
     principiante: {
       resistencia: 12,
       rendimiento: 10,
@@ -116,113 +73,117 @@ function getWeeklyKmBase(level: Level, goal: Goal) {
   return matrix[level][goal];
 }
 
-function distributeKm(totalKm: number, sessions: number) {
-  if (sessions <= 0) return [];
+function getRaceTargetKm(raceDistance: RaceDistance, level: Level) {
+  const targets: Record<RaceDistance, Record<Level, number>> = {
+    general: {
+      principiante: 12,
+      intermedio: 22,
+      avanzado: 34,
+    },
+    "5k": {
+      principiante: 14,
+      intermedio: 26,
+      avanzado: 38,
+    },
+    "10k": {
+      principiante: 18,
+      intermedio: 32,
+      avanzado: 46,
+    },
+    "21k": {
+      principiante: 24,
+      intermedio: 42,
+      avanzado: 58,
+    },
+    "42k": {
+      principiante: 32,
+      intermedio: 54,
+      avanzado: 72,
+    },
+  };
 
-  const base = Math.floor(totalKm / sessions);
-  let remainder = totalKm % sessions;
+  return targets[raceDistance][level];
+}
 
-  const result = Array.from({ length: sessions }, () => base);
+function getGrowthLimit(level: Level, injuryHistory?: InjuryHistory) {
+  if (injuryHistory === "recent") return 1.05;
+  if (injuryHistory === "minor") return 1.08;
+  if (level === "principiante") return 1.1;
+  if (level === "intermedio") return 1.13;
+  return 1.15;
+}
 
-  let i = 0;
-  while (remainder > 0) {
-    result[i] += 1;
-    remainder -= 1;
-    i += 1;
+function getPlannedWeeklyKm(input: GeneratePlanInput, sessionsPerWeek: number) {
+  if (sessionsPerWeek <= 0) return 0;
+
+  const raceDistance = resolveRaceDistance(input);
+  const baseKm = Math.round(
+    getBaseWeeklyKm(input.level, input.goal) * (sessionsPerWeek / 3),
+  );
+  const targetKm = Math.max(getRaceTargetKm(raceDistance, input.level), baseKm);
+  const currentKm = input.currentWeeklyKm ?? baseKm;
+
+  if (currentKm <= 0) {
+    return Math.min(targetKm, sessionsPerWeek * 4);
   }
 
-  return result;
+  const plannedKm = Math.ceil(currentKm * getGrowthLimit(input.level, input.injuryHistory));
+
+  return Math.max(1, Math.min(targetKm, plannedKm));
 }
 
 function getRunningSessionKinds(
-  goal: Goal,
-  level: Level,
+  input: GeneratePlanInput,
   sessions: number,
-): SessionKind[] {
+): RunningSessionKind[] {
   if (sessions <= 0) return [];
 
-  if (level === "principiante") {
-    if (goal === "rendimiento" || goal === "competencia") {
-      return sessions === 1
-        ? ["easy_run"]
-        : sessions === 2
-          ? ["easy_run", "intervals"]
-          : [
-              "easy_run",
-              "easy_run",
-              "long_run",
-              ...Array(Math.max(sessions - 3, 0)).fill("easy_run"),
-            ];
-    }
-
-    return sessions === 1
-      ? ["easy_run"]
-      : sessions === 2
-        ? ["easy_run", "long_run"]
-        : [
-            "easy_run",
-            "easy_run",
-            "long_run",
-            ...Array(Math.max(sessions - 3, 0)).fill("easy_run"),
-          ];
-  }
-
-  if (level === "intermedio") {
-    if (goal === "rendimiento" || goal === "competencia") {
-      if (sessions === 1) return ["tempo"];
-      if (sessions === 2) return ["easy_run", "tempo"];
-      if (sessions === 3) return ["easy_run", "intervals", "long_run"];
-      return [
-        "easy_run",
-        "intervals",
-        "easy_run",
-        "long_run",
-        ...Array(Math.max(sessions - 4, 0)).fill("easy_run"),
-      ];
-    }
-
-    if (sessions === 1) return ["easy_run"];
-    if (sessions === 2) return ["easy_run", "long_run"];
-    if (sessions === 3) return ["easy_run", "tempo", "long_run"];
-    return [
-      "easy_run",
-      "tempo",
-      "easy_run",
-      "long_run",
-      ...Array(Math.max(sessions - 4, 0)).fill("easy_run"),
-    ];
-  }
-
-  // avanzado
-  if (goal === "competencia") {
-    if (sessions <= 2) return ["tempo", "long_run"];
-    if (sessions === 3) return ["easy_run", "intervals", "long_run"];
-    if (sessions === 4) return ["easy_run", "intervals", "tempo", "long_run"];
-    return [
-      "easy_run",
-      "intervals",
-      "easy_run",
-      "tempo",
-      "long_run",
-      ...Array(Math.max(sessions - 5, 0)).fill("easy_run"),
-    ];
-  }
-
-  if (goal === "rendimiento") {
-    if (sessions <= 2) return ["easy_run", "tempo"];
-    if (sessions === 3) return ["easy_run", "intervals", "long_run"];
-    return [
-      "easy_run",
-      "intervals",
-      "easy_run",
-      "long_run",
-      ...Array(Math.max(sessions - 4, 0)).fill("easy_run"),
-    ];
-  }
+  const raceDistance = resolveRaceDistance(input);
+  const protectLoad =
+    input.injuryHistory === "recent" || input.runningExperience === "new";
+  const speedFocus =
+    input.goal === "rendimiento" ||
+    raceDistance === "5k" ||
+    raceDistance === "10k";
 
   if (sessions === 1) return ["easy_run"];
-  if (sessions === 2) return ["easy_run", "long_run"];
-  if (sessions === 3) return ["easy_run", "tempo", "long_run"];
+
+  if (sessions === 2) {
+    return protectLoad
+      ? ["easy_run", "long_run"]
+      : speedFocus
+        ? ["tempo", "long_run"]
+        : ["easy_run", "long_run"];
+  }
+
+  if (sessions === 3) {
+    return protectLoad
+      ? ["easy_run", "easy_run", "long_run"]
+      : speedFocus
+        ? ["easy_run", "intervals", "long_run"]
+        : ["easy_run", "tempo", "long_run"];
+  }
+
+  if (protectLoad) {
+    return [
+      "easy_run",
+      "easy_run",
+      "easy_run",
+      "long_run",
+      ...Array(Math.max(sessions - 4, 0)).fill("easy_run"),
+    ];
+  }
+
+  if (speedFocus) {
+    return [
+      "easy_run",
+      "intervals",
+      "easy_run",
+      "long_run",
+      ...Array(Math.max(sessions - 4, 0)).fill("easy_run"),
+    ];
+  }
+
   return [
     "easy_run",
     "tempo",
@@ -232,451 +193,62 @@ function getRunningSessionKinds(
   ];
 }
 
-function getSessionTitle(kind: SessionKind): string {
-  switch (kind) {
-    case "easy_run":
-      return "Rodaje suave";
-    case "intervals":
-      return "Intervalos";
-    case "tempo":
-      return "Tempo";
-    case "long_run":
-      return "Fondo progresivo";
-    case "strength":
-      return "Fuerza funcional";
-    case "swim_technique":
-      return "Técnica en piscina";
-    case "swim_endurance":
-      return "Resistencia en piscina";
-    case "mixed_conditioning":
-      return "Acondicionamiento mixto";
-    case "rest":
-      return "Descanso";
-    default:
-      return "Entrenamiento";
-  }
-}
-
-function getDifficulty(level: Level, kind: SessionKind) {
-  if (kind === "rest") return "Recuperación";
-  if (kind === "easy_run" || kind === "swim_technique") return "Baja";
-  if (kind === "long_run" || kind === "strength" || kind === "swim_endurance")
-    return level === "principiante" ? "Media" : "Media";
-  if (kind === "tempo" || kind === "intervals")
-    return level === "avanzado" ? "Alta" : "Media";
-  return "Media";
-}
-
-function getHeartRate(kind: SessionKind) {
-  switch (kind) {
-    case "easy_run":
-    case "long_run":
-      return "FC 135-150";
-    case "tempo":
-      return "FC 150-165";
-    case "intervals":
-      return "FC 160-175";
-    case "rest":
-      return "Recuperación";
-    default:
-      return "FC 140-160";
-  }
-}
-
-function getWorkoutDetails(
-  kind: SessionKind,
-  km: number,
-  duration: number,
-  level: Level,
-): WorkoutDetailBlock[] {
-  switch (kind) {
-    case "easy_run":
-      return [
-        {
-          type: "warmup",
-          label: "Calentamiento",
-          description: "8-10 min suaves + movilidad básica",
-        },
-        {
-          type: "main",
-          label: "Bloque principal",
-          description: `Rodaje continuo de ${km} km a ritmo conversacional, sin forzar.`,
-        },
-        {
-          type: "notes",
-          label: "Objetivo",
-          description: "Construir base aeróbica y mantener técnica estable.",
-        },
-        {
-          type: "cooldown",
-          label: "Vuelta a la calma",
-          description: "5 min suaves + respiración controlada",
-        },
-      ];
-
-    case "intervals": {
-      const prescription =
-        level === "principiante"
-          ? "4x100 a ritmo controlado"
-          : level === "intermedio"
-            ? "6x400 a ritmo 5K"
-            : "8x400 a ritmo 5K-10K";
-
-      const recovery =
-        level === "principiante"
-          ? "1 min caminando o trote muy suave entre repeticiones"
-          : "90 seg suaves entre repeticiones";
-
-      return [
-        {
-          type: "warmup",
-          label: "Calentamiento",
-          description:
-            "10 min suaves + movilidad dinámica + 3 progresiones cortas",
-        },
-        {
-          type: "main",
-          label: "Bloque principal",
-          description: `${prescription}. Volumen total aproximado: ${km} km`,
-        },
-        {
-          type: "recovery",
-          label: "Recuperación",
-          description: recovery,
-        },
-        {
-          type: "notes",
-          label: "Pace / intención",
-          description:
-            "Buscar ritmo firme, controlado y técnicamente limpio, no salir demasiado rápido.",
-        },
-        {
-          type: "cooldown",
-          label: "Vuelta a la calma",
-          description: "8 min suaves y estiramientos ligeros",
-        },
-      ];
-    }
-
-    case "tempo": {
-      const tempoBlock =
-        level === "principiante"
-          ? "10-12 min sostenidos a ritmo moderado-alto"
-          : level === "intermedio"
-            ? "15-20 min sostenidos a ritmo umbral controlado"
-            : "20-25 min sostenidos a ritmo umbral";
-
-      return [
-        {
-          type: "warmup",
-          label: "Calentamiento",
-          description: "10 min suaves + movilidad dinámica",
-        },
-        {
-          type: "main",
-          label: "Bloque principal",
-          description: `${tempoBlock} dentro de una sesión total de ${km} km`,
-        },
-        {
-          type: "notes",
-          label: "Pace / intención",
-          description:
-            "Ritmo exigente pero sostenible; debes sentir esfuerzo estable, no sprint.",
-        },
-        {
-          type: "cooldown",
-          label: "Vuelta a la calma",
-          description: "5-8 min suaves al terminar",
-        },
-      ];
-    }
-
-    case "long_run":
-      return [
-        {
-          type: "warmup",
-          label: "Inicio",
-          description: "Comienza muy suave durante los primeros 8-10 min",
-        },
-        {
-          type: "main",
-          label: "Bloque principal",
-          description: `Rodaje largo de ${km} km con enfoque aeróbico y ritmo constante.`,
-        },
-        {
-          type: "notes",
-          label: "Objetivo",
-          description:
-            "Construir resistencia, mantener control y evitar aceleraciones innecesarias.",
-        },
-        {
-          type: "cooldown",
-          label: "Cierre",
-          description: "5 min suaves + hidratación y recuperación",
-        },
-      ];
-
-    case "strength":
-      return [
-        {
-          type: "warmup",
-          label: "Activación",
-          description: "5-8 min de movilidad, activación de core y glúteos",
-        },
-        {
-          type: "main",
-          label: "Bloque principal",
-          description:
-            "3 bloques de fuerza: pierna, empuje/tracción y core. 3-4 series por ejercicio.",
-        },
-        {
-          type: "notes",
-          label: "Objetivo",
-          description: `Sesión de ${duration} min enfocada en control, técnica y estabilidad.`,
-        },
-      ];
-
-    case "swim_technique":
-      return [
-        {
-          type: "warmup",
-          label: "Calentamiento",
-          description: "200m suaves + técnica básica",
-        },
-        {
-          type: "main",
-          label: "Bloque principal",
-          description:
-            "Trabajo técnico de brazada, respiración y alineación corporal.",
-        },
-        {
-          type: "notes",
-          label: "Objetivo",
-          description: "Mejorar eficiencia antes que velocidad.",
-        },
-        {
-          type: "cooldown",
-          label: "Vuelta a la calma",
-          description: "100m suaves",
-        },
-      ];
-
-    case "swim_endurance":
-      return [
-        {
-          type: "warmup",
-          label: "Calentamiento",
-          description: "200-300m suaves",
-        },
-        {
-          type: "main",
-          label: "Bloque principal",
-          description:
-            "Series aeróbicas sostenidas con descansos cortos y ritmo uniforme.",
-        },
-        {
-          type: "notes",
-          label: "Objetivo",
-          description: "Construir resistencia manteniendo técnica eficiente.",
-        },
-        {
-          type: "cooldown",
-          label: "Vuelta a la calma",
-          description: "100m suaves y movilidad ligera",
-        },
-      ];
-
-    case "mixed_conditioning":
-      return [
-        {
-          type: "main",
-          label: "Bloque principal",
-          description: `Sesión combinada de ${duration} min: cardio suave + fuerza básica + movilidad.`,
-        },
-        {
-          type: "notes",
-          label: "Objetivo",
-          description:
-            "Mejorar acondicionamiento general sin concentrar toda la carga en una sola capacidad.",
-        },
-      ];
-
-    case "rest":
-      return [
-        {
-          type: "notes",
-          label: "Recuperación",
-          description:
-            "Día de descanso o movilidad ligera. Prioriza sueño, hidratación y descarga.",
-        },
-      ];
-
-    default:
-      return [];
-  }
-}
-
-function getKindsForTrainingType(
-  trainingType: TrainingType,
-  goal: Goal,
-  level: Level,
-  sessions: number,
-): SessionKind[] {
-  if (trainingType === "running") {
-    return getRunningSessionKinds(goal, level, sessions);
-  }
-
-  if (trainingType === "strength") {
-    return Array.from({ length: sessions }, () => "strength");
-  }
-
-  if (trainingType === "swimming") {
-    return Array.from({ length: sessions }, (_, i) =>
-      i % 2 === 0 ? "swim_technique" : "swim_endurance",
-    );
-  }
-
-  // mixed
-  const mixedBase: SessionKind[] = [
-    "easy_run",
-    "strength",
-    "mixed_conditioning",
-  ];
-  const result: SessionKind[] = [];
-  for (let i = 0; i < sessions; i++) {
-    result.push(mixedBase[i % mixedBase.length]);
-  }
-  return result;
-}
-
-function getTodayIndex(): number {
-  const jsDay = new Date().getDay(); // domingo 0
-  return jsDay === 0 ? 6 : jsDay - 1; // lunes 0
-}
-
-function getSessionMeta(
-  category: WorkoutCategory,
-  level: Level,
-): {
-  title: string;
-  description: string;
-  intensity: "baja" | "media" | "alta" | "recuperación";
-  targetHeartRate: string;
-  targetPace?: string;
-} {
-  switch (category) {
-    case "easy_run":
-      return {
-        title: "Rodaje suave",
-        description: "Sesión aeróbica cómoda para construir base y constancia.",
-        intensity: "baja",
-        targetHeartRate: "FC 135-150",
-        targetPace: "Ritmo conversacional",
-      };
-
-    case "intervals":
-      return {
-        title: level === "principiante" ? "Intervalos cortos" : "Intervalos",
-        description:
-          "Trabajo de velocidad controlada con recuperaciones activas.",
-        intensity: level === "avanzado" ? "alta" : "media",
-        targetHeartRate: "FC 160-175",
-        targetPace:
-          level === "principiante"
-            ? "Rápido pero controlado"
-            : "Ritmo aproximado 5K",
-      };
-
-    case "tempo":
-      return {
-        title: "Tempo controlado",
-        description:
-          "Bloque sostenido a intensidad moderada-alta para mejorar tolerancia al esfuerzo.",
-        intensity: "media",
-        targetHeartRate: "FC 150-165",
-        targetPace: "Ritmo fuerte sostenible",
-      };
-
-    case "long_run":
-      return {
-        title: "Fondo progresivo",
-        description:
-          "Sesión larga de baja intensidad para mejorar resistencia aeróbica.",
-        intensity: "media",
-        targetHeartRate: "FC 135-155",
-        targetPace: "Ritmo cómodo y constante",
-      };
-
-    case "strength":
-      return {
-        title: "Fuerza funcional",
-        description:
-          "Trabajo de fuerza general para mejorar estabilidad, potencia y prevención de lesiones.",
-        intensity: "media",
-        targetHeartRate: "Control técnico",
-      };
-
-    case "swim_technique":
-      return {
-        title: "Técnica en piscina",
-        description:
-          "Sesión enfocada en eficiencia de brazada, respiración y posición corporal.",
-        intensity: "baja",
-        targetHeartRate: "Suave / técnico",
-      };
-
-    case "swim_endurance":
-      return {
-        title: "Resistencia en piscina",
-        description:
-          "Series aeróbicas sostenidas para mejorar capacidad cardiovascular en agua.",
-        intensity: "media",
-        targetHeartRate: "Moderado",
-      };
-
-    case "mixed_conditioning":
-      return {
-        title: "Acondicionamiento mixto",
-        description:
-          "Combinación de cardio, fuerza y movilidad para desarrollo general.",
-        intensity: "media",
-        targetHeartRate: "FC 140-160",
-      };
-
-    case "rest":
-      return {
-        title: "Descanso",
-        description:
-          "Día de recuperación para asimilar la carga de entrenamiento.",
-        intensity: "recuperación",
-        targetHeartRate: "Recuperación",
-      };
-  }
-}
-
-function getKmWeight(kind: SessionKind): number {
+function getKmWeight(kind: RunningSessionKind): number {
   switch (kind) {
     case "easy_run":
       return 1;
-
     case "intervals":
       return 0.75;
-
     case "tempo":
       return 0.9;
-
     case "long_run":
       return 1.4;
-
-    case "mixed_conditioning":
-      return 0.7;
-
     default:
       return 0;
   }
 }
 
-function distributeKmBySessionKind(totalKm: number, kinds: SessionKind[]) {
+function capLongRun(
+  distribution: number[],
+  kinds: RunningSessionKind[],
+  input: GeneratePlanInput,
+) {
+  const longRunIndex = kinds.findIndex((kind) => kind === "long_run");
+
+  if (longRunIndex < 0 || !input.longRunKm) return distribution;
+
+  const capMultiplier = input.injuryHistory === "recent" ? 1.05 : 1.15;
+  const longRunCap = Math.max(1, Math.ceil(input.longRunKm * capMultiplier));
+  const plannedLongRun = distribution[longRunIndex] ?? 0;
+
+  if (plannedLongRun <= longRunCap) return distribution;
+
+  const adjusted = [...distribution];
+  const excess = plannedLongRun - longRunCap;
+  adjusted[longRunIndex] = longRunCap;
+
+  const receiverIndexes = kinds
+    .map((kind, index) => ({ kind, index }))
+    .filter(({ kind, index }) => kind !== "long_run" && getKmWeight(kind) > 0 && index !== longRunIndex)
+    .map(({ index }) => index);
+
+  if (!receiverIndexes.length) return adjusted;
+
+  receiverIndexes.forEach((index, offset) => {
+    adjusted[index] += Math.floor(excess / receiverIndexes.length);
+    if (offset < excess % receiverIndexes.length) {
+      adjusted[index] += 1;
+    }
+  });
+
+  return adjusted;
+}
+
+function distributeKmBySessionKind(
+  totalKm: number,
+  kinds: RunningSessionKind[],
+  input: GeneratePlanInput,
+) {
   const weights = kinds.map(getKmWeight);
   const totalWeight = weights.reduce((acc, weight) => acc + weight, 0);
 
@@ -685,68 +257,258 @@ function distributeKmBySessionKind(totalKm: number, kinds: SessionKind[]) {
   }
 
   const rawDistribution = weights.map((weight) =>
-    Math.round((weight / totalWeight) * totalKm),
+    Math.max(weight > 0 ? 1 : 0, Math.round((weight / totalWeight) * totalKm)),
   );
-
   const difference = totalKm - rawDistribution.reduce((acc, km) => acc + km, 0);
 
   if (difference !== 0) {
     const longRunIndex = kinds.findIndex((kind) => kind === "long_run");
     const targetIndex = longRunIndex >= 0 ? longRunIndex : 0;
-
-    rawDistribution[targetIndex] += difference;
+    rawDistribution[targetIndex] = Math.max(0, rawDistribution[targetIndex] + difference);
   }
 
-  return rawDistribution;
+  return capLongRun(rawDistribution, kinds, input);
 }
 
-export function generatePlan(input: Input): GeneratedPlan {
-  const sessionsPerWeek = input.days.length;
+function getSessionMeta(
+  category: RunningSessionKind,
+  input: GeneratePlanInput,
+): {
+  title: string;
+  description: string;
+  intensity: DayWorkout["intensity"];
+  targetHeartRate: string;
+  targetPace?: string;
+} {
+  const easyPace = input.easyPace?.trim();
+
+  switch (category) {
+    case "easy_run":
+      return {
+        title: "Rodaje suave",
+        description: "Sesión aeróbica cómoda para construir base y constancia.",
+        intensity: "baja",
+        targetHeartRate: "FC Z2 / esfuerzo 3-4 de 10",
+        targetPace: easyPace ? `Cerca de ${easyPace}` : "Ritmo conversacional",
+      };
+
+    case "intervals":
+      return {
+        title: input.level === "principiante" ? "Cambios cortos" : "Intervalos",
+        description:
+          "Trabajo de velocidad controlada con recuperaciones suficientes.",
+        intensity: input.level === "avanzado" ? "alta" : "media",
+        targetHeartRate: "FC Z4-Z5 / esfuerzo 8-9 de 10",
+        targetPace: "Rápido, controlado y sin perder técnica",
+      };
+
+    case "tempo":
+      return {
+        title: "Tempo controlado",
+        description:
+          "Bloque sostenido a intensidad moderada-alta para mejorar umbral.",
+        intensity: "media",
+        targetHeartRate: "FC Z3-Z4 / esfuerzo 7 de 10",
+        targetPace: "Fuerte sostenible",
+      };
+
+    case "long_run":
+      return {
+        title: "Fondo progresivo",
+        description:
+          "Sesión larga de baja intensidad para mejorar resistencia aeróbica.",
+        intensity: "media",
+        targetHeartRate: "FC Z2 / esfuerzo 4-5 de 10",
+        targetPace: easyPace ? `${easyPace} o más suave` : "Cómodo y constante",
+      };
+
+    default:
+      return {
+        title: "Descanso",
+        description: "Día de recuperación para asimilar la carga.",
+        intensity: "recuperación",
+        targetHeartRate: "Recuperación",
+      };
+  }
+}
+
+function getWorkoutDetails(
+  kind: RunningSessionKind,
+  km: number,
+  duration: number,
+  input: GeneratePlanInput,
+): WorkoutDetailBlock[] {
+  const raceLabel = getRaceDistanceLabel(resolveRaceDistance(input));
+
+  if (kind === "rest") {
+    return [
+      {
+        type: "notes",
+        label: "Recuperación",
+        description:
+          "Día sin carrera. Prioriza sueño, hidratación y movilidad ligera si lo necesitas.",
+      },
+    ];
+  }
+
+  if (kind === "easy_run") {
+    return [
+      {
+        type: "warmup",
+        label: "Inicio",
+        description: "5-8 min muy suaves antes de entrar en ritmo cómodo.",
+      },
+      {
+        type: "main",
+        label: "Bloque principal",
+        description: `Rodaje continuo de ${km} km a esfuerzo conversacional.`,
+      },
+      {
+        type: "notes",
+        label: "Objetivo",
+        description: `Construir base para ${raceLabel} sin acumular fatiga innecesaria.`,
+      },
+      {
+        type: "cooldown",
+        label: "Cierre",
+        description: "3-5 min suaves y respiración controlada.",
+      },
+    ];
+  }
+
+  if (kind === "intervals") {
+    const prescription =
+      input.level === "principiante"
+        ? "6x1 min rápido con 90 seg suaves"
+        : input.level === "intermedio"
+          ? "6x400 m a ritmo 5K con 90 seg suaves"
+          : "8x400 m a ritmo 5K-10K con 90 seg suaves";
+
+    return [
+      {
+        type: "warmup",
+        label: "Calentamiento",
+        description: "10 min suaves + movilidad dinámica + 3 progresiones.",
+      },
+      {
+        type: "main",
+        label: "Bloque principal",
+        description: `${prescription}. Volumen aproximado: ${km} km.`,
+      },
+      {
+        type: "recovery",
+        label: "Recuperación",
+        description: "Trote muy suave o caminata entre repeticiones.",
+      },
+      {
+        type: "cooldown",
+        label: "Vuelta a la calma",
+        description: "8 min suaves al terminar.",
+      },
+    ];
+  }
+
+  if (kind === "tempo") {
+    const tempoBlock =
+      input.level === "principiante"
+        ? "10 min sostenidos"
+        : input.level === "intermedio"
+          ? "15-20 min sostenidos"
+          : "20-25 min sostenidos";
+
+    return [
+      {
+        type: "warmup",
+        label: "Calentamiento",
+        description: "10 min suaves antes del bloque fuerte.",
+      },
+      {
+        type: "main",
+        label: "Bloque principal",
+        description: `${tempoBlock} a ritmo fuerte pero sostenible dentro de ${km} km totales.`,
+      },
+      {
+        type: "notes",
+        label: "Control",
+        description:
+          "Debe sentirse exigente, pero no como sprint. Si se descontrola, baja ritmo.",
+      },
+      {
+        type: "cooldown",
+        label: "Cierre",
+        description: "5-8 min suaves.",
+      },
+    ];
+  }
+
+  return [
+    {
+      type: "warmup",
+      label: "Inicio",
+      description: "Empieza muy suave durante los primeros 10 min.",
+    },
+    {
+      type: "main",
+      label: "Bloque principal",
+      description: `Fondo de ${km} km a ritmo cómodo y constante.`,
+    },
+    {
+      type: "notes",
+      label: "Objetivo",
+      description:
+        input.injuryHistory === "recent"
+          ? "Mantener carga controlada. Si aparece molestia, corta la sesión."
+          : `Desarrollar resistencia específica para ${raceLabel}.`,
+    },
+    {
+      type: "cooldown",
+      label: "Cierre",
+      description: "Camina 3-5 min, hidrátate y registra cómo te sentiste.",
+    },
+  ];
+}
+
+function buildTodayWorkoutFromDay(dayWorkout: DayWorkout): TodayWorkout {
+  const isRest = dayWorkout.type === "rest";
+
+  return {
+    type: isRest ? "Descanso" : "running",
+    category: dayWorkout.category,
+    title: dayWorkout.title,
+    description: dayWorkout.description,
+    day: "Hoy",
+    duration: isRest ? "—" : `${dayWorkout.duration ?? 0} min`,
+    difficulty: formatIntensity(dayWorkout.intensity),
+    metric: isRest ? "Sin carga" : `${dayWorkout.km ?? 0} km`,
+    heartRate: dayWorkout.targetHeartRate ?? "FC Z2",
+    targetPace: dayWorkout.targetPace,
+    km: dayWorkout.km ?? 0,
+    status: "pending",
+    details: dayWorkout.details ?? [],
+  };
+}
+
+export function generatePlan(input: GeneratePlanInput): GeneratedPlan {
+  const selectedDays = [...new Set(input.days)]
+    .filter((day) => day >= 0 && day <= 6)
+    .sort((a, b) => a - b);
+  const sessionsPerWeek = selectedDays.length;
+  const totalKm = getPlannedWeeklyKm(input, sessionsPerWeek);
+  const kinds = getRunningSessionKinds(input, sessionsPerWeek);
+  const kmDistribution = distributeKmBySessionKind(totalKm, kinds, input);
   const weekPlan: DayWorkout[] = [];
-
-  const totalKm =
-    input.trainingType === "running" || input.trainingType === "mixed"
-      ? Math.round(
-          getWeeklyKmBase(input.level, input.goal) * (sessionsPerWeek / 3),
-        )
-      : 0;
-
-  const kinds = getKindsForTrainingType(
-    input.trainingType,
-    input.goal,
-    input.level,
-    sessionsPerWeek,
-  );
-
-  const kmDistribution = distributeKmBySessionKind(totalKm, kinds);
- 
 
   let trainingDayCounter = 0;
 
-  for (let i = 0; i < 7; i++) {
-    if (input.days.includes(i)) {
+  for (let day = 0; day < 7; day += 1) {
+    if (selectedDays.includes(day)) {
       const kind = kinds[trainingDayCounter] ?? "easy_run";
-      const currentKm =
-        kind === "easy_run" ||
-        kind === "intervals" ||
-        kind === "tempo" ||
-        kind === "long_run" ||
-        kind === "mixed_conditioning"
-          ? (kmDistribution[trainingDayCounter] ?? 0)
-          : 0;
-
-      const meta = getSessionMeta(kind, input.level);
+      const currentKm = kmDistribution[trainingDayCounter] ?? 0;
+      const meta = getSessionMeta(kind, input);
 
       weekPlan.push({
-        day: i,
-        type:
-          kind === "strength"
-            ? "strength"
-            : kind === "swim_technique" || kind === "swim_endurance"
-              ? "swimming"
-              : kind === "mixed_conditioning"
-                ? "mixed"
-                : "running",
+        day,
+        type: "running",
         category: kind,
         title: meta.title,
         description: meta.description,
@@ -755,43 +517,28 @@ export function generatePlan(input: Input): GeneratedPlan {
         duration: input.duration,
         targetPace: meta.targetPace,
         targetHeartRate: meta.targetHeartRate,
-        details: getWorkoutDetails(
-          kind,
-          currentKm,
-          input.duration,
-          input.level,
-        ),
+        details: getWorkoutDetails(kind, currentKm, input.duration, input),
       });
 
       trainingDayCounter += 1;
     } else {
-      const restMeta = getSessionMeta("rest", input.level);
+      const restMeta = getSessionMeta("rest", input);
 
       weekPlan.push({
-        day: i,
+        day,
         type: "rest",
         category: "rest",
         title: restMeta.title,
         description: restMeta.description,
         intensity: restMeta.intensity,
         targetHeartRate: restMeta.targetHeartRate,
-        details: getWorkoutDetails("rest", 0, input.duration, input.level),
+        details: getWorkoutDetails("rest", 0, input.duration, input),
       });
     }
   }
 
   const todayIndex = getTodayIndex();
   const today = weekPlan.find((item) => item.day === todayIndex) ?? weekPlan[0];
-  const todayKind =
-    today.type === "rest"
-      ? "rest"
-      : today.type === "strength"
-        ? "strength"
-        : today.type === "swimming"
-          ? "swim_endurance"
-          : today.type === "mixed"
-            ? "mixed_conditioning"
-            : "easy_run";
 
   return {
     weeklyGoal: {
@@ -802,24 +549,7 @@ export function generatePlan(input: Input): GeneratedPlan {
       completedSessions: 0,
       totalSessions: sessionsPerWeek,
     },
-    todayWorkout: {
-      type: today.type === "rest" ? "Descanso" : today.type,
-      title: today.title,
-      day: "Hoy",
-      duration:
-        today.type === "rest" ? "—" : `${today.duration ?? input.duration} min`,
-      difficulty: getDifficulty(input.level, todayKind),
-      metric:
-        today.type === "running" || today.type === "mixed"
-          ? `${today.km ?? 0} km`
-          : today.type === "rest"
-            ? "Sin carga"
-            : "Sesión",
-      heartRate: getHeartRate(todayKind),
-      status: "pending",
-      km: today.km ?? 0,
-      details: today.details ?? [],
-    },
+    todayWorkout: buildTodayWorkoutFromDay(today),
     weekPlan,
   };
 }

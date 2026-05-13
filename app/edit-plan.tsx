@@ -2,6 +2,13 @@ import { spacing, theme } from "@/src/constants/theme";
 import { generatePlan } from "@/src/services/generatePlan";
 import { useHomeStore } from "@/src/store/home-store";
 import { useOnboardingStore } from "@/src/store/onboarding-store";
+import type {
+  Goal,
+  InjuryHistory,
+  Level,
+  RaceDistance,
+  RunningExperience,
+} from "@/src/types/training";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -10,35 +17,73 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 
-const goals = [
+type OptionItem<T extends string | number> = {
+  label: string;
+  value: T;
+  description?: string;
+};
+
+const goals: readonly OptionItem<Goal>[] = [
   { label: "Resistencia", value: "resistencia" },
   { label: "Rendimiento", value: "rendimiento" },
   { label: "Mantenerme", value: "mantenerme" },
   { label: "Competencia", value: "competencia" },
-] as const;
+];
 
-const levels = [
+const levels: readonly OptionItem<Level>[] = [
   { label: "Principiante", value: "principiante" },
   { label: "Intermedio", value: "intermedio" },
   { label: "Avanzado", value: "avanzado" },
-] as const;
+];
 
-const durations = [
+const durations: readonly OptionItem<number>[] = [
   { label: "30 min", value: 30 },
   { label: "45 min", value: 45 },
   { label: "60 min", value: 60 },
   { label: "90 min", value: 90 },
-] as const;
+];
 
-const trainingTypes = [
-  { label: "Running", value: "running" },
-  { label: "Swimming", value: "swimming" },
-  { label: "Fuerza", value: "strength" },
-  { label: "Mixto", value: "mixed" },
-] as const;
+const raceDistances: readonly OptionItem<RaceDistance>[] = [
+  { label: "Base", value: "general", description: "Salud y constancia" },
+  { label: "5K", value: "5k", description: "Velocidad corta" },
+  { label: "10K", value: "10k", description: "Resistencia rápida" },
+  { label: "21K", value: "21k", description: "Media maratón" },
+  { label: "42K", value: "42k", description: "Maratón" },
+];
+
+const weeklyKmOptions: readonly OptionItem<number>[] = [
+  { label: "0-5 km", value: 5 },
+  { label: "10 km", value: 10 },
+  { label: "20 km", value: 20 },
+  { label: "35 km", value: 35 },
+  { label: "50+ km", value: 50 },
+];
+
+const longRunOptions: readonly OptionItem<number>[] = [
+  { label: "3 km", value: 3 },
+  { label: "5 km", value: 5 },
+  { label: "8 km", value: 8 },
+  { label: "12 km", value: 12 },
+  { label: "18 km", value: 18 },
+  { label: "25 km", value: 25 },
+];
+
+const experienceOptions: readonly OptionItem<RunningExperience>[] = [
+  { label: "Inicio", value: "new", description: "Estoy empezando" },
+  { label: "Retomando", value: "returning", description: "Vuelvo a correr" },
+  { label: "Constante", value: "consistent", description: "Entreno cada semana" },
+  { label: "Competitivo", value: "competitive", description: "Busco marcas" },
+];
+
+const injuryOptions: readonly OptionItem<InjuryHistory>[] = [
+  { label: "Sin molestias", value: "none" },
+  { label: "Molestia leve", value: "minor" },
+  { label: "Lesión reciente", value: "recent" },
+];
 
 const daysList = [
   { label: "L", value: 0 },
@@ -57,55 +102,99 @@ export default function EditPlanScreen() {
   const setPlanFromOnboarding = useHomeStore(
     (state) => state.setPlanFromOnboarding,
   );
-  const resetHomeProgress = useHomeStore((state) => state.resetHomeProgress);
 
-  const [goal, setGoal] = useState(onboarding.goal);
-  const [level, setLevel] = useState(onboarding.level);
+  const [goal, setGoal] = useState<Goal | undefined>(onboarding.goal);
+  const [level, setLevel] = useState<Level | undefined>(onboarding.level);
   const [days, setDays] = useState<number[]>(onboarding.days);
-  const [duration, setDuration] = useState(onboarding.duration);
-  const [trainingType, setTrainingType] = useState(onboarding.trainingType);
+  const [duration, setDuration] = useState<number | undefined>(
+    onboarding.duration,
+  );
+  const [raceDistance, setRaceDistance] = useState<RaceDistance | undefined>(
+    onboarding.raceDistance,
+  );
+  const [currentWeeklyKm, setCurrentWeeklyKm] = useState<number | undefined>(
+    onboarding.currentWeeklyKm,
+  );
+  const [longRunKm, setLongRunKm] = useState<number | undefined>(
+    onboarding.longRunKm,
+  );
+  const [runningExperience, setRunningExperience] = useState<
+    RunningExperience | undefined
+  >(onboarding.runningExperience);
+  const [injuryHistory, setInjuryHistory] = useState<
+    InjuryHistory | undefined
+  >(onboarding.injuryHistory);
+  const [easyPace, setEasyPace] = useState(onboarding.easyPace ?? "");
+  const [targetDate, setTargetDate] = useState(onboarding.targetDate ?? "");
 
   const toggleDay = (day: number) => {
     setDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day],
+      prev.includes(day)
+        ? prev.filter((currentDay) => currentDay !== day)
+        : [...prev, day].sort((a, b) => a - b),
     );
   };
 
   const isFormValid =
-    !!goal && !!level && !!duration && !!trainingType && days.length > 0;
+    !!goal &&
+    !!level &&
+    !!duration &&
+    days.length > 0 &&
+    !!raceDistance &&
+    currentWeeklyKm !== undefined &&
+    longRunKm !== undefined &&
+    !!runningExperience &&
+    !!injuryHistory;
 
   const handleSave = () => {
-    if (!isFormValid) return;
+    if (
+      !goal ||
+      !level ||
+      !duration ||
+      !raceDistance ||
+      currentWeeklyKm === undefined ||
+      longRunKm === undefined ||
+      !runningExperience ||
+      !injuryHistory ||
+      days.length === 0
+    ) {
+      return;
+    }
 
-    onboarding.setGoal(goal!);
-    onboarding.setLevel(level!);
+    const cleanEasyPace = easyPace.trim() || undefined;
+    const cleanTargetDate = targetDate.trim() || undefined;
 
-    const currentDays = onboarding.days;
-    currentDays.forEach((day) => {
-      if (!days.includes(day)) {
-        onboarding.toggleDay(day);
-      }
+    onboarding.setGoal(goal);
+    onboarding.setLevel(level);
+    onboarding.setDays(days);
+    onboarding.setDuration(duration);
+    onboarding.setTrainingType("running");
+    onboarding.setRunningProfile({
+      raceDistance,
+      currentWeeklyKm,
+      longRunKm,
+      easyPace: cleanEasyPace,
+      targetDate: cleanTargetDate,
+      runningExperience,
+      injuryHistory,
     });
-    days.forEach((day) => {
-      if (!currentDays.includes(day)) {
-        onboarding.toggleDay(day);
-      }
-    });
-
-    onboarding.setDuration(duration!);
-    onboarding.setTrainingType(trainingType!);
 
     const plan = generatePlan({
-      goal: goal!,
-      level: level!,
+      goal,
+      level,
       days,
-      duration: duration!,
-      trainingType: trainingType!,
+      duration,
+      trainingType: "running",
+      raceDistance,
+      currentWeeklyKm,
+      longRunKm,
+      easyPace: cleanEasyPace,
+      targetDate: cleanTargetDate,
+      runningExperience,
+      injuryHistory,
     });
 
-    resetHomeProgress();
     setPlanFromOnboarding(plan);
-
     router.replace("/(tabs)");
   };
 
@@ -120,7 +209,7 @@ export default function EditPlanScreen() {
           <Text style={styles.step}>Ajustar plan</Text>
           <Text style={styles.title}>Edita tu planificación</Text>
           <Text style={styles.subtitle}>
-            Cambia tu configuración actual y genera un nuevo plan.
+            Cambia tus datos de running y genera una nueva semana de entrenamiento.
           </Text>
         </View>
 
@@ -160,7 +249,7 @@ export default function EditPlanScreen() {
           </View>
         </Section>
 
-        <Section title="Duración">
+        <Section title="Duración por sesión">
           <OptionGrid
             items={durations}
             selectedValue={duration}
@@ -168,11 +257,65 @@ export default function EditPlanScreen() {
           />
         </Section>
 
-        <Section title="Tipo de entrenamiento">
+        <Section title="Distancia objetivo">
           <OptionGrid
-            items={trainingTypes}
-            selectedValue={trainingType}
-            onSelect={setTrainingType}
+            items={raceDistances}
+            selectedValue={raceDistance}
+            onSelect={setRaceDistance}
+          />
+        </Section>
+
+        <Section title="Kilómetros semanales actuales">
+          <OptionGrid
+            items={weeklyKmOptions}
+            selectedValue={currentWeeklyKm}
+            onSelect={setCurrentWeeklyKm}
+          />
+        </Section>
+
+        <Section title="Tirada larga actual">
+          <OptionGrid
+            items={longRunOptions}
+            selectedValue={longRunKm}
+            onSelect={setLongRunKm}
+          />
+        </Section>
+
+        <Section title="Experiencia corriendo">
+          <OptionGrid
+            items={experienceOptions}
+            selectedValue={runningExperience}
+            onSelect={setRunningExperience}
+          />
+        </Section>
+
+        <Section title="Historial reciente de lesiones">
+          <OptionGrid
+            items={injuryOptions}
+            selectedValue={injuryHistory}
+            onSelect={setInjuryHistory}
+          />
+        </Section>
+
+        <Section title="Ritmo cómodo">
+          <TextInput
+            value={easyPace}
+            onChangeText={setEasyPace}
+            placeholder="Ej. 6:10 min/km"
+            placeholderTextColor={theme.colors.textMuted}
+            style={styles.input}
+            autoCapitalize="none"
+          />
+        </Section>
+
+        <Section title="Fecha objetivo">
+          <TextInput
+            value={targetDate}
+            onChangeText={setTargetDate}
+            placeholder="Opcional, ej. 2026-09-20"
+            placeholderTextColor={theme.colors.textMuted}
+            style={styles.input}
+            autoCapitalize="none"
           />
         </Section>
 
@@ -200,12 +343,13 @@ export default function EditPlanScreen() {
   );
 }
 
-type SectionProps = {
+function Section({
+  title,
+  children,
+}: {
   title: string;
   children: React.ReactNode;
-};
-
-function Section({ title, children }: SectionProps) {
+}) {
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -214,22 +358,15 @@ function Section({ title, children }: SectionProps) {
   );
 }
 
-type OptionItem<T extends string | number> = {
-  label: string;
-  value: T;
-};
-
-type OptionGridProps<T extends string | number> = {
-  items: readonly OptionItem<T>[];
-  selectedValue: T | undefined;
-  onSelect: (value: T) => void;
-};
-
 function OptionGrid<T extends string | number>({
   items,
   selectedValue,
   onSelect,
-}: OptionGridProps<T>) {
+}: {
+  items: readonly OptionItem<T>[];
+  selectedValue: T | undefined;
+  onSelect: (value: T) => void;
+}) {
   return (
     <View style={styles.options}>
       {items.map((item) => {
@@ -246,6 +383,16 @@ function OptionGrid<T extends string | number>({
             >
               {item.label}
             </Text>
+            {!!item.description && (
+              <Text
+                style={[
+                  styles.optionDescription,
+                  selected && styles.optionDescriptionSelected,
+                ]}
+              >
+                {item.description}
+              </Text>
+            )}
           </Pressable>
         );
       })}
@@ -331,6 +478,27 @@ const styles = StyleSheet.create({
   optionTextSelected: {
     color: theme.colors.primaryDark,
     fontWeight: theme.fontWeight.bold,
+  },
+
+  optionDescription: {
+    marginTop: 3,
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.textSecondary,
+  },
+
+  optionDescriptionSelected: {
+    color: theme.colors.primaryDark,
+  },
+
+  input: {
+    height: 52,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    borderRadius: theme.radius.lg,
+    paddingHorizontal: spacing.lg,
+    fontSize: theme.typography.bodyLG,
+    color: theme.colors.text,
+    backgroundColor: theme.colors.white,
   },
 
   daysRow: {

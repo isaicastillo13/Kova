@@ -20,17 +20,14 @@ export default function WeeklyCalendar({ days }: WeeklyCalendarProps) {
       {days.map((day, index) => (
         <View key={index} style={styles.dayWrapper}>
           
-          {/* 🔤 Día */}
           <Text style={styles.dayLabel}>{day.dayLabel}</Text>
 
-          {/* ✔ Badge */}
           {day.isCompleted && (
             <View style={styles.checkBadge}>
               <AntDesign name="check" size={10} color={theme.colors.white} />
             </View>
           )}
 
-          {/* 🔘 Círculo */}
           <View
             style={[
               styles.dayCircle,
@@ -51,9 +48,6 @@ export default function WeeklyCalendar({ days }: WeeklyCalendarProps) {
     </View>
   );
 }
-
-const CIRCLE_SIZE = 36;
-const BADGE_SIZE = 18;
 
 const styles = StyleSheet.create({
   container: {

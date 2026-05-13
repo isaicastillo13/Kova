@@ -1,30 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { spacing, theme } from "@/src/constants/theme";
-
-type WorkoutDetailBlockType =
-  | "warmup"
-  | "main"
-  | "recovery"
-  | "cooldown"
-  | "notes";
-
-type WorkoutDetailBlock = {
-  type: WorkoutDetailBlockType;
-  label: string;
-  description: string;
-};
-
-type DayWorkoutType = "running" | "swimming" | "strength" | "mixed" | "rest";
-
-type DayWorkout = {
-  day: number;
-  type: DayWorkoutType;
-  title: string;
-  km?: number;
-  duration?: number;
-  details?: WorkoutDetailBlock[];
-};
+import type { DayWorkout } from "@/src/types/training";
 
 type Props = {
   weekPlan: DayWorkout[];

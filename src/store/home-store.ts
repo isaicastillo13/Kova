@@ -1,90 +1,14 @@
 import { getTodayDateString, getTodayIndex } from "@/src/components/utils/date";
+import type {
+  Activity,
+  DayWorkout,
+  GeneratedPlan,
+  TodayWorkout,
+  WeeklyGoal,
+} from "@/src/types/training";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-
-type WorkoutStatus = "pending" | "completed";
-
-type DayWorkoutType = "running" | "swimming" | "strength" | "mixed" | "rest";
-
-type WorkoutDetailBlockType =
-  | "warmup"
-  | "main"
-  | "recovery"
-  | "cooldown"
-  | "notes";
-
-type WorkoutCategory =
-  | "easy_run"
-  | "intervals"
-  | "tempo"
-  | "long_run"
-  | "strength"
-  | "swim_technique"
-  | "swim_endurance"
-  | "mixed_conditioning"
-  | "rest";
-
-type DayWorkout = {
-  day: number;
-  type: DayWorkoutType;
-  category: WorkoutCategory;
-  title: string;
-  description: string;
-  intensity: "baja" | "media" | "alta" | "recuperación";
-  km?: number;
-  duration?: number;
-  targetPace?: string;
-  targetHeartRate?: string;
-  details?: WorkoutDetailBlock[];
-};
-
-type WorkoutDetailBlock = {
-  type: WorkoutDetailBlockType;
-  label: string;
-  description: string;
-};
-
-type Activity = {
-  id: string;
-  title: string;
-  subtitle: string;
-  dateLabel: string;
-  type: string;
-  km: number;
-  duration: string;
-};
-
-type TodayWorkout = {
-  type: string;
-  category?: WorkoutCategory;
-  title: string;
-  description?: string;
-  day: string;
-  duration: string;
-  difficulty: string;
-  metric: string;
-  heartRate: string;
-  targetPace?: string;
-  km: number;
-  status: WorkoutStatus;
-  details?: WorkoutDetailBlock[];
-};
-
-type WeeklyGoal = {
-  distance: number;
-  unit: string;
-  progressCurrent: number;
-  progressTotal: number;
-  completedSessions: number;
-  totalSessions: number;
-};
-
-type GeneratedPlan = {
-  weeklyGoal: WeeklyGoal;
-  todayWorkout: TodayWorkout;
-  weekPlan: DayWorkout[];
-};
 
 type HomeState = {
   weeklyGoal: WeeklyGoal;

@@ -1,12 +1,13 @@
-export function getWeekDaysWithLabels(completedDays: number[] = []) {
+export function getWeekDaysWithLabels(completedDates: string[] = []) {
   const today = new Date();
   const day = today.getDay();
   const mondayOffset = day === 0 ? -6 : 1 - day;
+  const completedDateSet = new Set(completedDates);
 
   const monday = new Date(today);
   monday.setDate(today.getDate() + mondayOffset);
 
-  const labels = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+  const labels = ["L", "M", "X", "J", "V", "S", "D"];
 
   const week = [];
 
@@ -17,7 +18,7 @@ export function getWeekDaysWithLabels(completedDays: number[] = []) {
     week.push({
       dayNumber: currentDay.getDate(),
       isToday: currentDay.toDateString() === today.toDateString(),
-      isCompleted: completedDays.includes(i), // 🔥 aquí está la magia
+      isCompleted: completedDateSet.has(formatDateToYYYYMMDD(currentDay)),
       dayLabel: labels[i],
     });
   }
@@ -62,5 +63,5 @@ export function calculateStreak(completedDates: string[]): number {
     currentDate = getPreviousDateString(currentDate);
   }
 
-  return streak; // 🔥 ESTA LÍNEA ES CLAVE
+  return streak;
 }

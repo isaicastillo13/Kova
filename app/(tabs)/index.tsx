@@ -18,11 +18,40 @@ import { useRouter } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+function formatRaceDistance(value?: string) {
+  switch (value) {
+    case "5k":
+      return "5K";
+    case "10k":
+      return "10K";
+    case "21k":
+      return "21K";
+    case "42k":
+      return "Maratón";
+    case "general":
+      return "Base aeróbica";
+    default:
+      return "No definido";
+  }
+}
+
+function formatInjuryStatus(value?: string) {
+  switch (value) {
+    case "none":
+      return "Sin molestias";
+    case "minor":
+      return "Molestia leve";
+    case "recent":
+      return "Lesión reciente";
+    default:
+      return "No definido";
+  }
+}
+
 export default function HomeScreen() {
   const {
     weeklyGoal,
     todayWorkout,
-    completedDays,
     completedDates,
     activities,
     toggleTodayWorkout,
@@ -45,9 +74,19 @@ export default function HomeScreen() {
 
   const streakDays = calculateStreak(completedDates);
 
-  const weekDays = getWeekDaysWithLabels(completedDays);
+  const weekDays = getWeekDaysWithLabels(completedDates);
   const router = useRouter();
-  const { goal, level, days, duration, trainingType } = useOnboardingStore();
+  const {
+    goal,
+    level,
+    days,
+    duration,
+    raceDistance,
+    currentWeeklyKm,
+    longRunKm,
+    easyPace,
+    injuryHistory,
+  } = useOnboardingStore();
   const formattedGoal =
     goal === "resistencia"
       ? "Resistencia"
@@ -57,17 +96,6 @@ export default function HomeScreen() {
           ? "Mantenerme activo"
           : goal === "competencia"
             ? "Competencia"
-            : "No definido";
-
-  const formattedTrainingType =
-    trainingType === "running"
-      ? "Running"
-      : trainingType === "swimming"
-        ? "Swimming"
-        : trainingType === "strength"
-          ? "Fuerza"
-          : trainingType === "mixed"
-            ? "Mixto"
             : "No definido";
 
   const trainingDaysPerWeek = days.length;
@@ -115,9 +143,19 @@ export default function HomeScreen() {
 
             <PlanContextCard
               goal={formattedGoal}
-              trainingType={formattedTrainingType}
+              raceDistance={formatRaceDistance(raceDistance)}
               daysPerWeek={trainingDaysPerWeek}
               duration={formattedDuration}
+              currentWeeklyKm={
+                currentWeeklyKm !== undefined
+                  ? `${currentWeeklyKm} km/sem`
+                  : "No definido"
+              }
+              longRunKm={
+                longRunKm !== undefined ? `${longRunKm} km` : "No definido"
+              }
+              easyPace={easyPace?.trim() || "No definido"}
+              injuryStatus={formatInjuryStatus(injuryHistory)}
               level={
                 level === "principiante"
                   ? "Principiante"

@@ -70,7 +70,7 @@ export default function LoginScreen() {
       } else {
         router.replace("/onboarding");
       }
-    } catch (error) {
+    } catch {
       setPasswordError("No se pudo iniciar sesión. Intenta nuevamente.");
     } finally {
       setIsLoading(false);

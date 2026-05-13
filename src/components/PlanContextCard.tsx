@@ -4,18 +4,26 @@ import { spacing, theme } from "@/src/constants/theme";
 
 type Props = {
   goal: string;
-  trainingType: string;
+  raceDistance: string;
   daysPerWeek: number;
   duration: string;
   level: string;
+  currentWeeklyKm: string;
+  longRunKm: string;
+  easyPace: string;
+  injuryStatus: string;
 };
 
 export default function PlanContextCard({
   goal,
-  trainingType,
+  raceDistance,
   daysPerWeek,
   duration,
   level,
+  currentWeeklyKm,
+  longRunKm,
+  easyPace,
+  injuryStatus,
 }: Props) {
   return (
     <View style={styles.container}>
@@ -28,8 +36,8 @@ export default function PlanContextCard({
         </View>
 
         <View style={styles.item}>
-          <Text style={styles.label}>Tipo</Text>
-          <Text style={styles.value}>{trainingType}</Text>
+          <Text style={styles.label}>Distancia</Text>
+          <Text style={styles.value}>{raceDistance}</Text>
         </View>
 
         <View style={styles.item}>
@@ -42,9 +50,29 @@ export default function PlanContextCard({
           <Text style={styles.value}>{duration}</Text>
         </View>
 
-        <View style={[styles.item, styles.fullWidth]}>
+        <View style={styles.item}>
           <Text style={styles.label}>Nivel</Text>
           <Text style={styles.value}>{level}</Text>
+        </View>
+
+        <View style={styles.item}>
+          <Text style={styles.label}>Volumen actual</Text>
+          <Text style={styles.value}>{currentWeeklyKm}</Text>
+        </View>
+
+        <View style={styles.item}>
+          <Text style={styles.label}>Fondo actual</Text>
+          <Text style={styles.value}>{longRunKm}</Text>
+        </View>
+
+        <View style={styles.item}>
+          <Text style={styles.label}>Ritmo cómodo</Text>
+          <Text style={styles.value}>{easyPace}</Text>
+        </View>
+
+        <View style={[styles.item, styles.fullWidth]}>
+          <Text style={styles.label}>Estado físico</Text>
+          <Text style={styles.value}>{injuryStatus}</Text>
         </View>
       </View>
     </View>
