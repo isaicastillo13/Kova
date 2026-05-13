@@ -1,10 +1,8 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { spacing, theme } from "@/src/constants/theme";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import AntDesign from '@expo/vector-icons/AntDesign';
-
 
 type TodayWorkout = {
   type: string;
@@ -27,10 +25,21 @@ type Props = {
   weeklyGoal: WeeklyGoal;
 };
 
-function getInsightMessage({ streakDays, todayWorkout, weeklyGoal }: Props): {
+type Insight = {
+  label: string;
   text: string;
-  emoji: React.ReactNode;
-} {
+  icon:
+    | React.ComponentProps<typeof MaterialCommunityIcons>["name"]
+    | React.ComponentProps<typeof Ionicons>["name"];
+  family: "material" | "ion";
+  tone: "primary" | "success" | "recovery";
+};
+
+function getInsightMessage({
+  streakDays,
+  todayWorkout,
+  weeklyGoal,
+}: Props): Insight {
   const isRestDay =
     todayWorkout.type.toLowerCase() === "descanso" || todayWorkout.km === 0;
 
@@ -39,39 +48,62 @@ function getInsightMessage({ streakDays, todayWorkout, weeklyGoal }: Props): {
       ? weeklyGoal.progressCurrent / weeklyGoal.progressTotal
       : 0;
 
-  if (isRestDay)
+  if (isRestDay) {
     return {
-      emoji: <MaterialCommunityIcons name="sleep" size={32} color={theme.colors.primaryLight} />, // match emoji font size and color
-      text: "Hoy toca recuperación. Descansar también forma parte del progreso.",
+      family: "material",
+      icon: "sleep",
+      label: "Recuperación",
+      tone: "recovery",
+      text: "Hoy baja la carga. Recuperar bien también suma al plan.",
     };
+  }
 
-  if (todayWorkout.status === "completed")
+  if (todayWorkout.status === "completed") {
     return {
-      emoji: <Ionicons name="checkmark-done" size={24} color={theme.colors.blue} />,
-      text: `Buen trabajo. Ya sumaste ${todayWorkout.km} ${weeklyGoal.unit} al progreso semanal.`,
+      family: "ion",
+      icon: "checkmark-done",
+      label: "Sesión cerrada",
+      tone: "success",
+      text: `Ya sumaste ${todayWorkout.km} ${weeklyGoal.unit}. Buen avance para esta semana.`,
     };
+  }
 
-  if (streakDays >= 3)
+  if (streakDays >= 3) {
     return {
-      emoji: <AntDesign name="fire" size={24} color="black" />,
-      text: `Llevas ${streakDays} días seguidos. Mantén ese ritmo.`,
+      family: "material",
+      icon: "fire",
+      label: "Racha activa",
+      tone: "primary",
+      text: `Llevas ${streakDays} días seguidos. Mantén el ritmo sin forzar de más.`,
     };
+  }
 
-  if (progressPercent >= 0.75)
+  if (progressPercent >= 0.75) {
     return {
-      emoji: <MaterialCommunityIcons name="run" size={24} color="black" />,
-      text: "Estás muy cerca de completar tu meta semanal. Último empujón.",
+      family: "material",
+      icon: "chart-line",
+      label: "Casi listo",
+      tone: "primary",
+      text: "Estás cerca de completar la meta semanal. Cuida la ejecución.",
     };
+  }
 
-  if (weeklyGoal.completedSessions === 0)
+  if (weeklyGoal.completedSessions === 0) {
     return {
-      emoji: "🚀",
-      text: `Hoy tienes ${todayWorkout.title}. Buen día para empezar fuerte.`,
+      family: "material",
+      icon: "run-fast",
+      label: "Primera sesión",
+      tone: "primary",
+      text: `Hoy toca ${todayWorkout.title}. Buen día para abrir la semana.`,
     };
+  }
 
   return {
-    emoji: "📈",
-    text: `Vas ${weeklyGoal.progressCurrent}/${weeklyGoal.progressTotal} ${weeklyGoal.unit} esta semana. Sigue construyendo constancia.`,
+    family: "material",
+    icon: "map-marker-distance",
+    label: "Construyendo base",
+    tone: "primary",
+    text: `Vas ${weeklyGoal.progressCurrent}/${weeklyGoal.progressTotal} ${weeklyGoal.unit}. Sigue acumulando trabajo útil.`,
   };
 }
 
@@ -80,84 +112,76 @@ export default function HomeInsight({
   todayWorkout,
   weeklyGoal,
 }: Props) {
-  const { emoji, text } = getInsightMessage({
+  const insight = getInsightMessage({
     streakDays,
     todayWorkout,
     weeklyGoal,
   });
 
+  const iconColor =
+    insight.tone === "success"
+      ? theme.colors.success
+      : insight.tone === "recovery"
+        ? theme.colors.info
+        : theme.colors.primary;
+
   return (
-    <View style={styles.wrapper}>
-      {/* Floating pill */}
-      <View style={styles.pill}>
-        <Text style={styles.pillText}>✦ Insight del día</Text>
+    <View style={styles.banner}>
+      <View style={[styles.iconWrap, { backgroundColor: `${iconColor}18` }]}>
+        {insight.family === "ion" ? (
+          <Ionicons name={insight.icon as never} size={22} color={iconColor} />
+        ) : (
+          <MaterialCommunityIcons
+            name={insight.icon as never}
+            size={24}
+            color={iconColor}
+          />
+        )}
       </View>
 
-      {/* Dark banner */}
-      <View style={styles.banner}>
-        {typeof emoji === 'string' ? (
-          <Text style={styles.emoji}>{emoji}</Text>
-        ) : (
-          <View style={styles.emoji}>{emoji}</View>
-        )}
-        <Text style={styles.message}>{text}</Text>
+      <View style={styles.messageBlock}>
+        <Text style={styles.label}>{insight.label}</Text>
+        <Text style={styles.message}>{insight.text}</Text>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    marginBottom: theme.spacing.lg,
-    // Extra top margin so the pill doesn't get clipped
-    marginTop: spacing.sm,
-  },
-
-  // ── Floating pill ──────────────────────────
-  pill: {
-    position: "absolute",
-    top: -10,
-    right: 14,
-    zIndex: 1,
-    backgroundColor: theme.colors.primary,        // tu rojo #c0392b
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 20,
-    shadowColor: theme.colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-
-  pillText: {
-    fontSize: 10,
-    fontWeight: theme.fontWeight.bold,
-    letterSpacing: 0.8,
-    color: "#fff",
-    textTransform: "uppercase",
-  },
-
-  // ── Dark banner ────────────────────────────
   banner: {
-    backgroundColor: theme.colors.blue,
-    borderRadius: theme.radius.md,
-    padding: theme.spacing.md,
+    backgroundColor: theme.colors.surfaceAlt,
+    borderRadius: theme.radius.xl,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    padding: theme.spacing.lg,
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: spacing.md,
   },
 
-  emoji: {
-    fontSize: 32,
-    flexShrink: 0,
+  iconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  messageBlock: {
+    flex: 1,
+  },
+
+  label: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.text,
+    fontWeight: theme.fontWeight.bold,
+    marginBottom: 2,
   },
 
   message: {
-    flex: 1,
     fontSize: theme.typography.bodySM,
-    color: "rgba(255, 255, 255, 0.88)",
-    lineHeight: 21,
+    color: theme.colors.textSecondary,
+    lineHeight: 20,
     fontWeight: theme.fontWeight.medium,
   },
 });

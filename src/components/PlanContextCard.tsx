@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { spacing, theme } from "@/src/constants/theme";
 
 type Props = {
@@ -25,55 +26,50 @@ export default function PlanContextCard({
   easyPace,
   injuryStatus,
 }: Props) {
+  const metrics = [
+    { label: "Objetivo", value: goal, icon: "target" },
+    { label: "Distancia", value: raceDistance, icon: "flag-checkered" },
+    { label: "Frecuencia", value: `${daysPerWeek} días/sem`, icon: "calendar-week" },
+    { label: "Sesión", value: duration, icon: "timer-outline" },
+    { label: "Nivel", value: level, icon: "chart-timeline-variant" },
+    { label: "Volumen", value: currentWeeklyKm, icon: "map-marker-distance" },
+    { label: "Fondo", value: longRunKm, icon: "routes" },
+    { label: "Ritmo", value: easyPace, icon: "speedometer" },
+  ] as const;
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tu plan</Text>
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.kicker}>Perfil de entrenamiento</Text>
+          <Text style={styles.title}>Tu plan actual</Text>
+        </View>
+        <View style={styles.healthPill}>
+          <MaterialCommunityIcons
+            name="heart-pulse"
+            size={16}
+            color={theme.colors.primary}
+          />
+          <Text style={styles.healthText}>{injuryStatus}</Text>
+        </View>
+      </View>
 
       <View style={styles.grid}>
-        <View style={styles.item}>
-          <Text style={styles.label}>Objetivo</Text>
-          <Text style={styles.value}>{goal}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Distancia</Text>
-          <Text style={styles.value}>{raceDistance}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Frecuencia</Text>
-          <Text style={styles.value}>{daysPerWeek} días/sem</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Duración</Text>
-          <Text style={styles.value}>{duration}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Nivel</Text>
-          <Text style={styles.value}>{level}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Volumen actual</Text>
-          <Text style={styles.value}>{currentWeeklyKm}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Fondo actual</Text>
-          <Text style={styles.value}>{longRunKm}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Ritmo cómodo</Text>
-          <Text style={styles.value}>{easyPace}</Text>
-        </View>
-
-        <View style={[styles.item, styles.fullWidth]}>
-          <Text style={styles.label}>Estado físico</Text>
-          <Text style={styles.value}>{injuryStatus}</Text>
-        </View>
+        {metrics.map((item) => (
+          <View key={item.label} style={styles.item}>
+            <MaterialCommunityIcons
+              name={item.icon}
+              size={18}
+              color={theme.colors.primary}
+            />
+            <View style={styles.itemText}>
+              <Text style={styles.label}>{item.label}</Text>
+              <Text style={styles.value} numberOfLines={1}>
+                {item.value}
+              </Text>
+            </View>
+          </View>
+        ))}
       </View>
     </View>
   );
@@ -81,19 +77,55 @@ export default function PlanContextCard({
 
 const styles = StyleSheet.create({
   container: {
+    marginHorizontal: spacing.xxl,
+    marginTop: spacing.md,
+    marginBottom: 40,
     backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xl,
+    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
     borderWidth: 1,
     borderColor: theme.colors.border,
     ...theme.shadows.card,
   },
 
+  header: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    gap: spacing.md,
+    marginBottom: spacing.xl,
+  },
+
+  kicker: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.primary,
+    fontWeight: theme.fontWeight.bold,
+    marginBottom: 3,
+  },
+
   title: {
     fontSize: theme.typography.titleSM,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
-    marginBottom: spacing.lg,
+  },
+
+  healthPill: {
+    maxWidth: 150,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+    borderRadius: theme.radius.pill,
+    backgroundColor: theme.colors.primaryLight,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 7,
+  },
+
+  healthText: {
+    flexShrink: 1,
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.primaryDark,
+    fontWeight: theme.fontWeight.bold,
   },
 
   grid: {
@@ -104,24 +136,28 @@ const styles = StyleSheet.create({
 
   item: {
     width: "47%",
-    backgroundColor: theme.colors.background,
-    borderRadius: theme.radius.lg,
-    padding: spacing.md,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border,
+    paddingTop: spacing.md,
   },
 
-  fullWidth: {
-    width: "100%",
+  itemText: {
+    flex: 1,
+    minWidth: 0,
   },
 
   label: {
     fontSize: theme.typography.bodySM,
     color: theme.colors.textSecondary,
-    marginBottom: 4,
+    marginBottom: 2,
   },
 
   value: {
     fontSize: theme.typography.bodyMD,
-    fontWeight: theme.fontWeight.semibold,
+    fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
   },
 });

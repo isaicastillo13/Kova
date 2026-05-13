@@ -1,85 +1,86 @@
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
-import { theme } from '@/src/constants/theme';
-import { useRouter } from 'expo-router';
-import { useOnboardingStore } from '@/src/store/onboarding-store';
-import { useHomeStore } from '@/src/store/home-store';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useRouter } from "expo-router";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { theme, spacing } from "@/src/constants/theme";
+import { useHomeStore } from "@/src/store/home-store";
+import { useOnboardingStore } from "@/src/store/onboarding-store";
 
-const dayLabels = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+const dayLabels = ["L", "M", "X", "J", "V", "S", "D"];
 
 function formatGoal(goal?: string) {
   switch (goal) {
-    case 'resistencia':
-      return 'Resistencia';
-    case 'rendimiento':
-      return 'Rendimiento';
-    case 'mantenerme':
-      return 'Mantenerme activo';
-    case 'competencia':
-      return 'Competencia';
+    case "resistencia":
+      return "Resistencia";
+    case "rendimiento":
+      return "Rendimiento";
+    case "mantenerme":
+      return "Mantenerme activo";
+    case "competencia":
+      return "Competencia";
     default:
-      return 'No definido';
+      return "No definido";
   }
 }
 
 function formatLevel(level?: string) {
   switch (level) {
-    case 'principiante':
-      return 'Principiante';
-    case 'intermedio':
-      return 'Intermedio';
-    case 'avanzado':
-      return 'Avanzado';
+    case "principiante":
+      return "Principiante";
+    case "intermedio":
+      return "Intermedio";
+    case "avanzado":
+      return "Avanzado";
     default:
-      return 'No definido';
+      return "No definido";
   }
 }
 
 function formatTrainingType(type?: string) {
-  return type === 'running' ? 'Running' : 'Running';
+  return type === "running" ? "Running" : "Running";
 }
 
 function formatRaceDistance(value?: string) {
   switch (value) {
-    case '5k':
-      return '5K';
-    case '10k':
-      return '10K';
-    case '21k':
-      return '21K';
-    case '42k':
-      return 'Maratón';
-    case 'general':
-      return 'Base aeróbica';
+    case "5k":
+      return "5K";
+    case "10k":
+      return "10K";
+    case "21k":
+      return "21K";
+    case "42k":
+      return "Maratón";
+    case "general":
+      return "Base aeróbica";
     default:
-      return 'No definido';
+      return "No definido";
   }
 }
 
 function formatExperience(value?: string) {
   switch (value) {
-    case 'new':
-      return 'Inicio';
-    case 'returning':
-      return 'Retomando';
-    case 'consistent':
-      return 'Constante';
-    case 'competitive':
-      return 'Competitivo';
+    case "new":
+      return "Inicio";
+    case "returning":
+      return "Retomando";
+    case "consistent":
+      return "Constante";
+    case "competitive":
+      return "Competitivo";
     default:
-      return 'No definido';
+      return "No definido";
   }
 }
 
 function formatInjuryStatus(value?: string) {
   switch (value) {
-    case 'none':
-      return 'Sin molestias';
-    case 'minor':
-      return 'Molestia leve';
-    case 'recent':
-      return 'Lesión reciente';
+    case "none":
+      return "Sin molestias";
+    case "minor":
+      return "Molestia leve";
+    case "recent":
+      return "Lesión reciente";
     default:
-      return 'No definido';
+      return "No definido";
   }
 }
 
@@ -107,19 +108,59 @@ export default function ProfileScreen() {
   const handleReset = () => {
     resetOnboarding();
     resetHome();
-    router.replace('/onboarding');
+    router.replace("/onboarding");
   };
 
   const handleEditPlan = () => {
-    router.push('/edit-plan');
+    router.push("/edit-plan");
   };
 
   const selectedDays = days.length
     ? [...days]
         .sort((a, b) => a - b)
         .map((day) => dayLabels[day])
-        .join(' · ')
-    : 'No definido';
+        .join(" · ")
+    : "No definido";
+
+  const profileMetrics = [
+    {
+      label: "Objetivo",
+      value: formatGoal(goal),
+      icon: "target",
+    },
+    {
+      label: "Nivel",
+      value: formatLevel(level),
+      icon: "chart-timeline-variant",
+    },
+    {
+      label: "Distancia",
+      value: formatRaceDistance(raceDistance),
+      icon: "flag-checkered",
+    },
+    {
+      label: "Días",
+      value: selectedDays,
+      icon: "calendar-week",
+    },
+  ] as const;
+
+  const details = [
+    ["Duración por sesión", duration ? `${duration} min` : "No definido"],
+    ["Tipo de entrenamiento", formatTrainingType(trainingType)],
+    [
+      "Km semanales actuales",
+      currentWeeklyKm !== undefined ? `${currentWeeklyKm} km` : "No definido",
+    ],
+    [
+      "Tirada larga actual",
+      longRunKm !== undefined ? `${longRunKm} km` : "No definido",
+    ],
+    ["Ritmo cómodo", easyPace || "No definido"],
+    ["Experiencia", formatExperience(runningExperience)],
+    ["Estado físico", formatInjuryStatus(injuryHistory)],
+    ["Fecha objetivo", targetDate || "No definido"],
+  ];
 
   return (
     <ScrollView
@@ -127,88 +168,70 @@ export default function ProfileScreen() {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.title}>Tu perfil 👤</Text>
-      <Text style={styles.subtitle}>
-        Gestiona tu configuración y ajusta tu plan cuando lo necesites.
-      </Text>
+      <View style={styles.hero}>
+        <View style={styles.avatar}>
+          <MaterialCommunityIcons
+            name="account-run"
+            size={34}
+            color={theme.colors.white}
+          />
+        </View>
+        <Text style={styles.kicker}>Perfil de atleta</Text>
+        <Text style={styles.title}>Tu configuración de entrenamiento</Text>
+        <Text style={styles.subtitle}>
+          Ajusta el plan cuando cambien tus objetivos, disponibilidad o carga.
+        </Text>
+      </View>
+
+      <View style={styles.metricsGrid}>
+        {profileMetrics.map((item) => (
+          <View key={item.label} style={styles.metricCard}>
+            <View style={styles.metricIcon}>
+              <MaterialCommunityIcons
+                name={item.icon}
+                size={20}
+                color={theme.colors.primary}
+              />
+            </View>
+            <Text style={styles.metricLabel}>{item.label}</Text>
+            <Text style={styles.metricValue} numberOfLines={2}>
+              {item.value}
+            </Text>
+          </View>
+        ))}
+      </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Tu plan actual</Text>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Objetivo</Text>
-          <Text style={styles.value}>{formatGoal(goal)}</Text>
+        <View style={styles.cardHeader}>
+          <Text style={styles.cardTitle}>Datos del plan</Text>
+          <Text style={styles.cardMeta}>Actual</Text>
         </View>
 
-        <View style={styles.item}>
-          <Text style={styles.label}>Nivel</Text>
-          <Text style={styles.value}>{formatLevel(level)}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Días disponibles</Text>
-          <Text style={styles.value}>{selectedDays}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Duración</Text>
-          <Text style={styles.value}>
-            {duration ? `${duration} min` : 'No definido'}
-          </Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Tipo de entrenamiento</Text>
-          <Text style={styles.value}>{formatTrainingType(trainingType)}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Distancia objetivo</Text>
-          <Text style={styles.value}>{formatRaceDistance(raceDistance)}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Km semanales actuales</Text>
-          <Text style={styles.value}>
-            {currentWeeklyKm !== undefined ? `${currentWeeklyKm} km` : 'No definido'}
-          </Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Tirada larga actual</Text>
-          <Text style={styles.value}>
-            {longRunKm !== undefined ? `${longRunKm} km` : 'No definido'}
-          </Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Ritmo cómodo</Text>
-          <Text style={styles.value}>{easyPace || 'No definido'}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Experiencia</Text>
-          <Text style={styles.value}>{formatExperience(runningExperience)}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Estado físico</Text>
-          <Text style={styles.value}>{formatInjuryStatus(injuryHistory)}</Text>
-        </View>
-
-        <View style={styles.item}>
-          <Text style={styles.label}>Fecha objetivo</Text>
-          <Text style={styles.value}>{targetDate || 'No definido'}</Text>
-        </View>
+        {details.map(([label, value]) => (
+          <View key={label} style={styles.item}>
+            <Text style={styles.label}>{label}</Text>
+            <Text style={styles.value}>{value}</Text>
+          </View>
+        ))}
       </View>
 
       <View style={styles.actions}>
         <Pressable style={styles.primaryButton} onPress={handleEditPlan}>
+          <MaterialCommunityIcons
+            name="pencil"
+            size={19}
+            color={theme.colors.white}
+          />
           <Text style={styles.primaryButtonText}>Editar plan</Text>
         </Pressable>
 
-        <Pressable style={styles.dangerButton} onPress={handleReset}>
-          <Text style={styles.dangerButtonText}>Rehacer onboarding</Text>
+        <Pressable style={styles.secondaryButton} onPress={handleReset}>
+          <MaterialCommunityIcons
+            name="refresh"
+            size={19}
+            color={theme.colors.error}
+          />
+          <Text style={styles.secondaryButtonText}>Rehacer onboarding</Text>
         </Pressable>
       </View>
     </ScrollView>
@@ -223,53 +246,140 @@ const styles = StyleSheet.create({
 
   container: {
     padding: theme.spacing.xxl,
-    paddingBottom: 40,
+    paddingBottom: 96,
+    gap: theme.spacing.xl,
+  },
+
+  hero: {
+    backgroundColor: theme.colors.charcoal,
+    borderRadius: theme.radius.xxl,
+    padding: theme.spacing.xxl,
+    borderWidth: 1,
+    borderColor: theme.colors.black,
+    ...theme.shadows.card,
+  },
+
+  avatar: {
+    width: 62,
+    height: 62,
+    borderRadius: 22,
+    backgroundColor: theme.colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.xl,
+  },
+
+  kicker: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.primaryMuted,
+    fontWeight: theme.fontWeight.bold,
+    marginBottom: spacing.xs,
   },
 
   title: {
     fontSize: theme.typography.titleLG,
+    color: theme.colors.white,
     fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
-    marginBottom: theme.spacing.sm,
+    lineHeight: 32,
   },
 
   subtitle: {
+    marginTop: spacing.sm,
     fontSize: theme.typography.bodyMD,
-    color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.xl,
+    color: "rgba(255, 255, 255, 0.68)",
     lineHeight: 22,
+  },
+
+  metricsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.md,
+  },
+
+  metricCard: {
+    width: "47%",
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.radius.xl,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    padding: spacing.lg,
+    ...theme.shadows.soft,
+  },
+
+  metricIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 14,
+    backgroundColor: theme.colors.primaryLight,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.md,
+  },
+
+  metricLabel: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.textSecondary,
+    marginBottom: 3,
+  },
+
+  metricValue: {
+    minHeight: 40,
+    fontSize: theme.typography.bodyMD,
+    lineHeight: 20,
+    color: theme.colors.text,
+    fontWeight: theme.fontWeight.bold,
   },
 
   card: {
     backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xl,
+    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
     borderWidth: 1,
     borderColor: theme.colors.border,
     ...theme.shadows.card,
-    marginBottom: theme.spacing.xl,
+  },
+
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: spacing.lg,
+    gap: spacing.md,
   },
 
   cardTitle: {
     fontSize: theme.typography.titleSM,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.lg,
+  },
+
+  cardMeta: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.primary,
+    fontWeight: theme.fontWeight.bold,
   },
 
   item: {
-    marginBottom: theme.spacing.lg,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.md,
+    paddingVertical: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border,
   },
 
   label: {
-    fontSize: theme.typography.bodySM,
+    flex: 1,
+    fontSize: theme.typography.bodyMD,
     color: theme.colors.textSecondary,
-    marginBottom: 4,
   },
 
   value: {
-    fontSize: theme.typography.bodyLG,
-    fontWeight: theme.fontWeight.semibold,
+    flex: 1,
+    textAlign: "right",
+    fontSize: theme.typography.bodyMD,
+    fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
   },
 
@@ -278,11 +388,14 @@ const styles = StyleSheet.create({
   },
 
   primaryButton: {
-    height: 54,
+    minHeight: 54,
     borderRadius: theme.radius.lg,
     backgroundColor: theme.colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
   },
 
   primaryButtonText: {
@@ -291,16 +404,21 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.bold,
   },
 
-  dangerButton: {
-    height: 54,
+  secondaryButton: {
+    minHeight: 54,
     borderRadius: theme.radius.lg,
-    backgroundColor: theme.colors.error,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.errorLight,
+    backgroundColor: theme.colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
   },
 
-  dangerButtonText: {
-    color: theme.colors.white,
+  secondaryButtonText: {
+    color: theme.colors.error,
     fontSize: theme.typography.bodyLG,
     fontWeight: theme.fontWeight.bold,
   },

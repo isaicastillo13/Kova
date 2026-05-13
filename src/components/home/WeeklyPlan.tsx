@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { spacing, theme } from "@/src/constants/theme";
 import type { DayWorkout } from "@/src/types/training";
 
@@ -19,31 +20,98 @@ const dayLabels = [
 ];
 
 function getTodayIndex(): number {
-  const jsDay = new Date().getDay(); // domingo = 0
-  return jsDay === 0 ? 6 : jsDay - 1; // lunes = 0
+  const jsDay = new Date().getDay();
+  return jsDay === 0 ? 6 : jsDay - 1;
 }
 
-function getSessionDifficulty(item: DayWorkout): "baja" | "media" | "alta" | "rest" {
+function getSessionDifficulty(
+  item: DayWorkout,
+): "baja" | "media" | "alta" | "rest" {
   if (item.type === "rest") return "rest";
 
   const title = item.title.toLowerCase();
 
-  if (
-    title.includes("intervalos") ||
-    title.includes("tempo")
-  ) {
+  if (title.includes("intervalos") || title.includes("tempo")) {
     return "alta";
   }
 
-  if (
-    title.includes("fondo") ||
-    item.type === "strength" ||
-    item.type === "mixed"
-  ) {
+  if (title.includes("fondo") || item.type === "strength" || item.type === "mixed") {
     return "media";
   }
 
   return "baja";
+}
+
+function getTypeMeta(item: DayWorkout) {
+  switch (item.type) {
+    case "strength":
+      return {
+        label: "Fuerza",
+        icon: "dumbbell",
+        color: theme.colors.purple,
+        bg: theme.colors.purpleLight,
+      };
+    case "swimming":
+      return {
+        label: "Natación",
+        icon: "swim",
+        color: theme.colors.info,
+        bg: theme.colors.infoLight,
+      };
+    case "mixed":
+      return {
+        label: "Mixto",
+        icon: "lightning-bolt",
+        color: theme.colors.warning,
+        bg: theme.colors.warningLight,
+      };
+    case "rest":
+      return {
+        label: "Descanso",
+        icon: "sleep",
+        color: theme.colors.textSecondary,
+        bg: theme.colors.surfaceAlt,
+      };
+    default:
+      return {
+        label: "Running",
+        icon: "run-fast",
+        color: theme.colors.primary,
+        bg: theme.colors.primaryLight,
+      };
+  }
+}
+
+function getDifficultyStyle(difficulty: ReturnType<typeof getSessionDifficulty>) {
+  if (difficulty === "alta") {
+    return {
+      backgroundColor: theme.colors.errorLight,
+      color: theme.colors.error,
+      label: "Alta",
+    };
+  }
+
+  if (difficulty === "media") {
+    return {
+      backgroundColor: theme.colors.warningLight,
+      color: theme.colors.warning,
+      label: "Media",
+    };
+  }
+
+  if (difficulty === "baja") {
+    return {
+      backgroundColor: theme.colors.successLight,
+      color: theme.colors.success,
+      label: "Baja",
+    };
+  }
+
+  return {
+    backgroundColor: theme.colors.surfaceAlt,
+    color: theme.colors.textSecondary,
+    label: "Recuperación",
+  };
 }
 
 export default function WeeklyPlan({ weekPlan, onPressDay }: Props) {
@@ -51,76 +119,68 @@ export default function WeeklyPlan({ weekPlan, onPressDay }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Plan semanal</Text>
+      <View style={styles.header}>
+        <Text style={styles.sectionTitle}>Plan semanal</Text>
+        <Text style={styles.sectionMeta}>{weekPlan.length} días</Text>
+      </View>
 
       <View style={styles.list}>
         {weekPlan.map((item) => {
           const isRest = item.type === "rest";
           const isToday = item.day === todayIndex;
           const difficulty = getSessionDifficulty(item);
+          const typeMeta = getTypeMeta(item);
+          const difficultyStyle = getDifficultyStyle(difficulty);
+          const metric = isRest
+            ? "Sin carga"
+            : item.type === "running" || item.type === "mixed"
+              ? `${item.km ?? 0} km`
+              : `${item.duration ?? 0} min`;
 
           return (
             <Pressable
               key={item.day}
-              style={[
-                styles.card,
-                isToday && styles.todayCard,
-                isRest && styles.restCard,
-              ]}
+              style={[styles.card, isToday && styles.todayCard]}
               onPress={() => onPressDay?.(item)}
             >
-              <View style={styles.left}>
+              <View style={[styles.rail, { backgroundColor: typeMeta.color }]} />
+
+              <View style={[styles.iconWrap, { backgroundColor: typeMeta.bg }]}>
+                <MaterialCommunityIcons
+                  name={typeMeta.icon as never}
+                  size={21}
+                  color={typeMeta.color}
+                />
+              </View>
+
+              <View style={styles.main}>
                 <View style={styles.dayRow}>
                   <Text style={styles.day}>{dayLabels[item.day]}</Text>
                   {isToday && <Text style={styles.todayBadge}>Hoy</Text>}
                 </View>
-
-                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.title} numberOfLines={2}>
+                  {item.title}
+                </Text>
+                <Text style={styles.type}>{typeMeta.label}</Text>
               </View>
 
               <View style={styles.right}>
-                <Text
+                <Text style={styles.metric}>{metric}</Text>
+                <View
                   style={[
-                    styles.type,
-                    isRest && styles.restType,
-                    item.type === "running" && styles.runningType,
-                    item.type === "strength" && styles.strengthType,
-                    item.type === "swimming" && styles.swimmingType,
-                    item.type === "mixed" && styles.mixedType,
+                    styles.difficultyBadge,
+                    { backgroundColor: difficultyStyle.backgroundColor },
                   ]}
                 >
-                  {isRest ? "Descanso" : item.type}
-                </Text>
-
-                <Text style={styles.meta}>
-                  {isRest
-                    ? "—"
-                    : item.type === "running" || item.type === "mixed"
-                    ? `${item.km ?? 0} km`
-                    : `${item.duration ?? 0} min`}
-                </Text>
-
-                {!isRest && (
-                  <View
+                  <Text
                     style={[
-                      styles.difficultyBadge,
-                      difficulty === "baja" && styles.badgeLow,
-                      difficulty === "media" && styles.badgeMedium,
-                      difficulty === "alta" && styles.badgeHigh,
+                      styles.difficultyText,
+                      { color: difficultyStyle.color },
                     ]}
                   >
-                    <Text
-                      style={[
-                        styles.difficultyText,
-                        difficulty === "baja" && styles.badgeLowText,
-                        difficulty === "media" && styles.badgeMediumText,
-                        difficulty === "alta" && styles.badgeHighText,
-                      ]}
-                    >
-                      {difficulty}
-                    </Text>
-                  </View>
-                )}
+                    {difficultyStyle.label}
+                  </Text>
+                </View>
               </View>
             </Pressable>
           );
@@ -132,14 +192,25 @@ export default function WeeklyPlan({ weekPlan, onPressDay }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    gap: spacing.sm,
+    gap: spacing.md,
+  },
+
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 
   sectionTitle: {
     fontSize: theme.typography.titleSM,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
-    marginBottom: spacing.sm,
+  },
+
+  sectionMeta: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.textSecondary,
+    fontWeight: theme.fontWeight.semibold,
   },
 
   list: {
@@ -147,125 +218,101 @@ const styles = StyleSheet.create({
   },
 
   card: {
+    minHeight: 90,
     backgroundColor: theme.colors.white,
     borderRadius: theme.radius.xl,
-    padding: theme.spacing.lg,
+    paddingVertical: theme.spacing.lg,
+    paddingLeft: theme.spacing.lg,
+    paddingRight: theme.spacing.md,
     borderWidth: 1,
     borderColor: theme.colors.border,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    ...theme.shadows.card,
+    overflow: "hidden",
+    ...theme.shadows.soft,
   },
 
   todayCard: {
     borderColor: theme.colors.primary,
-    borderWidth: 1.5,
+    backgroundColor: theme.colors.primarySoft,
   },
 
-  restCard: {
-    backgroundColor: "#FAFAFA",
+  rail: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 5,
   },
 
-  left: {
+  iconWrap: {
+    width: 42,
+    height: 42,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: spacing.md,
+  },
+
+  main: {
     flex: 1,
     paddingRight: spacing.md,
+    minWidth: 0,
   },
 
   dayRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    marginBottom: 4,
+    marginBottom: 3,
   },
 
   day: {
     fontSize: theme.typography.bodySM,
     color: theme.colors.textSecondary,
+    fontWeight: theme.fontWeight.medium,
   },
 
   todayBadge: {
     fontSize: theme.typography.bodySM,
-    color: theme.colors.primary,
+    color: theme.colors.primaryDark,
     fontWeight: theme.fontWeight.bold,
   },
 
   title: {
     fontSize: theme.typography.bodyMD,
-    fontWeight: theme.fontWeight.semibold,
+    lineHeight: 20,
+    fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
+  },
+
+  type: {
+    marginTop: 3,
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.textSecondary,
   },
 
   right: {
     alignItems: "flex-end",
-    gap: 4,
+    gap: spacing.sm,
   },
 
-  type: {
-    fontSize: theme.typography.bodySM,
-    fontWeight: theme.fontWeight.semibold,
-    textTransform: "capitalize",
-  },
-
-  runningType: {
-    color: theme.colors.primary,
-  },
-
-  strengthType: {
-    color: "#7C3AED",
-  },
-
-  swimmingType: {
-    color: "#2563EB",
-  },
-
-  mixedType: {
-    color: "#D97706",
-  },
-
-  restType: {
-    color: theme.colors.textSecondary,
-  },
-
-  meta: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+  metric: {
+    fontSize: theme.typography.bodyMD,
+    color: theme.colors.text,
+    fontWeight: theme.fontWeight.bold,
   },
 
   difficultyBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-    marginTop: 2,
+    minWidth: 68,
+    alignItems: "center",
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 5,
+    borderRadius: theme.radius.pill,
   },
 
   difficultyText: {
     fontSize: 11,
     fontWeight: "700",
-    textTransform: "capitalize",
-  },
-
-  badgeLow: {
-    backgroundColor: "#ECFDF5",
-  },
-
-  badgeLowText: {
-    color: "#059669",
-  },
-
-  badgeMedium: {
-    backgroundColor: "#FFFBEB",
-  },
-
-  badgeMediumText: {
-    color: "#D97706",
-  },
-
-  badgeHigh: {
-    backgroundColor: "#FEF2F2",
-  },
-
-  badgeHighText: {
-    color: "#DC2626",
   },
 });

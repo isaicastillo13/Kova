@@ -1,8 +1,8 @@
 import React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { StyleSheet, Text, View } from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { ProgressBar } from "@/src/components/ProgresBar";
-import { spacing, theme, typography } from "@/src/constants/theme";
+import { spacing, theme } from "@/src/constants/theme";
 
 type Props = {
   unit?: string;
@@ -19,46 +19,68 @@ export default function WeeklyGoalCard({
   progressCurrent,
   progressTotal,
 }: Props) {
+  const progressPercent =
+    progressTotal > 0
+      ? Math.round(Math.min(progressCurrent / progressTotal, 1) * 100)
+      : 0;
+  const remaining = Math.max(progressTotal - progressCurrent, 0);
+  const remainingSessions = Math.max(totalSessions - completedSessions, 0);
+
   return (
     <View style={styles.container}>
-      <View style={styles.summaryRow}>
-        <View style={styles.summaryLeft}>
-          <View style={styles.summaryIconWrapper}>
-            <Image
-              source={require("@/assets/images/iconAppWhite.png")}
-              style={styles.summaryIcon}
-            />
-          </View>
+      <View style={styles.header}>
+        <View style={styles.goalIcon}>
+          <MaterialCommunityIcons
+            name="flag-checkered"
+            size={22}
+            color={theme.colors.white}
+          />
+        </View>
 
-          <View style={styles.kmContainer}>
-            <Text style={styles.cardTitle}>
-              {progressCurrent}
-              <Text
-                style={{
-                  color: theme.colors.textSecondary,
-                  fontSize: typography.titleSM,
-                }}
-              >
-                {" "}
-                / {progressTotal}
-              </Text>
-            </Text>
-            <Text style={styles.cardSubtitle}>{unit}</Text>
-          </View>
+        <View style={styles.headerText}>
+          <Text style={styles.eyebrow}>Meta semanal</Text>
+          <Text style={styles.title}>
+            {progressCurrent}
+            <Text style={styles.titleMuted}> / {progressTotal}</Text>
+            <Text style={styles.unit}> {unit}</Text>
+          </Text>
+        </View>
+
+        <View style={styles.percentPill}>
+          <Text style={styles.percentText}>{progressPercent}%</Text>
         </View>
       </View>
 
-      <Text style={styles.label}>
-        {completedSessions} de {totalSessions} sesiones completadas
-      </Text>
+      <View style={styles.progressBlock}>
+        <View style={styles.progressLabels}>
+          <Text style={styles.progressLabel}>Carga acumulada</Text>
+          <Text style={styles.progressValue}>
+            Faltan {remaining} {unit}
+          </Text>
+        </View>
+        <ProgressBar current={progressCurrent} total={progressTotal} />
+      </View>
 
-      <View style={styles.progressRow}>
-        <View style={styles.progressWrapper}>
-          <ProgressBar current={progressCurrent} total={progressTotal} />
+      <View style={styles.statsRow}>
+        <View style={styles.stat}>
+          <Text style={styles.statValue}>
+            {completedSessions}/{totalSessions}
+          </Text>
+          <Text style={styles.statLabel}>Sesiones</Text>
         </View>
 
-        <View style={styles.trophyWrapper}>
-          <AntDesign name="trophy" size={20} color={theme.colors.primary} />
+        <View style={styles.divider} />
+
+        <View style={styles.stat}>
+          <Text style={styles.statValue}>{remainingSessions}</Text>
+          <Text style={styles.statLabel}>Pendientes</Text>
+        </View>
+
+        <View style={styles.divider} />
+
+        <View style={styles.stat}>
+          <Text style={styles.statValue}>{progressTotal}</Text>
+          <Text style={styles.statLabel}>{unit} objetivo</Text>
         </View>
       </View>
     </View>
@@ -68,83 +90,122 @@ export default function WeeklyGoalCard({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xl,
+    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderLeftWidth: 4,
-    borderLeftColor: theme.colors.primary,
     ...theme.shadows.card,
   },
 
-  summaryRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: spacing.md,
-  },
-
-  summaryLeft: {
+  header: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md,
   },
 
-  summaryIconWrapper: {
+  goalIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: 16,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
 
-  summaryIcon: {
-    width: 24,
-    height: 24,
-  },
-
-  kmContainer: {
-    alignItems: "center",
-  },
-
-  cardTitle: {
-    fontSize: theme.typography.titleMD,
-    fontWeight: theme.fontWeight.bold,
-    color: theme.colors.text,
-    marginBottom: 0,
-    lineHeight: 34,
-  },
-
-  cardSubtitle: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
-    marginTop: 0,
-    lineHeight: 14,
-  },
-
-  label: {
-    fontSize: theme.typography.bodyMD,
-    fontWeight: theme.fontWeight.semibold,
-    color: theme.colors.text,
-    marginBottom: spacing.sm,
-  },
-
-  progressRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-  },
-
-  progressWrapper: {
+  headerText: {
     flex: 1,
   },
 
-  trophyWrapper: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  eyebrow: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.textSecondary,
+    fontWeight: theme.fontWeight.semibold,
+    marginBottom: 2,
+  },
+
+  title: {
+    fontSize: theme.typography.titleMD,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.colors.text,
+  },
+
+  titleMuted: {
+    color: theme.colors.textMuted,
+    fontSize: theme.typography.titleSM,
+  },
+
+  unit: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.typography.bodyMD,
+  },
+
+  percentPill: {
+    minWidth: 54,
+    height: 34,
+    borderRadius: theme.radius.pill,
     backgroundColor: theme.colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: spacing.md,
+  },
+
+  percentText: {
+    color: theme.colors.primaryDark,
+    fontSize: theme.typography.bodySM,
+    fontWeight: theme.fontWeight.bold,
+  },
+
+  progressBlock: {
+    marginTop: spacing.xl,
+    gap: spacing.sm,
+  },
+
+  progressLabels: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: spacing.md,
+  },
+
+  progressLabel: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.textSecondary,
+  },
+
+  progressValue: {
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.text,
+    fontWeight: theme.fontWeight.semibold,
+  },
+
+  statsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border,
+    marginTop: spacing.xl,
+    paddingTop: spacing.lg,
+  },
+
+  stat: {
+    flex: 1,
+  },
+
+  statValue: {
+    fontSize: theme.typography.bodyLG,
+    fontWeight: theme.fontWeight.bold,
+    color: theme.colors.text,
+  },
+
+  statLabel: {
+    marginTop: 2,
+    fontSize: theme.typography.bodySM,
+    color: theme.colors.textSecondary,
+  },
+
+  divider: {
+    width: 1,
+    height: 32,
+    backgroundColor: theme.colors.border,
+    marginHorizontal: spacing.md,
   },
 });

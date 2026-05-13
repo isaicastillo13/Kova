@@ -1,23 +1,35 @@
 export const colors = {
-  primary: "#d00a0c",
-  primaryDark: "#a10809",
-  primaryLight: "#fbe7e7",
+  primary: "#fc4c02",
+  primaryDark: "#b83200",
+  primaryLight: "#fff1e8",
+  primarySoft: "#ffefe5",
+  primaryMuted: "#ffb088",
 
-  background: "#ffffff",
-  surface: "#f8f8f8",
-  border: "#e5e7eb",
+  background: "#f5f3ef",
+  surface: "#ffffff",
+  surfaceAlt: "#fbfaf7",
+  border: "#e7e0d7",
+  borderStrong: "#d7cbbd",
 
-  text: "#404040",
-  textSecondary: "#6b7280",
-  textMuted: "#9ca3af",
+  text: "#23211f",
+  textSecondary: "#6f6860",
+  textMuted: "#a79d93",
 
   success: "#16a34a",
+  successLight: "#dcfce7",
   warning: "#f59e0b",
+  warningLight: "#fff7db",
   error: "#dc2626",
+  errorLight: "#fee2e2",
+  info: "#2563eb",
+  infoLight: "#dbeafe",
+  purple: "#7c3aed",
+  purpleLight: "#ede9fe",
 
   white: "#ffffff",
-  black: "#404040",
-  blue: "#1a1a2e",
+  black: "#171514",
+  charcoal: "#1f1d1b",
+  blue: "#162133",
 };
 
 export const spacing = {
@@ -36,10 +48,12 @@ export const radius = {
   md: 12,
   lg: 16,
   xl: 20,
+  xxl: 28,
   pill: 999,
 };
 
 export const typography = {
+  hero: 40,
   titleXL: 32,
   titleLG: 26,
   titleMD: 22,
@@ -59,10 +73,17 @@ export const fontWeight = {
 export const shadows = {
   card: {
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.07,
+    shadowRadius: 14,
     elevation: 3,
+  },
+  soft: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 1,
   },
 };
 
@@ -77,24 +98,24 @@ export const theme = {
 
 export const Colors = {
   light: {
-    primary: '#d00a0c',
-    background: '#ffffff',
-    text: '#404040',
-    textSecondary: '#6b7280',
-    textMuted: '#9ca3af',
-    border: '#e5e7eb',
+    primary: '#fc4c02',
+    background: '#f5f3ef',
+    text: '#23211f',
+    textSecondary: '#6f6860',
+    textMuted: '#a79d93',
+    border: '#e7e0d7',
     white: '#ffffff',
-    tint: '#d00a0c',
+    tint: '#fc4c02',
   },
   dark: {
-    primary: '#d00a0c',
-    background: '#404040',
+    primary: '#fc4c02',
+    background: '#171514',
     text: '#f3f4f6',
     textSecondary: '#d1d5db',
     textMuted: '#9ca3af',
     border: '#27272a',
     white: '#ffffff',
-    tint: '#d00a0c',
+    tint: '#fc4c02',
   },
 };
 
