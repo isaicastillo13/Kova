@@ -34,7 +34,7 @@ export default function HomeHeader({
 
       <View style={styles.brandPill}>
         <Image
-          source={require("../../../assets/images/iconAppNaranja.png")}
+          source={require("../../../assets/images/iconApp.png")}
           style={styles.logo}
           resizeMode="contain"
         />

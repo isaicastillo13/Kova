@@ -1,9 +1,9 @@
 export const colors = {
-  primary: "#fc4c02",
-  primaryDark: "#b83200",
-  primaryLight: "#fff1e8",
-  primarySoft: "#ffefe5",
-  primaryMuted: "#ffb088",
+  primary: "#d71920",
+  primaryDark: "#9f1118",
+  primaryLight: "#fee7e8",
+  primarySoft: "#fff1f1",
+  primaryMuted: "#ff9ea3",
 
   background: "#f5f3ef",
   surface: "#ffffff",
@@ -98,24 +98,24 @@ export const theme = {
 
 export const Colors = {
   light: {
-    primary: '#fc4c02',
+    primary: '#d71920',
     background: '#f5f3ef',
     text: '#23211f',
     textSecondary: '#6f6860',
     textMuted: '#a79d93',
     border: '#e7e0d7',
     white: '#ffffff',
-    tint: '#fc4c02',
+    tint: '#d71920',
   },
   dark: {
-    primary: '#fc4c02',
+    primary: '#d71920',
     background: '#171514',
     text: '#f3f4f6',
     textSecondary: '#d1d5db',
     textMuted: '#9ca3af',
     border: '#27272a',
     white: '#ffffff',
-    tint: '#fc4c02',
+    tint: '#d71920',
   },
 };
 
