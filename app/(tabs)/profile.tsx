@@ -171,7 +171,7 @@ export default function ProfileScreen() {
       <View style={styles.hero}>
         <View style={styles.avatar}>
           <MaterialCommunityIcons
-            name="account-run"
+            name="run-fast"
             size={34}
             color={theme.colors.white}
           />

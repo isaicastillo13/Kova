@@ -200,6 +200,31 @@ export default function HomeScreen() {
               }}
             />
           </View>
+          <PlanContextCard
+            goal={formattedGoal}
+            raceDistance={formatRaceDistance(raceDistance)}
+            daysPerWeek={trainingDaysPerWeek}
+            duration={formattedDuration}
+            currentWeeklyKm={
+              currentWeeklyKm !== undefined
+                ? `${currentWeeklyKm} km/sem`
+                : "No definido"
+            }
+            longRunKm={
+              longRunKm !== undefined ? `${longRunKm} km` : "No definido"
+            }
+            easyPace={easyPace?.trim() || "No definido"}
+            injuryStatus={formatInjuryStatus(injuryHistory)}
+            level={
+              level === "principiante"
+                ? "Principiante"
+                : level === "intermedio"
+                  ? "Intermedio"
+                  : level === "avanzado"
+                    ? "Avanzado"
+                    : "No definido"
+            }
+          />
         </View>
       </ScrollView>
     </SafeAreaProvider>

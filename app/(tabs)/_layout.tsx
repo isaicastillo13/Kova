@@ -19,20 +19,25 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: theme.colors.white,
           borderTopColor: theme.colors.border,
-          height: 64,
-          paddingBottom: 8,
-          paddingTop: 8,
+          height: 70,
+          paddingBottom: 10,
+          paddingTop: 10,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.05,
+          shadowRadius: 12,
+          elevation: 12,
         },
         tabBarLabelStyle: {
           fontSize: theme.typography.bodySM,
-          fontWeight: theme.fontWeight.medium,
+          fontWeight: theme.fontWeight.semibold,
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Inicio',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={24} name="house.fill" color={color} />
           ),
