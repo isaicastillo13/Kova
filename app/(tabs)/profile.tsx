@@ -1,6 +1,7 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useRouter } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { theme, spacing } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
 import { useOnboardingStore } from "@/src/store/onboarding-store";
@@ -163,6 +164,7 @@ export default function ProfileScreen() {
   ];
 
   return (
+    <SafeAreaView style={styles.screen} edges={["top"]}>
     <ScrollView
       style={styles.screen}
       contentContainerStyle={styles.container}
@@ -235,6 +237,7 @@ export default function ProfileScreen() {
         </Pressable>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -246,7 +249,7 @@ const styles = StyleSheet.create({
 
   container: {
     padding: theme.spacing.xxl,
-    paddingBottom: 96,
+    paddingBottom: 112,
     gap: theme.spacing.xl,
   },
 

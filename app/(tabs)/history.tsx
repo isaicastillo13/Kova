@@ -2,6 +2,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { theme, spacing } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function formatType(type: string) {
   if (type.toLowerCase() === "running") return "Running";
@@ -25,6 +26,7 @@ export default function HistoryScreen() {
   const totalSessions = activities.length;
 
   return (
+    <SafeAreaView style={styles.screen} edges={["top"]}>
     <ScrollView
       style={styles.screen}
       contentContainerStyle={styles.content}
@@ -112,6 +114,7 @@ export default function HistoryScreen() {
         </View>
       )}
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -123,7 +126,7 @@ const styles = StyleSheet.create({
 
   content: {
     padding: theme.spacing.xxl,
-    paddingBottom: 96,
+    paddingBottom: 112,
     gap: theme.spacing.xl,
   },
 

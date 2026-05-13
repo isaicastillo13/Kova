@@ -5,6 +5,7 @@ import { calculateStreak } from "@/src/components/utils/date";
 import { theme, spacing } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const dayLabels = ["L", "M", "X", "J", "V", "S", "D"];
 
@@ -33,6 +34,7 @@ export default function ProgressScreen() {
   const maxBarValue = Math.max(...weekPlan.map((item) => item.km ?? 0), 1);
 
   return (
+    <SafeAreaView style={styles.screen} edges={["top"]}>
     <ScrollView
       style={styles.screen}
       contentContainerStyle={styles.content}
@@ -145,6 +147,7 @@ export default function ProgressScreen() {
         />
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -211,7 +214,7 @@ const styles = StyleSheet.create({
 
   content: {
     padding: theme.spacing.xxl,
-    paddingBottom: 96,
+    paddingBottom: 112,
     gap: theme.spacing.xl,
   },
 

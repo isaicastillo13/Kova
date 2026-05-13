@@ -5,7 +5,6 @@ import QuickHistory from "@/src/components/home/QuickHistory";
 import TodayWorkout from "@/src/components/home/TodayWorkout";
 import WeeklyGoalCard from "@/src/components/home/WeeklyGoalCard";
 import WeeklyPlan from "@/src/components/home/WeeklyPlan";
-import PlanContextCard from "@/src/components/PlanContextCard";
 import {
   calculateStreak,
   getWeekDaysWithLabels,
@@ -13,40 +12,9 @@ import {
 import WeeklyCalendar from "@/src/components/weeklyCalendar";
 import { spacing, theme } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
-import { useOnboardingStore } from "@/src/store/onboarding-store";
 import { useRouter } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-
-function formatRaceDistance(value?: string) {
-  switch (value) {
-    case "5k":
-      return "5K";
-    case "10k":
-      return "10K";
-    case "21k":
-      return "21K";
-    case "42k":
-      return "Maratón";
-    case "general":
-      return "Base aeróbica";
-    default:
-      return "No definido";
-  }
-}
-
-function formatInjuryStatus(value?: string) {
-  switch (value) {
-    case "none":
-      return "Sin molestias";
-    case "minor":
-      return "Molestia leve";
-    case "recent":
-      return "Lesión reciente";
-    default:
-      return "No definido";
-  }
-}
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const {
@@ -83,36 +51,12 @@ export default function HomeScreen() {
 
   const weekDays = getWeekDaysWithLabels(completedDates);
   const router = useRouter();
-  const {
-    goal,
-    level,
-    days,
-    duration,
-    raceDistance,
-    currentWeeklyKm,
-    longRunKm,
-    easyPace,
-    injuryHistory,
-  } = useOnboardingStore();
-  const formattedGoal =
-    goal === "resistencia"
-      ? "Resistencia"
-      : goal === "rendimiento"
-        ? "Rendimiento"
-        : goal === "mantenerme"
-          ? "Mantenerme activo"
-          : goal === "competencia"
-            ? "Competencia"
-            : "No definido";
-
-  const trainingDaysPerWeek = days.length;
-  const formattedDuration = duration ? `${duration} min` : "No definido";
 
   return (
-    <SafeAreaProvider style={styles.screen}>
+    <SafeAreaView style={styles.screen} edges={["top"]}>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 60 }}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.screen}>
@@ -200,34 +144,9 @@ export default function HomeScreen() {
               }}
             />
           </View>
-          <PlanContextCard
-            goal={formattedGoal}
-            raceDistance={formatRaceDistance(raceDistance)}
-            daysPerWeek={trainingDaysPerWeek}
-            duration={formattedDuration}
-            currentWeeklyKm={
-              currentWeeklyKm !== undefined
-                ? `${currentWeeklyKm} km/sem`
-                : "No definido"
-            }
-            longRunKm={
-              longRunKm !== undefined ? `${longRunKm} km` : "No definido"
-            }
-            easyPace={easyPace?.trim() || "No definido"}
-            injuryStatus={formatInjuryStatus(injuryHistory)}
-            level={
-              level === "principiante"
-                ? "Principiante"
-                : level === "intermedio"
-                  ? "Intermedio"
-                  : level === "avanzado"
-                    ? "Avanzado"
-                    : "No definido"
-            }
-          />
         </View>
       </ScrollView>
-    </SafeAreaProvider>
+    </SafeAreaView>
   );
 }
 
@@ -237,9 +156,13 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
 
+  scrollContent: {
+    paddingBottom: 112,
+  },
+
   topSection: {
     backgroundColor: theme.colors.background,
-    paddingTop: spacing.xxl,
+    paddingTop: spacing.lg,
     paddingBottom: spacing.xl,
     paddingHorizontal: spacing.xxl,
     gap: spacing.lg,

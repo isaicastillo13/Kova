@@ -4,7 +4,7 @@ import { useHomeStore } from "@/src/store/home-store";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function getWorkoutIcon(type: string, km: number) {
   const normalizedType = type.toLowerCase();
@@ -76,7 +76,7 @@ export default function WorkoutDetailScreen() {
   const iconName = getWorkoutIcon(workout.type, workout.km);
 
   return (
-    <SafeAreaProvider style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.content}
@@ -163,7 +163,7 @@ export default function WorkoutDetailScreen() {
           )}
         </View>
       </ScrollView>
-    </SafeAreaProvider>
+    </SafeAreaView>
   );
 }
 
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
 
   content: {
     padding: theme.spacing.xxl,
-    paddingBottom: 40,
+    paddingBottom: 48,
     gap: theme.spacing.xl,
   },
 

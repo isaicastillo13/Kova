@@ -17,7 +17,7 @@ import type {
   RaceDistance,
   RunningExperience,
 } from "@/src/types/training";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type OptionItem<T extends string | number> = {
   label: string;
@@ -125,7 +125,7 @@ export default function OnboardingTypeScreen() {
   };
 
   return (
-    <SafeAreaProvider style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.container}
@@ -218,7 +218,7 @@ export default function OnboardingTypeScreen() {
           </Pressable>
         </View>
       </ScrollView>
-    </SafeAreaProvider>
+    </SafeAreaView>
   );
 }
 

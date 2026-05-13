@@ -8,7 +8,7 @@ import {
 import { useRouter } from "expo-router";
 import { spacing, theme } from "@/src/constants/theme";
 import { useOnboardingStore } from "@/src/store/onboarding-store";
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const levels = [
@@ -45,7 +45,7 @@ export default function OnboardingLevelScreen() {
   };
 
   return (
-    <SafeAreaProvider style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.container}>
         <View style={styles.top}>
           <Text style={styles.step}>Paso 2 de 5</Text>
@@ -107,7 +107,7 @@ export default function OnboardingLevelScreen() {
           </Pressable>
         </View>
       </View>
-    </SafeAreaProvider>
+    </SafeAreaView>
   );
 }
 

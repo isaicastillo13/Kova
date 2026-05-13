@@ -8,7 +8,7 @@ import {
 import { useRouter } from "expo-router";
 import { spacing, theme } from "@/src/constants/theme";
 import { useOnboardingStore } from "@/src/store/onboarding-store";
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const goals = [
@@ -29,7 +29,7 @@ export default function OnboardingGoalScreen() {
   };
 
   return (
-    <SafeAreaProvider style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.container}>
         <View style={styles.top}>
           <Text style={styles.step}>Paso 1 de 5</Text>
@@ -76,7 +76,7 @@ export default function OnboardingGoalScreen() {
           <Text style={styles.buttonText}>Continuar</Text>
         </Pressable>
       </View>
-    </SafeAreaProvider>
+    </SafeAreaView>
   );
 }
 
