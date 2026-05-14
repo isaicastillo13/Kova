@@ -1,8 +1,8 @@
 export type ThemeMode = "dark" | "light";
 
 const palette = {
-  orange: "#ff6d29",
-  orangeSoft: "#ffb599",
+  orange: "#C50212",
+  orangeSoft: "#ff5b68",
   orangeDeep: "#a63b00",
   ember: "#453027",
 
