@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { ProgressBar } from "@/src/components/ProgresBar";
+import { Badge, BaseCard } from "@/src/components/ui/kova";
 import { spacing, theme } from "@/src/constants/theme";
 
 type Props = {
@@ -27,13 +28,13 @@ export default function WeeklyGoalCard({
   const remainingSessions = Math.max(totalSessions - completedSessions, 0);
 
   return (
-    <View style={styles.container}>
+    <BaseCard variant="elevated" style={styles.container}>
       <View style={styles.header}>
         <View style={styles.goalIcon}>
           <MaterialCommunityIcons
             name="flag-checkered"
             size={22}
-            color={theme.colors.white}
+            color={theme.colors.onPrimary}
           />
         </View>
 
@@ -46,9 +47,7 @@ export default function WeeklyGoalCard({
           </Text>
         </View>
 
-        <View style={styles.percentPill}>
-          <Text style={styles.percentText}>{progressPercent}%</Text>
-        </View>
+        <Badge label={`${progressPercent}%`} />
       </View>
 
       <View style={styles.progressBlock}>
@@ -58,7 +57,11 @@ export default function WeeklyGoalCard({
             Faltan {remaining} {unit}
           </Text>
         </View>
-        <ProgressBar current={progressCurrent} total={progressTotal} />
+        <ProgressBar
+          current={progressCurrent}
+          total={progressTotal}
+          trackColor={theme.colors.primaryLight}
+        />
       </View>
 
       <View style={styles.statsRow}>
@@ -83,18 +86,13 @@ export default function WeeklyGoalCard({
           <Text style={styles.statLabel}>{unit} objetivo</Text>
         </View>
       </View>
-    </View>
+    </BaseCard>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    ...theme.shadows.card,
   },
 
   header: {
@@ -137,22 +135,6 @@ const styles = StyleSheet.create({
   unit: {
     color: theme.colors.textSecondary,
     fontSize: theme.typography.bodyMD,
-  },
-
-  percentPill: {
-    minWidth: 54,
-    height: 34,
-    borderRadius: theme.radius.pill,
-    backgroundColor: theme.colors.primaryLight,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: spacing.md,
-  },
-
-  percentText: {
-    color: theme.colors.primaryDark,
-    fontSize: theme.typography.bodySM,
-    fontWeight: theme.fontWeight.bold,
   },
 
   progressBlock: {

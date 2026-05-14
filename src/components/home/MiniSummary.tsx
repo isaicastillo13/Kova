@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { BaseCard } from "@/src/components/ui/kova";
 import { theme, spacing } from "@/src/constants/theme";
 
 type Props = {
@@ -17,7 +18,7 @@ export default function MiniSummary({
   totalTime,
 }: Props) {
   return (
-    <View style={styles.container}>
+    <BaseCard variant="glass" compact style={styles.container}>
       <SummaryItem icon="fire" value={String(streakDays)} label="Racha" />
       <View style={styles.divider} />
       <SummaryItem
@@ -27,7 +28,7 @@ export default function MiniSummary({
       />
       <View style={styles.divider} />
       <SummaryItem icon="timer-outline" value={totalTime} label="Tiempo" />
-    </View>
+    </BaseCard>
   );
 }
 
@@ -62,13 +63,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xl,
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.lg,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    ...theme.shadows.soft,
   },
 
   item: {

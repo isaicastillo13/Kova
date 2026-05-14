@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
   },
 
   optionCard: {
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
     borderColor: theme.colors.border,
     borderRadius: theme.radius.xl,
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
   },
 
   optionCardSelected: {
-    borderColor: theme.colors.primary,
+    borderColor: theme.colors.borderAccent,
     backgroundColor: theme.colors.primaryLight,
   },
 
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     fontSize: theme.typography.bodyLG,
     color: theme.colors.text,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
   },
 
   daysRow: {
@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
   },
 
   dayCircleSelected: {
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
   },
 
   dayTextSelected: {
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
     fontWeight: theme.fontWeight.bold,
   },
 
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
   },
 
   secondaryButtonText: {
@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
   },
 
   primaryButtonText: {
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
     fontSize: theme.typography.bodyLG,
     fontWeight: theme.fontWeight.bold,
   },

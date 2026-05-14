@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { IntensityChip, SectionHeader } from "@/src/components/ui/kova";
 import { spacing, theme } from "@/src/constants/theme";
 import type { DayWorkout } from "@/src/types/training";
 
@@ -82,47 +83,12 @@ function getTypeMeta(item: DayWorkout) {
   }
 }
 
-function getDifficultyStyle(difficulty: ReturnType<typeof getSessionDifficulty>) {
-  if (difficulty === "alta") {
-    return {
-      backgroundColor: theme.colors.errorLight,
-      color: theme.colors.error,
-      label: "Alta",
-    };
-  }
-
-  if (difficulty === "media") {
-    return {
-      backgroundColor: theme.colors.warningLight,
-      color: theme.colors.warning,
-      label: "Media",
-    };
-  }
-
-  if (difficulty === "baja") {
-    return {
-      backgroundColor: theme.colors.successLight,
-      color: theme.colors.success,
-      label: "Baja",
-    };
-  }
-
-  return {
-    backgroundColor: theme.colors.surfaceAlt,
-    color: theme.colors.textSecondary,
-    label: "Recuperación",
-  };
-}
-
 export default function WeeklyPlan({ weekPlan, onPressDay }: Props) {
   const todayIndex = getTodayIndex();
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.sectionTitle}>Plan semanal</Text>
-        <Text style={styles.sectionMeta}>{weekPlan.length} días</Text>
-      </View>
+      <SectionHeader title="Plan semanal" meta={`${weekPlan.length} días`} />
 
       <View style={styles.list}>
         {weekPlan.map((item) => {
@@ -130,7 +96,6 @@ export default function WeeklyPlan({ weekPlan, onPressDay }: Props) {
           const isToday = item.day === todayIndex;
           const difficulty = getSessionDifficulty(item);
           const typeMeta = getTypeMeta(item);
-          const difficultyStyle = getDifficultyStyle(difficulty);
           const metric = isRest
             ? "Sin carga"
             : item.type === "running" || item.type === "mixed"
@@ -166,21 +131,10 @@ export default function WeeklyPlan({ weekPlan, onPressDay }: Props) {
 
               <View style={styles.right}>
                 <Text style={styles.metric}>{metric}</Text>
-                <View
-                  style={[
-                    styles.difficultyBadge,
-                    { backgroundColor: difficultyStyle.backgroundColor },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.difficultyText,
-                      { color: difficultyStyle.color },
-                    ]}
-                  >
-                    {difficultyStyle.label}
-                  </Text>
-                </View>
+                <IntensityChip
+                  intensity={difficulty}
+                  label={isRest ? "Recuperación" : undefined}
+                />
               </View>
             </Pressable>
           );
@@ -219,7 +173,7 @@ const styles = StyleSheet.create({
 
   card: {
     minHeight: 90,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radius.xl,
     paddingVertical: theme.spacing.lg,
     paddingLeft: theme.spacing.lg,
@@ -233,7 +187,7 @@ const styles = StyleSheet.create({
   },
 
   todayCard: {
-    borderColor: theme.colors.primary,
+    borderColor: theme.colors.borderAccent,
     backgroundColor: theme.colors.primarySoft,
   },
 
@@ -275,7 +229,7 @@ const styles = StyleSheet.create({
 
   todayBadge: {
     fontSize: theme.typography.bodySM,
-    color: theme.colors.primaryDark,
+    color: theme.colors.primary,
     fontWeight: theme.fontWeight.bold,
   },
 
@@ -303,16 +257,4 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.bold,
   },
 
-  difficultyBadge: {
-    minWidth: 68,
-    alignItems: "center",
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 5,
-    borderRadius: theme.radius.pill,
-  },
-
-  difficultyText: {
-    fontSize: 11,
-    fontWeight: "700",
-  },
 });

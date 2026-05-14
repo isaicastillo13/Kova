@@ -1,4 +1,5 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { BaseCard, SectionHeader } from "@/src/components/ui/kova";
 import { theme, spacing } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
 import { useRouter } from "expo-router";
@@ -82,7 +83,7 @@ export default function WorkoutDetailScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.hero}>
+        <BaseCard variant="hero" style={styles.hero}>
           <Pressable style={styles.backButton} onPress={() => router.back()}>
             <MaterialCommunityIcons
               name="chevron-left"
@@ -95,7 +96,7 @@ export default function WorkoutDetailScreen() {
             <MaterialCommunityIcons
               name={iconName as never}
               size={30}
-              color={theme.colors.white}
+              color={theme.colors.onPrimary}
             />
           </View>
 
@@ -104,9 +105,9 @@ export default function WorkoutDetailScreen() {
           <Text style={styles.meta}>
             {workout.day} · {workout.duration} · {workout.difficulty}
           </Text>
-        </View>
+        </BaseCard>
 
-        <View style={styles.summaryCard}>
+        <BaseCard variant="elevated" style={styles.summaryCard}>
           <Metric
             label={isRestDay ? "Enfoque" : "Objetivo"}
             value={workout.metric}
@@ -124,16 +125,20 @@ export default function WorkoutDetailScreen() {
               />
             </>
           )}
-        </View>
+        </BaseCard>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            {isRestDay ? "Detalle del día" : "Bloques del entrenamiento"}
-          </Text>
+          <SectionHeader
+            title={isRestDay ? "Detalle del día" : "Bloques del entrenamiento"}
+          />
 
           {workout.details && workout.details.length > 0 ? (
             workout.details.map((block, index) => (
-              <View key={`${block.type}-${index}`} style={styles.blockCard}>
+              <BaseCard
+                key={`${block.type}-${index}`}
+                compact
+                style={styles.blockCard}
+              >
                 <View style={styles.blockIcon}>
                   <MaterialCommunityIcons
                     name={getBlockIcon(block.type) as never}
@@ -147,10 +152,10 @@ export default function WorkoutDetailScreen() {
                     {block.description}
                   </Text>
                 </View>
-              </View>
+              </BaseCard>
             ))
           ) : (
-            <View style={styles.emptyCard}>
+            <BaseCard compact style={styles.emptyCard}>
               <MaterialCommunityIcons
                 name="clipboard-text-outline"
                 size={24}
@@ -159,7 +164,7 @@ export default function WorkoutDetailScreen() {
               <Text style={styles.emptyText}>
                 Este entrenamiento todavía no tiene detalle disponible.
               </Text>
-            </View>
+            </BaseCard>
           )}
         </View>
       </ScrollView>
@@ -210,12 +215,7 @@ const styles = StyleSheet.create({
   },
 
   hero: {
-    backgroundColor: theme.colors.charcoal,
-    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
-    borderWidth: 1,
-    borderColor: theme.colors.black,
-    ...theme.shadows.card,
   },
 
   backButton: {
@@ -260,12 +260,7 @@ const styles = StyleSheet.create({
   },
 
   summaryCard: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    ...theme.shadows.card,
   },
 
   metricRow: {
@@ -318,14 +313,9 @@ const styles = StyleSheet.create({
   },
 
   blockCard: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xl,
     padding: theme.spacing.xl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     flexDirection: "row",
     gap: spacing.md,
-    ...theme.shadows.soft,
   },
 
   blockIcon: {
@@ -356,11 +346,7 @@ const styles = StyleSheet.create({
   },
 
   emptyCard: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xl,
     padding: theme.spacing.xl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md,

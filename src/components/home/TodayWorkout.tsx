@@ -70,7 +70,7 @@ export default function TodayWorkout({
             <MaterialCommunityIcons
               name={iconName}
               size={24}
-              color={theme.colors.white}
+              color={theme.colors.onPrimary}
             />
           </View>
           <View>
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
     borderWidth: 1,
-    borderColor: theme.colors.black,
+    borderColor: theme.colors.borderAccent,
     ...theme.shadows.card,
   },
 
@@ -174,8 +174,8 @@ const styles = StyleSheet.create({
   },
 
   restContainer: {
-    backgroundColor: theme.colors.blue,
-    borderColor: theme.colors.blue,
+    backgroundColor: theme.colors.surfaceAlt,
+    borderColor: theme.colors.info,
   },
 
   header: {
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
 
   actionText: {
     fontSize: theme.typography.bodyMD,
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
     fontWeight: theme.fontWeight.bold,
   },
 

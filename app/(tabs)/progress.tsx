@@ -1,6 +1,7 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import type { ComponentProps } from "react";
 import { ProgressBar } from "@/src/components/ProgresBar";
+import { BaseCard, SectionHeader } from "@/src/components/ui/kova";
 import { calculateStreak } from "@/src/components/utils/date";
 import { theme, spacing } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
@@ -40,7 +41,7 @@ export default function ProgressScreen() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.hero}>
+      <BaseCard variant="hero" style={styles.hero}>
         <Text style={styles.kicker}>Progreso</Text>
         <Text style={styles.title}>Tu carga semanal</Text>
         <Text style={styles.heroValue}>{progressPercent}%</Text>
@@ -59,7 +60,7 @@ export default function ProgressScreen() {
             {weeklyGoal.completedSessions}/{weeklyGoal.totalSessions} sesiones
           </Text>
         </View>
-      </View>
+      </BaseCard>
 
       <View style={styles.metricsGrid}>
         <MetricCard
@@ -88,11 +89,8 @@ export default function ProgressScreen() {
         />
       </View>
 
-      <View style={styles.card}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Distribución de carga</Text>
-          <Text style={styles.sectionMeta}>Semana actual</Text>
-        </View>
+      <BaseCard variant="elevated" style={styles.card}>
+        <SectionHeader title="Distribución de carga" meta="Semana actual" />
 
         <View style={styles.chart}>
           {weekPlan.map((item) => {
@@ -125,10 +123,10 @@ export default function ProgressScreen() {
             );
           })}
         </View>
-      </View>
+      </BaseCard>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Lectura rápida</Text>
+      <BaseCard variant="elevated" style={styles.card}>
+        <SectionHeader title="Lectura rápida" />
 
         <InsightRow
           icon="chart-line"
@@ -145,7 +143,7 @@ export default function ProgressScreen() {
           title="Recuperación"
           copy="Alterna los días intensos con baja carga para sostener el progreso."
         />
-      </View>
+      </BaseCard>
     </ScrollView>
     </SafeAreaView>
   );
@@ -219,12 +217,7 @@ const styles = StyleSheet.create({
   },
 
   hero: {
-    backgroundColor: theme.colors.charcoal,
-    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
-    borderWidth: 1,
-    borderColor: theme.colors.black,
-    ...theme.shadows.card,
   },
 
   kicker: {
@@ -270,7 +263,7 @@ const styles = StyleSheet.create({
 
   metricCard: {
     width: "47%",
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radius.xl,
     borderWidth: 1,
     borderColor: theme.colors.border,
@@ -300,12 +293,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    ...theme.shadows.card,
   },
 
   sectionHeader: {

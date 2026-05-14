@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     marginHorizontal: spacing.xxl,
     marginTop: spacing.md,
     marginBottom: 40,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
     borderWidth: 1,

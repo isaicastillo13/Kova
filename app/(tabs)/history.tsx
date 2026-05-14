@@ -1,4 +1,5 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { BaseCard } from "@/src/components/ui/kova";
 import { theme, spacing } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -40,7 +41,7 @@ export default function HistoryScreen() {
         </Text>
       </View>
 
-      <View style={styles.summary}>
+      <BaseCard variant="hero" style={styles.summary}>
         <View style={styles.summaryItem}>
           <Text style={styles.summaryValue}>{totalSessions}</Text>
           <Text style={styles.summaryLabel}>Sesiones</Text>
@@ -57,10 +58,10 @@ export default function HistoryScreen() {
           </Text>
           <Text style={styles.summaryLabel}>Semana</Text>
         </View>
-      </View>
+      </BaseCard>
 
       {activities.length === 0 ? (
-        <View style={styles.emptyCard}>
+        <BaseCard variant="elevated" style={styles.emptyCard}>
           <View style={styles.emptyIcon}>
             <MaterialCommunityIcons
               name="clipboard-text-clock"
@@ -73,11 +74,11 @@ export default function HistoryScreen() {
             Cuando marques un entrenamiento como completado, aparecerá aquí con
             sus métricas principales.
           </Text>
-        </View>
+        </BaseCard>
       ) : (
         <View style={styles.list}>
           {activities.map((item) => (
-            <View key={item.id} style={styles.activityCard}>
+            <BaseCard key={item.id} compact style={styles.activityCard}>
               <View style={styles.timelineDot} />
               <View style={styles.iconWrap}>
                 <MaterialCommunityIcons
@@ -109,7 +110,7 @@ export default function HistoryScreen() {
                   {item.subtitle}
                 </Text>
               </View>
-            </View>
+            </BaseCard>
           ))}
         </View>
       )}
@@ -153,12 +154,9 @@ const styles = StyleSheet.create({
   },
 
   summary: {
-    backgroundColor: theme.colors.charcoal,
-    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
     flexDirection: "row",
     alignItems: "center",
-    ...theme.shadows.card,
   },
 
   summaryItem: {
@@ -185,13 +183,8 @@ const styles = StyleSheet.create({
   },
 
   emptyCard: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     alignItems: "center",
-    ...theme.shadows.card,
   },
 
   emptyIcon: {
@@ -224,14 +217,8 @@ const styles = StyleSheet.create({
 
   activityCard: {
     flexDirection: "row",
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     padding: spacing.lg,
     position: "relative",
-    overflow: "hidden",
-    ...theme.shadows.soft,
   },
 
   timelineDot: {

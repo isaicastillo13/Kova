@@ -5,6 +5,7 @@ import QuickHistory from "@/src/components/home/QuickHistory";
 import TodayWorkout from "@/src/components/home/TodayWorkout";
 import WeeklyGoalCard from "@/src/components/home/WeeklyGoalCard";
 import WeeklyPlan from "@/src/components/home/WeeklyPlan";
+import { BaseCard, ProgressRing, SectionHeader } from "@/src/components/ui/kova";
 import {
   calculateStreak,
   getWeekDaysWithLabels,
@@ -63,20 +64,33 @@ export default function HomeScreen() {
           <View style={styles.topSection}>
             <HomeHeader name="Isaias" greeting="Buenos días" />
 
-            <View style={styles.weekHero}>
-              <Text style={styles.weekHeroLabel}>Semana activa</Text>
-              <Text style={styles.weekHeroTitle}>
-                {weeklyGoal.progressCurrent}
-                <Text style={styles.weekHeroMuted}>
-                  /{weeklyGoal.progressTotal}
-                </Text>{" "}
-                {weeklyGoal.unit}
-              </Text>
-              <Text style={styles.weekHeroCopy}>
-                {weeklyGoal.completedSessions} sesiones completas ·{" "}
-                {completionPercent}% de la carga
-              </Text>
-            </View>
+            <BaseCard variant="hero" style={styles.weekHero}>
+              <View style={styles.weekHeroContent}>
+                <View style={styles.weekHeroText}>
+                  <Text style={styles.weekHeroLabel}>Semana activa</Text>
+                  <Text style={styles.weekHeroTitle}>
+                    {weeklyGoal.progressCurrent}
+                    <Text style={styles.weekHeroMuted}>
+                      /{weeklyGoal.progressTotal}
+                    </Text>{" "}
+                    {weeklyGoal.unit}
+                  </Text>
+                  <Text style={styles.weekHeroCopy}>
+                    {weeklyGoal.completedSessions} sesiones completas ·{" "}
+                    {completionPercent}% de la carga
+                  </Text>
+                </View>
+
+                <ProgressRing
+                  progress={completionPercent / 100}
+                  size={82}
+                  strokeWidth={7}
+                  trackColor="rgba(255, 255, 255, 0.12)"
+                >
+                  <Text style={styles.ringValue}>{completionPercent}%</Text>
+                </ProgressRing>
+              </View>
+            </BaseCard>
 
             <HomeInsight
               streakDays={streakDays}
@@ -108,7 +122,7 @@ export default function HomeScreen() {
             />
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Tu racha</Text>
+              <SectionHeader title="Tu racha" />
               <WeeklyCalendar days={weekDays} />
             </View>
 
@@ -122,10 +136,10 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.content}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Última actividad</Text>
-              <Text style={styles.sectionMeta}>{activities.length} registros</Text>
-            </View>
+            <SectionHeader
+              title="Última actividad"
+              meta={`${activities.length} registros`}
+            />
 
             <ScrollView
               horizontal
@@ -165,7 +179,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     paddingBottom: spacing.xl,
     paddingHorizontal: spacing.xxl,
-    gap: spacing.lg,
+    gap: spacing.xl,
   },
 
   topRow: {
@@ -204,12 +218,19 @@ const styles = StyleSheet.create({
   },
 
   weekHero: {
-    backgroundColor: theme.colors.charcoal,
-    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
-    borderWidth: 1,
-    borderColor: theme.colors.black,
-    ...theme.shadows.card,
+  },
+
+  weekHeroContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.lg,
+  },
+
+  weekHeroText: {
+    flex: 1,
+    minWidth: 0,
   },
 
   weekHeroLabel: {
@@ -220,9 +241,9 @@ const styles = StyleSheet.create({
   },
 
   weekHeroTitle: {
-    fontSize: theme.typography.hero,
-    lineHeight: 46,
-    fontWeight: theme.fontWeight.bold,
+    fontSize: theme.typography.display,
+    lineHeight: 42,
+    fontWeight: theme.fontWeight.extrabold,
     color: theme.colors.white,
   },
 
@@ -236,5 +257,11 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.bodySM,
     color: "rgba(255, 255, 255, 0.68)",
     fontWeight: theme.fontWeight.semibold,
+  },
+
+  ringValue: {
+    color: theme.colors.white,
+    fontSize: theme.typography.bodyMD,
+    fontWeight: theme.fontWeight.bold,
   },
 });

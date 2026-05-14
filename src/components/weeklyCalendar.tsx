@@ -25,7 +25,7 @@ export default function WeeklyCalendar({ days }: WeeklyCalendarProps) {
 
           {day.isCompleted && (
             <View style={styles.checkBadge}>
-              <AntDesign name="check" size={10} color={theme.colors.white} />
+              <AntDesign name="check" size={10} color={theme.colors.onPrimary} />
             </View>
           )}
 
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
 
   todayLabel: {
-    color: theme.colors.primaryDark,
+    color: theme.colors.primary,
     fontWeight: theme.fontWeight.bold,
   },
 
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     borderRadius: 19,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
   },
 
@@ -92,8 +92,8 @@ const styles = StyleSheet.create({
   },
 
   completedCircle: {
-    backgroundColor: theme.colors.charcoal,
-    borderColor: theme.colors.charcoal,
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
   },
 
   todayCircle: {
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   },
 
   completedText: {
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
   },
 
   todayText: {
@@ -128,6 +128,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     zIndex: 2,
     borderWidth: 2,
-    borderColor: theme.colors.white,
+    borderColor: theme.colors.surface,
   },
 });

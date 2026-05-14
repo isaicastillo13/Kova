@@ -1,4 +1,5 @@
 import { spacing, theme } from "@/src/constants/theme";
+import { Badge, BaseCard } from "@/src/components/ui/kova";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -35,7 +36,7 @@ function getActivityIcon(type: string) {
 export default function QuickHistory({ activities }: Props) {
   if (!activities.length) {
     return (
-      <View style={styles.emptyCard}>
+      <BaseCard compact style={styles.emptyCard}>
         <View style={styles.emptyIcon}>
           <MaterialCommunityIcons
             name="run"
@@ -49,14 +50,14 @@ export default function QuickHistory({ activities }: Props) {
             Completa tu primer entrenamiento para empezar a construir historial.
           </Text>
         </View>
-      </View>
+      </BaseCard>
     );
   }
 
   return (
     <View style={styles.container}>
       {activities.map((item) => (
-        <View key={item.id} style={styles.card}>
+        <BaseCard key={item.id} compact style={styles.card}>
           <View style={styles.topRow}>
             <View style={styles.iconWrap}>
               <MaterialCommunityIcons
@@ -67,7 +68,7 @@ export default function QuickHistory({ activities }: Props) {
             </View>
             <View style={styles.dateBlock}>
               <Text style={styles.date}>{item.dateLabel}</Text>
-              <Text style={styles.badge}>{formatType(item.type)}</Text>
+              <Badge label={formatType(item.type)} />
             </View>
           </View>
 
@@ -86,7 +87,7 @@ export default function QuickHistory({ activities }: Props) {
           <Text style={styles.subtitle} numberOfLines={1}>
             {item.subtitle}
           </Text>
-        </View>
+        </BaseCard>
       ))}
     </View>
   );
@@ -100,12 +101,7 @@ const styles = StyleSheet.create({
 
   card: {
     width: 220,
-    backgroundColor: theme.colors.white,
     padding: spacing.lg,
-    borderRadius: theme.radius.xl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    ...theme.shadows.soft,
   },
 
   topRow: {
@@ -132,13 +128,6 @@ const styles = StyleSheet.create({
   date: {
     fontSize: theme.typography.bodySM,
     color: theme.colors.textSecondary,
-  },
-
-  badge: {
-    marginTop: 1,
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.text,
-    fontWeight: theme.fontWeight.bold,
   },
 
   title: {
@@ -177,11 +166,7 @@ const styles = StyleSheet.create({
 
   emptyCard: {
     width: 300,
-    backgroundColor: theme.colors.white,
     padding: spacing.lg,
-    borderRadius: theme.radius.xl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md,

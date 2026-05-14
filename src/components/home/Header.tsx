@@ -41,7 +41,7 @@ export default function HomeHeader({
         <MaterialCommunityIcons
           name="chevron-right"
           size={18}
-          color={theme.colors.textSecondary}
+          color={theme.colors.primary}
         />
       </View>
     </View>
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: 18,
     borderWidth: 2,
-    borderColor: theme.colors.white,
+    borderColor: theme.colors.borderStrong,
   },
 
   textContainer: {
@@ -93,9 +93,9 @@ const styles = StyleSheet.create({
     height: 44,
     minWidth: 76,
     borderRadius: theme.radius.pill,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surfaceGlass,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.borderStrong,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

@@ -3,6 +3,7 @@ import React from 'react';
 
 import { HapticTab } from '@/src/components/haptic-tab';
 import { IconSymbol } from '@/src/components/ui/icon-symbol';
+import { FloatingTabBarItem } from '@/src/components/ui/kova';
 import { theme } from '@/src/constants/theme';
 import Entypo from '@expo/vector-icons/Entypo';
 import Octicons from '@expo/vector-icons/Octicons';
@@ -21,16 +22,22 @@ export default function TabLayout() {
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textMuted,
         tabBarStyle: {
-          backgroundColor: theme.colors.white,
-          borderTopColor: theme.colors.border,
-          height: 60 + bottomInset,
-          paddingBottom: bottomInset,
+          position: 'absolute',
+          left: 18,
+          right: 18,
+          bottom: Math.max(bottomInset - 4, 10),
+          height: 62,
+          paddingBottom: 8,
           paddingTop: 8,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.05,
-          shadowRadius: 12,
-          elevation: 12,
+          borderTopWidth: 0,
+          borderWidth: 1,
+          borderColor: theme.colors.borderStrong,
+          borderRadius: theme.radius.xxl,
+          backgroundColor: theme.colors.surfaceGlass,
+          ...theme.shadows.floating,
+        },
+        tabBarItemStyle: {
+          borderRadius: theme.radius.xl,
         },
         tabBarLabelStyle: {
           fontSize: theme.typography.bodySM,
@@ -42,8 +49,11 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Inicio',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={24} name="house.fill" color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <FloatingTabBarItem
+              focused={focused}
+              icon={<IconSymbol size={23} name="house.fill" color={color} />}
+            />
           ),
         }}
       />
@@ -51,8 +61,11 @@ export default function TabLayout() {
         name="progress"
         options={{
           title: 'Progreso',
-          tabBarIcon: ({ color }) => (
-            <Entypo name="progress-two" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <FloatingTabBarItem
+              focused={focused}
+              icon={<Entypo name="progress-two" size={23} color={color} />}
+            />
           ),
         }}
       />
@@ -60,8 +73,11 @@ export default function TabLayout() {
         name="history"
         options={{
           title: 'Historial',
-          tabBarIcon: ({ color }) => (
-            <Octicons name="history" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <FloatingTabBarItem
+              focused={focused}
+              icon={<Octicons name="history" size={22} color={color} />}
+            />
           ),
         }}
       />
@@ -69,8 +85,13 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Perfil',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="account" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <FloatingTabBarItem
+              focused={focused}
+              icon={
+                <MaterialCommunityIcons name="account" size={24} color={color} />
+              }
+            />
           ),
         }}
       />

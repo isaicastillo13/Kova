@@ -124,7 +124,7 @@ export default function RegisterScreen() {
               disabled={isButtonDisabled}
             >
               {isLoading ? (
-                <ActivityIndicator color={theme.colors.white} />
+                <ActivityIndicator color={theme.colors.onPrimary} />
               ) : (
                 <Text style={styles.primaryButtonText}>Crear cuenta</Text>
               )}
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.lg,
     fontSize: theme.typography.bodyLG,
     color: theme.colors.text,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
   },
   errorText: {
     color: theme.colors.error,
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   primaryButtonText: {
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
     fontSize: theme.typography.bodyLG,
     fontWeight: theme.fontWeight.bold,
   },

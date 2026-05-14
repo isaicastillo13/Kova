@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { BaseCard } from "@/src/components/ui/kova";
 import { spacing, theme } from "@/src/constants/theme";
 
 type TodayWorkout = {
@@ -126,7 +127,7 @@ export default function HomeInsight({
         : theme.colors.primary;
 
   return (
-    <View style={styles.banner}>
+    <BaseCard variant="glass" compact style={styles.banner}>
       <View style={[styles.iconWrap, { backgroundColor: `${iconColor}18` }]}>
         {insight.family === "ion" ? (
           <Ionicons name={insight.icon as never} size={22} color={iconColor} />
@@ -143,16 +144,12 @@ export default function HomeInsight({
         <Text style={styles.label}>{insight.label}</Text>
         <Text style={styles.message}>{insight.text}</Text>
       </View>
-    </View>
+    </BaseCard>
   );
 }
 
 const styles = StyleSheet.create({
   banner: {
-    backgroundColor: theme.colors.surfaceAlt,
-    borderRadius: theme.radius.xl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     padding: theme.spacing.lg,
     flexDirection: "row",
     alignItems: "center",

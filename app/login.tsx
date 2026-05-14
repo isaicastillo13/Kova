@@ -166,7 +166,7 @@ export default function LoginScreen() {
               disabled={isButtonDisabled}
             >
               {isLoading ? (
-                <ActivityIndicator color={theme.colors.white} />
+                <ActivityIndicator color={theme.colors.onPrimary} />
               ) : (
                 <Text style={styles.loginButtonText}>Iniciar sesión</Text>
               )}
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   card: {
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radius.xl,
     padding: theme.spacing.xxl,
     borderWidth: 1,
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.lg,
     fontSize: theme.typography.bodyLG,
     color: theme.colors.text,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
   },
   passwordWrapper: {
     height: 52,
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
   },
   passwordInput: {
     flex: 1,
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   loginButtonText: {
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
     fontSize: theme.typography.bodyLG,
     fontWeight: theme.fontWeight.bold,
   },

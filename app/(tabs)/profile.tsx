@@ -1,4 +1,5 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { BaseCard, MetricCard } from "@/src/components/ui/kova";
 import { useRouter } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -170,12 +171,12 @@ export default function ProfileScreen() {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.hero}>
+      <BaseCard variant="hero" style={styles.hero}>
         <View style={styles.avatar}>
           <MaterialCommunityIcons
             name="run-fast"
             size={34}
-            color={theme.colors.white}
+            color={theme.colors.onPrimary}
           />
         </View>
         <Text style={styles.kicker}>Perfil de atleta</Text>
@@ -183,27 +184,27 @@ export default function ProfileScreen() {
         <Text style={styles.subtitle}>
           Ajusta el plan cuando cambien tus objetivos, disponibilidad o carga.
         </Text>
-      </View>
+      </BaseCard>
 
       <View style={styles.metricsGrid}>
         {profileMetrics.map((item) => (
-          <View key={item.label} style={styles.metricCard}>
-            <View style={styles.metricIcon}>
+          <MetricCard
+            key={item.label}
+            label={item.label}
+            value={item.value}
+            icon={
               <MaterialCommunityIcons
                 name={item.icon}
                 size={20}
                 color={theme.colors.primary}
               />
-            </View>
-            <Text style={styles.metricLabel}>{item.label}</Text>
-            <Text style={styles.metricValue} numberOfLines={2}>
-              {item.value}
-            </Text>
-          </View>
+            }
+            style={styles.metricCard}
+          />
         ))}
       </View>
 
-      <View style={styles.card}>
+      <BaseCard variant="elevated" style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>Datos del plan</Text>
           <Text style={styles.cardMeta}>Actual</Text>
@@ -215,14 +216,14 @@ export default function ProfileScreen() {
             <Text style={styles.value}>{value}</Text>
           </View>
         ))}
-      </View>
+      </BaseCard>
 
       <View style={styles.actions}>
         <Pressable style={styles.primaryButton} onPress={handleEditPlan}>
           <MaterialCommunityIcons
             name="pencil"
             size={19}
-            color={theme.colors.white}
+            color={theme.colors.onPrimary}
           />
           <Text style={styles.primaryButtonText}>Editar plan</Text>
         </Pressable>
@@ -254,12 +255,7 @@ const styles = StyleSheet.create({
   },
 
   hero: {
-    backgroundColor: theme.colors.charcoal,
-    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
-    borderWidth: 1,
-    borderColor: theme.colors.black,
-    ...theme.shadows.card,
   },
 
   avatar: {
@@ -301,45 +297,10 @@ const styles = StyleSheet.create({
 
   metricCard: {
     width: "47%",
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    padding: spacing.lg,
-    ...theme.shadows.soft,
-  },
-
-  metricIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 14,
-    backgroundColor: theme.colors.primaryLight,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: spacing.md,
-  },
-
-  metricLabel: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
-    marginBottom: 3,
-  },
-
-  metricValue: {
-    minHeight: 40,
-    fontSize: theme.typography.bodyMD,
-    lineHeight: 20,
-    color: theme.colors.text,
-    fontWeight: theme.fontWeight.bold,
   },
 
   card: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.radius.xxl,
     padding: theme.spacing.xxl,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    ...theme.shadows.card,
   },
 
   cardHeader: {
@@ -402,7 +363,7 @@ const styles = StyleSheet.create({
   },
 
   primaryButtonText: {
-    color: theme.colors.white,
+    color: theme.colors.onPrimary,
     fontSize: theme.typography.bodyLG,
     fontWeight: theme.fontWeight.bold,
   },
@@ -412,7 +373,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.lg,
     borderWidth: 1,
     borderColor: theme.colors.errorLight,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.surface,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
