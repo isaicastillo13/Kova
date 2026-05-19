@@ -71,7 +71,7 @@ const sharedFontWeight = {
 };
 
 function createColors(mode: ThemeMode) {
-  const isDark = mode === "dark";
+  const isDark = mode === "light";
 
   return {
     mode,
