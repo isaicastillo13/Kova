@@ -19,29 +19,31 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarActiveTintColor: theme.colors.primary,
+        tabBarActiveTintColor: theme.colors.onPrimary,
         tabBarInactiveTintColor: theme.colors.textMuted,
-        // tabBarStyle: {
-
-        //   left: 18,
-        //   right: 18,
-        //   bottom: Math.max(bottomInset - 4, 10),
-        //   height: 62,
-        //   paddingBottom: 8,
-        //   paddingTop: 8,
-        //   borderTopWidth: 0,
-        //   borderWidth: 1,
-        //   borderColor: theme.colors.borderStrong,
-        //   // borderRadius: theme.radius.xxl,
-        //   backgroundColor: theme.colors.background,
-        //   ...theme.shadows.floating,
-        // },
+        tabBarStyle: {
+          position: 'absolute',
+          left: 18,
+          right: 18,
+          bottom: Math.max(bottomInset - 2, 12),
+          height: 68,
+          paddingBottom: 9,
+          paddingTop: 9,
+          borderTopWidth: 0,
+          borderWidth: 1,
+          borderColor: theme.colors.borderStrong,
+          borderRadius: theme.radius.xxl,
+          backgroundColor: theme.colors.surfaceGlass,
+          ...theme.shadows.floating,
+        },
         tabBarItemStyle: {
           borderRadius: theme.radius.xl,
+          paddingVertical: 2,
         },
         tabBarLabelStyle: {
           fontSize: theme.typography.bodySM,
           fontWeight: theme.fontWeight.semibold,
+          marginTop: 2,
         },
       }}
     >

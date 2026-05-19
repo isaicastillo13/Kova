@@ -60,7 +60,7 @@ export default function WeeklyGoalCard({
         <ProgressBar
           current={progressCurrent}
           total={progressTotal}
-          trackColor={theme.colors.primaryLight}
+          trackColor={theme.colors.surfaceMuted}
         />
       </View>
 
@@ -93,6 +93,7 @@ export default function WeeklyGoalCard({
 const styles = StyleSheet.create({
   container: {
     padding: theme.spacing.xxl,
+    gap: theme.spacing.lg,
   },
 
   header: {
@@ -102,12 +103,13 @@ const styles = StyleSheet.create({
   },
 
   goalIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
+    width: 50,
+    height: 50,
+    borderRadius: 18,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
+    ...theme.shadows.soft,
   },
 
   headerText: {
@@ -138,7 +140,6 @@ const styles = StyleSheet.create({
   },
 
   progressBlock: {
-    marginTop: spacing.xl,
     gap: spacing.sm,
   },
 
@@ -151,6 +152,7 @@ const styles = StyleSheet.create({
   progressLabel: {
     fontSize: theme.typography.bodySM,
     color: theme.colors.textSecondary,
+    fontWeight: theme.fontWeight.semibold,
   },
 
   progressValue: {
@@ -164,12 +166,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
-    marginTop: spacing.xl,
     paddingTop: spacing.lg,
   },
 
   stat: {
     flex: 1,
+    minWidth: 0,
   },
 
   statValue: {

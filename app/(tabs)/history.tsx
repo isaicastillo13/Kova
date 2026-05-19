@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
 
   content: {
     padding: theme.spacing.xxl,
-    paddingBottom: 112,
+    paddingBottom: 126,
     gap: theme.spacing.xl,
   },
 
@@ -137,14 +137,15 @@ const styles = StyleSheet.create({
 
   kicker: {
     fontSize: theme.typography.bodySM,
-    color: theme.colors.primary,
+    color: theme.colors.primaryMuted,
     fontWeight: theme.fontWeight.bold,
   },
 
   title: {
-    fontSize: theme.typography.titleLG,
+    fontSize: theme.typography.titleXL,
+    lineHeight: 36,
     color: theme.colors.text,
-    fontWeight: theme.fontWeight.bold,
+    fontWeight: theme.fontWeight.extrabold,
   },
 
   subtitle: {
@@ -157,6 +158,7 @@ const styles = StyleSheet.create({
     padding: theme.spacing.xxl,
     flexDirection: "row",
     alignItems: "center",
+    minHeight: 126,
   },
 
   summaryItem: {
@@ -219,6 +221,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: spacing.lg,
     position: "relative",
+    borderColor: theme.colors.borderStrong,
   },
 
   timelineDot: {

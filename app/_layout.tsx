@@ -1,5 +1,6 @@
 import {
   DarkTheme,
+  DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
 import { Stack } from "expo-router";
@@ -14,10 +15,11 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
+  const baseNavigationTheme = theme.mode === "dark" ? DarkTheme : DefaultTheme;
   const navigationTheme = {
-    ...DarkTheme,
+    ...baseNavigationTheme,
     colors: {
-      ...DarkTheme.colors,
+      ...baseNavigationTheme.colors,
       primary: theme.colors.primary,
       background: theme.colors.background,
       card: theme.colors.surface,

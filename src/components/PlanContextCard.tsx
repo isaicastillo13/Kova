@@ -81,10 +81,10 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     marginBottom: 40,
     backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.xxl,
+    borderRadius: theme.radius.card,
     padding: theme.spacing.xxl,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.borderStrong,
     ...theme.shadows.card,
   },
 
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
 
   kicker: {
     fontSize: theme.typography.bodySM,
-    color: theme.colors.primary,
+    color: theme.colors.primaryMuted,
     fontWeight: theme.fontWeight.bold,
     marginBottom: 3,
   },
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 5,
     borderRadius: theme.radius.pill,
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: theme.colors.primary,
     paddingHorizontal: spacing.md,
     paddingVertical: 7,
   },
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   healthText: {
     flexShrink: 1,
     fontSize: theme.typography.bodySM,
-    color: theme.colors.primaryDark,
+    color: theme.colors.onPrimary,
     fontWeight: theme.fontWeight.bold,
   },
 

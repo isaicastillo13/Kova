@@ -1,23 +1,23 @@
 export type ThemeMode = "dark" | "light";
 
 const palette = {
-  orange: "#C50212",
-  orangeSoft: "#ff5b68",
-  orangeDeep: "#a63b00",
-  ember: "#453027",
+  primary: "#ff4d24",
+  primaryHot: "#ff6b3d",
+  primaryDeep: "#b72914",
+  ember: "#341813",
 
-  black: "#0c0f0f",
-  obsidian: "#121414",
-  surfaceLow: "#1a1c1c",
-  surface: "#1e2020",
-  surfaceHigh: "#282a2b",
-  surfaceHighest: "#333535",
+  black: "#070808",
+  obsidian: "#0d0e10",
+  surfaceLow: "#111214",
+  surface: "#17181b",
+  surfaceHigh: "#202126",
+  surfaceHighest: "#292a30",
 
   white: "#ffffff",
-  daylight: "#f8f9fa",
-  daylightLow: "#f3f4f5",
+  daylight: "#f7f4f1",
+  daylightLow: "#eeeae6",
   daylightSurface: "#ffffff",
-  slate: "#191c1d",
+  slate: "#171513",
 
   success: "#22c55e",
   warning: "#f59e0b",
@@ -45,7 +45,7 @@ const sharedRadius = {
   lg: 16,
   xl: 20,
   xxl: 28,
-  card: 24,
+  card: 22,
   pill: 999,
 } as const;
 
@@ -71,20 +71,20 @@ const sharedFontWeight = {
 };
 
 function createColors(mode: ThemeMode) {
-  const isDark = mode === "light";
+  const isDark = mode === "dark";
 
   return {
     mode,
 
-    primary: palette.orange,
-    primaryDark: isDark ? palette.orangeSoft : palette.orangeDeep,
-    primaryLight: isDark ? "rgba(255, 109, 41, 0.16)" : "#ffdbce",
-    primarySoft: isDark ? "rgba(255, 109, 41, 0.10)" : "#fff2ec",
-    primaryMuted: isDark ? palette.orangeSoft : "#c2410c",
-    onPrimary: isDark ? "#180704" : palette.white,
+    primary: palette.primary,
+    primaryDark: isDark ? palette.primaryHot : palette.primaryDeep,
+    primaryLight: isDark ? "rgba(255, 77, 36, 0.18)" : "#ffe0d6",
+    primarySoft: isDark ? "rgba(255, 77, 36, 0.11)" : "#fff0ea",
+    primaryMuted: isDark ? "#ff9a7c" : "#c93417",
+    onPrimary: palette.white,
 
-    accent: palette.orangeSoft,
-    accentSoft: isDark ? "rgba(255, 181, 153, 0.12)" : "#fff2ec",
+    accent: palette.primaryHot,
+    accentSoft: isDark ? "rgba(255, 154, 124, 0.13)" : "#fff0ea",
 
     background: isDark ? palette.obsidian : palette.daylight,
     backgroundAlt: isDark ? palette.black : palette.daylightLow,
@@ -92,16 +92,16 @@ function createColors(mode: ThemeMode) {
     surfaceAlt: isDark ? palette.surfaceHigh : palette.daylightLow,
     surfaceMuted: isDark ? palette.surfaceLow : "#edeeef",
     surfaceElevated: isDark ? palette.surfaceHighest : palette.daylightSurface,
-    surfaceGlass: isDark ? "rgba(250, 250, 250, 0.10)" : "rgba(255, 255, 255, 0.82)",
-    surfacePressed: isDark ? "rgba(255, 109, 41, 0.12)" : "#fff2ec",
+    surfaceGlass: isDark ? "rgba(32, 33, 38, 0.82)" : "rgba(255, 255, 255, 0.86)",
+    surfacePressed: isDark ? "rgba(255, 77, 36, 0.14)" : "#fff0ea",
 
-    border: isDark ? "rgba(255, 255, 255, 0.10)" : "#e7e8e9",
-    borderStrong: isDark ? "rgba(255, 255, 255, 0.18)" : "#d9dadb",
-    borderAccent: isDark ? "rgba(255, 109, 41, 0.34)" : "rgba(255, 109, 41, 0.42)",
+    border: isDark ? "rgba(255, 255, 255, 0.08)" : "#e5dfda",
+    borderStrong: isDark ? "rgba(255, 255, 255, 0.16)" : "#d7cec7",
+    borderAccent: isDark ? "rgba(255, 77, 36, 0.42)" : "rgba(255, 77, 36, 0.42)",
 
-    text: isDark ? "#f5f2ef" : palette.slate,
-    textSecondary: isDark ? "rgba(245, 242, 239, 0.68)" : "#5d5e61",
-    textMuted: isDark ? "rgba(245, 242, 239, 0.44)" : "#8d8f92",
+    text: isDark ? "#f7f2ef" : palette.slate,
+    textSecondary: isDark ? "rgba(247, 242, 239, 0.68)" : "#625c58",
+    textMuted: isDark ? "rgba(247, 242, 239, 0.42)" : "#908883",
     textInverse: isDark ? palette.slate : palette.white,
 
     success: palette.success,
@@ -122,10 +122,10 @@ function createColors(mode: ThemeMode) {
 
     white: palette.white,
     black: isDark ? palette.black : "#171514",
-    charcoal: isDark ? palette.surface : "#1f1d1b",
-    blue: isDark ? "#162133" : "#dbeafe",
+    charcoal: isDark ? "#18120f" : "#1f1d1b",
+    blue: isDark ? "#152033" : "#dbeafe",
     glow: palette.ember,
-    overlay: isDark ? "rgba(12, 15, 15, 0.78)" : "rgba(255, 255, 255, 0.78)",
+    overlay: isDark ? "rgba(7, 8, 8, 0.78)" : "rgba(255, 255, 255, 0.78)",
   } as const;
 }
 
@@ -134,9 +134,9 @@ function createShadows(mode: ThemeMode) {
 
   return {
     card: {
-      shadowColor: isDark ? palette.orange : "#000",
+      shadowColor: isDark ? palette.primaryDeep : "#000",
       shadowOffset: { width: 0, height: 14 },
-      shadowOpacity: isDark ? 0.12 : 0.06,
+      shadowOpacity: isDark ? 0.22 : 0.06,
       shadowRadius: 24,
       elevation: 5,
     },
@@ -148,10 +148,10 @@ function createShadows(mode: ThemeMode) {
       elevation: 2,
     },
     floating: {
-      shadowColor: isDark ? palette.orange : "#000",
-      shadowOffset: { width: 0, height: 10 },
-      shadowOpacity: isDark ? 0.18 : 0.08,
-      shadowRadius: 26,
+      shadowColor: isDark ? "#000" : "#000",
+      shadowOffset: { width: 0, height: 16 },
+      shadowOpacity: isDark ? 0.36 : 0.08,
+      shadowRadius: 30,
       elevation: 12,
     },
     none: {

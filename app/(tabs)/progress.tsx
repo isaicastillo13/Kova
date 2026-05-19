@@ -212,12 +212,13 @@ const styles = StyleSheet.create({
 
   content: {
     padding: theme.spacing.xxl,
-    paddingBottom: 112,
+    paddingBottom: 126,
     gap: theme.spacing.xl,
   },
 
   hero: {
     padding: theme.spacing.xxl,
+    minHeight: 220,
   },
 
   kicker: {
@@ -228,8 +229,9 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: theme.typography.titleLG,
-    fontWeight: theme.fontWeight.bold,
+    fontSize: theme.typography.titleXL,
+    lineHeight: 36,
+    fontWeight: theme.fontWeight.extrabold,
     color: theme.colors.white,
   },
 
@@ -264,9 +266,9 @@ const styles = StyleSheet.create({
   metricCard: {
     width: "47%",
     backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.xl,
+    borderRadius: theme.radius.card,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.borderStrong,
     padding: spacing.lg,
     ...theme.shadows.soft,
   },
@@ -294,6 +296,7 @@ const styles = StyleSheet.create({
 
   card: {
     padding: theme.spacing.xxl,
+    gap: theme.spacing.xl,
   },
 
   sectionHeader: {
@@ -358,7 +361,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: spacing.md,
     paddingTop: spacing.lg,
-    marginTop: spacing.lg,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
   },

@@ -210,12 +210,13 @@ const styles = StyleSheet.create({
 
   content: {
     padding: theme.spacing.xxl,
-    paddingBottom: 48,
+    paddingBottom: 56,
     gap: theme.spacing.xl,
   },
 
   hero: {
     padding: theme.spacing.xxl,
+    minHeight: 220,
   },
 
   backButton: {
@@ -223,6 +224,8 @@ const styles = StyleSheet.create({
     height: 42,
     borderRadius: 16,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.12)",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.xl,
@@ -316,6 +319,7 @@ const styles = StyleSheet.create({
     padding: theme.spacing.xl,
     flexDirection: "row",
     gap: spacing.md,
+    borderColor: theme.colors.borderStrong,
   },
 
   blockIcon: {

@@ -250,12 +250,13 @@ const styles = StyleSheet.create({
 
   container: {
     padding: theme.spacing.xxl,
-    paddingBottom: 112,
+    paddingBottom: 126,
     gap: theme.spacing.xl,
   },
 
   hero: {
     padding: theme.spacing.xxl,
+    minHeight: 230,
   },
 
   avatar: {
@@ -276,10 +277,10 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: theme.typography.titleLG,
+    fontSize: theme.typography.titleXL,
     color: theme.colors.white,
-    fontWeight: theme.fontWeight.bold,
-    lineHeight: 32,
+    fontWeight: theme.fontWeight.extrabold,
+    lineHeight: 36,
   },
 
   subtitle: {
@@ -301,6 +302,7 @@ const styles = StyleSheet.create({
 
   card: {
     padding: theme.spacing.xxl,
+    borderColor: theme.colors.borderStrong,
   },
 
   cardHeader: {
@@ -353,7 +355,7 @@ const styles = StyleSheet.create({
 
   primaryButton: {
     minHeight: 54,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.pill,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
@@ -370,7 +372,7 @@ const styles = StyleSheet.create({
 
   secondaryButton: {
     minHeight: 54,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.pill,
     borderWidth: 1,
     borderColor: theme.colors.errorLight,
     backgroundColor: theme.colors.surface,

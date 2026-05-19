@@ -164,13 +164,14 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xxxl,
   },
   logoCircle: {
-    width: 72,
-    height: 72,
+    width: 76,
+    height: 76,
     borderRadius: theme.radius.pill,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: theme.spacing.lg,
+    ...theme.shadows.card,
   },
   logo: {
     width: 40,
@@ -182,8 +183,9 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   title: {
-    fontSize: theme.typography.titleMD,
-    fontWeight: theme.fontWeight.bold,
+    fontSize: theme.typography.titleXL,
+    lineHeight: 36,
+    fontWeight: theme.fontWeight.extrabold,
     color: theme.colors.text,
     marginBottom: theme.spacing.sm,
   },
@@ -205,12 +207,12 @@ const styles = StyleSheet.create({
   input: {
     height: 52,
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.radius.lg,
+    borderColor: theme.colors.borderStrong,
+    borderRadius: theme.radius.xl,
     paddingHorizontal: theme.spacing.lg,
     fontSize: theme.typography.bodyLG,
     color: theme.colors.text,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceAlt,
   },
   errorText: {
     color: theme.colors.error,
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     height: 54,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.pill,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",

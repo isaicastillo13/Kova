@@ -9,6 +9,7 @@ import type {
   RaceDistance,
   RunningExperience,
 } from "@/src/types/training";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -324,6 +325,11 @@ export default function EditPlanScreen() {
             style={styles.secondaryButton}
             onPress={() => router.back()}
           >
+            <MaterialCommunityIcons
+              name="chevron-left"
+              size={19}
+              color={theme.colors.text}
+            />
             <Text style={styles.secondaryButtonText}>Cancelar</Text>
           </Pressable>
 
@@ -335,6 +341,11 @@ export default function EditPlanScreen() {
             onPress={handleSave}
             disabled={!isFormValid}
           >
+            <MaterialCommunityIcons
+              name="refresh"
+              size={19}
+              color={theme.colors.onPrimary}
+            />
             <Text style={styles.primaryButtonText}>Actualizar plan</Text>
           </Pressable>
         </View>
@@ -422,14 +433,15 @@ const styles = StyleSheet.create({
 
   step: {
     fontSize: theme.typography.bodySM,
-    color: theme.colors.primary,
-    fontWeight: theme.fontWeight.semibold,
+    color: theme.colors.primaryMuted,
+    fontWeight: theme.fontWeight.bold,
     marginBottom: 6,
   },
 
   title: {
-    fontSize: theme.typography.titleLG,
-    fontWeight: theme.fontWeight.bold,
+    fontSize: theme.typography.titleXL,
+    lineHeight: 36,
+    fontWeight: theme.fontWeight.extrabold,
     color: theme.colors.text,
     marginBottom: theme.spacing.sm,
   },
@@ -457,16 +469,16 @@ const styles = StyleSheet.create({
   optionCard: {
     backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.radius.xl,
+    borderColor: theme.colors.borderStrong,
+    borderRadius: theme.radius.card,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
     ...theme.shadows.card,
   },
 
   optionCardSelected: {
-    borderColor: theme.colors.borderAccent,
-    backgroundColor: theme.colors.primaryLight,
+    borderColor: theme.colors.primary,
+    backgroundColor: theme.colors.primary,
   },
 
   optionText: {
@@ -476,7 +488,7 @@ const styles = StyleSheet.create({
   },
 
   optionTextSelected: {
-    color: theme.colors.primaryDark,
+    color: theme.colors.onPrimary,
     fontWeight: theme.fontWeight.bold,
   },
 
@@ -487,18 +499,18 @@ const styles = StyleSheet.create({
   },
 
   optionDescriptionSelected: {
-    color: theme.colors.primaryDark,
+    color: "rgba(255, 255, 255, 0.78)",
   },
 
   input: {
     height: 52,
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.radius.lg,
+    borderColor: theme.colors.borderStrong,
+    borderRadius: theme.radius.xl,
     paddingHorizontal: spacing.lg,
     fontSize: theme.typography.bodyLG,
     color: theme.colors.text,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceAlt,
   },
 
   daysRow: {
@@ -543,11 +555,13 @@ const styles = StyleSheet.create({
   secondaryButton: {
     flex: 1,
     height: 54,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.pill,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.borderStrong,
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
+    gap: spacing.sm,
     backgroundColor: theme.colors.surface,
   },
 
@@ -560,10 +574,12 @@ const styles = StyleSheet.create({
   primaryButton: {
     flex: 1,
     height: 54,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.pill,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
+    gap: spacing.sm,
   },
 
   primaryButtonDisabled: {

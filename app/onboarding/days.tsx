@@ -113,13 +113,15 @@ const styles = StyleSheet.create({
 
   step: {
     fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    color: theme.colors.primaryMuted,
+    fontWeight: theme.fontWeight.bold,
     marginBottom: spacing.sm,
   },
 
   title: {
-    fontSize: theme.typography.titleLG,
-    fontWeight: theme.fontWeight.bold,
+    fontSize: theme.typography.titleXL,
+    lineHeight: 36,
+    fontWeight: theme.fontWeight.extrabold,
     color: theme.colors.text,
     marginBottom: spacing.sm,
   },
@@ -136,11 +138,11 @@ const styles = StyleSheet.create({
   },
 
   dayCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.borderStrong,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: theme.colors.surface,
@@ -170,9 +172,9 @@ const styles = StyleSheet.create({
   secondaryButton: {
     flex: 1,
     height: 54,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.pill,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.borderStrong,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: theme.colors.surface,
@@ -187,7 +189,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     flex: 1,
     height: 54,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.pill,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",

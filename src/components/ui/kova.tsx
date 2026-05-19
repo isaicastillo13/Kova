@@ -125,6 +125,54 @@ export function MetricCard({
   );
 }
 
+type ProgressCardProps = {
+  label: string;
+  value: string;
+  progress: number;
+  helper?: string;
+  right?: React.ReactNode;
+  color?: string;
+  style?: StyleProp<ViewStyle>;
+};
+
+export function ProgressCard({
+  label,
+  value,
+  progress,
+  helper,
+  right,
+  color = theme.colors.primary,
+  style,
+}: ProgressCardProps) {
+  const normalizedProgress = Math.min(Math.max(progress, 0), 1);
+
+  return (
+    <BaseCard variant="elevated" style={[styles.progressCard, style]}>
+      <View style={styles.progressHeader}>
+        <View style={styles.progressText}>
+          <Text style={styles.progressLabel}>{label}</Text>
+          <Text style={styles.progressValue}>{value}</Text>
+        </View>
+        {right}
+      </View>
+
+      <View style={styles.progressTrack}>
+        <View
+          style={[
+            styles.progressFill,
+            {
+              width: `${normalizedProgress * 100}%`,
+              backgroundColor: color,
+            },
+          ]}
+        />
+      </View>
+
+      {!!helper && <Text style={styles.progressHelper}>{helper}</Text>}
+    </BaseCard>
+  );
+}
+
 type SectionHeaderProps = {
   title: string;
   meta?: string;
@@ -231,7 +279,7 @@ export function IntensityChip({ intensity, label }: IntensityChipProps) {
 }
 
 const tonePalette = {
-  primary: { fg: theme.colors.primaryDark, bg: theme.colors.primaryLight },
+  primary: { fg: theme.colors.primaryMuted, bg: theme.colors.primaryLight },
   success: { fg: theme.colors.success, bg: theme.colors.successLight },
   warning: { fg: theme.colors.warning, bg: theme.colors.warningLight },
   error: { fg: theme.colors.error, bg: theme.colors.errorLight },
@@ -270,6 +318,8 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.pill,
     paddingHorizontal: theme.spacing.md,
     paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   badgeText: {
     fontSize: theme.typography.bodySM,
@@ -280,14 +330,14 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.pill,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceAlt,
     paddingHorizontal: theme.spacing.lg,
     alignItems: "center",
     justifyContent: "center",
   },
   pillSelected: {
     borderColor: theme.colors.borderAccent,
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: theme.colors.primary,
   },
   pillText: {
     color: theme.colors.textSecondary,
@@ -295,11 +345,12 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.semibold,
   },
   pillTextSelected: {
-    color: theme.colors.primaryDark,
+    color: theme.colors.onPrimary,
   },
   metricCard: {
     flex: 1,
     minWidth: 0,
+    backgroundColor: theme.colors.surface,
   },
   metricTop: {
     flexDirection: "row",
@@ -340,7 +391,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     color: theme.colors.text,
     fontSize: theme.typography.titleSM,
-    fontWeight: theme.fontWeight.bold,
+    fontWeight: theme.fontWeight.extrabold,
   },
   sectionMeta: {
     color: theme.colors.textSecondary,
@@ -348,14 +399,54 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.semibold,
   },
   floatingTabItem: {
-    width: 42,
-    height: 34,
+    width: 44,
+    height: 36,
     borderRadius: theme.radius.pill,
     alignItems: "center",
     justifyContent: "center",
   },
   floatingTabItemActive: {
-    backgroundColor: theme.colors.primaryLight,
+    backgroundColor: theme.colors.primary,
+    ...theme.shadows.soft,
+  },
+  progressCard: {
+    gap: theme.spacing.md,
+  },
+  progressHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: theme.spacing.md,
+  },
+  progressText: {
+    flex: 1,
+    minWidth: 0,
+  },
+  progressLabel: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.typography.bodySM,
+    fontWeight: theme.fontWeight.semibold,
+    marginBottom: 4,
+  },
+  progressValue: {
+    color: theme.colors.text,
+    fontSize: theme.typography.titleMD,
+    fontWeight: theme.fontWeight.extrabold,
+  },
+  progressTrack: {
+    height: 11,
+    borderRadius: theme.radius.pill,
+    backgroundColor: theme.colors.surfaceMuted,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: theme.radius.pill,
+  },
+  progressHelper: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.typography.bodySM,
+    lineHeight: 19,
   },
   ring: {
     alignItems: "center",
@@ -375,8 +466,8 @@ const cardVariants = StyleSheet.create({
     ...theme.shadows.soft,
   },
   elevated: {
-    backgroundColor: theme.colors.surfaceElevated,
-    borderColor: theme.colors.border,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.borderStrong,
     ...theme.shadows.card,
   },
   glass: {

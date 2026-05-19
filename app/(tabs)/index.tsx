@@ -171,13 +171,13 @@ const styles = StyleSheet.create({
   },
 
   scrollContent: {
-    paddingBottom: 112,
+    paddingBottom: 126,
   },
 
   topSection: {
     backgroundColor: theme.colors.background,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.xl,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.lg,
     paddingHorizontal: spacing.xxl,
     gap: spacing.xl,
   },
@@ -190,12 +190,12 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: spacing.xxl,
-    paddingVertical: spacing.md,
+    paddingVertical: spacing.lg,
     gap: spacing.lg,
   },
 
   section: {
-    gap: spacing.sm,
+    gap: spacing.md,
   },
 
   sectionHeader: {
@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
 
   weekHero: {
     padding: theme.spacing.xxl,
+    minHeight: 156,
   },
 
   weekHeroContent: {
@@ -235,8 +236,8 @@ const styles = StyleSheet.create({
 
   weekHeroLabel: {
     fontSize: theme.typography.bodySM,
-    color: "rgba(255, 255, 255, 0.64)",
-    fontWeight: theme.fontWeight.semibold,
+    color: theme.colors.primaryMuted,
+    fontWeight: theme.fontWeight.bold,
     marginBottom: spacing.xs,
   },
 
@@ -248,14 +249,14 @@ const styles = StyleSheet.create({
   },
 
   weekHeroMuted: {
-    color: "rgba(255, 255, 255, 0.42)",
+    color: "rgba(255, 255, 255, 0.46)",
     fontSize: theme.typography.titleLG,
   },
 
   weekHeroCopy: {
     marginTop: spacing.sm,
     fontSize: theme.typography.bodySM,
-    color: "rgba(255, 255, 255, 0.68)",
+    color: "rgba(255, 255, 255, 0.7)",
     fontWeight: theme.fontWeight.semibold,
   },
 

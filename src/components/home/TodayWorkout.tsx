@@ -162,7 +162,7 @@ function MetricItem({ label, value }: { label: string; value: string }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.charcoal,
-    borderRadius: theme.radius.xxl,
+    borderRadius: theme.radius.card,
     padding: theme.spacing.xxl,
     borderWidth: 1,
     borderColor: theme.colors.borderAccent,
@@ -171,10 +171,11 @@ const styles = StyleSheet.create({
 
   completedContainer: {
     borderColor: theme.colors.success,
+    backgroundColor: theme.colors.surface,
   },
 
   restContainer: {
-    backgroundColor: theme.colors.surfaceAlt,
+    backgroundColor: theme.colors.surface,
     borderColor: theme.colors.info,
   },
 
@@ -194,9 +195,9 @@ const styles = StyleSheet.create({
   },
 
   iconBox: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
+    width: 50,
+    height: 50,
+    borderRadius: 18,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
@@ -217,32 +218,36 @@ const styles = StyleSheet.create({
 
   statusPill: {
     borderRadius: theme.radius.pill,
-    backgroundColor: "rgba(252, 76, 2, 0.18)",
+    backgroundColor: theme.colors.primaryLight,
     paddingHorizontal: spacing.md,
     paddingVertical: 7,
+    borderWidth: 1,
+    borderColor: theme.colors.borderAccent,
   },
 
   statusPillCompleted: {
-    backgroundColor: "rgba(22, 163, 74, 0.18)",
+    backgroundColor: theme.colors.successLight,
+    borderColor: "rgba(34, 197, 94, 0.28)",
   },
 
   statusPillRest: {
-    backgroundColor: "rgba(255, 255, 255, 0.12)",
+    backgroundColor: theme.colors.infoLight,
+    borderColor: "rgba(56, 189, 248, 0.28)",
   },
 
   statusText: {
-    color: theme.colors.primaryMuted,
+    color: theme.colors.primaryDark,
     fontSize: theme.typography.bodySM,
     fontWeight: theme.fontWeight.bold,
     textTransform: "capitalize",
   },
 
   statusTextCompleted: {
-    color: "#86efac",
+    color: theme.colors.success,
   },
 
   statusTextRest: {
-    color: theme.colors.white,
+    color: theme.colors.info,
   },
 
   title: {
@@ -268,9 +273,9 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 70,
     borderRadius: theme.radius.lg,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    backgroundColor: "rgba(255, 255, 255, 0.07)",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: theme.colors.border,
     padding: spacing.md,
     justifyContent: "center",
   },
@@ -290,7 +295,7 @@ const styles = StyleSheet.create({
   actionButton: {
     marginTop: spacing.xl,
     minHeight: 52,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.pill,
     backgroundColor: theme.colors.primary,
     flexDirection: "row",
     alignItems: "center",

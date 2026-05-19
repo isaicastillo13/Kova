@@ -121,7 +121,11 @@ export default function WeeklyPlan({ weekPlan, onPressDay }: Props) {
               <View style={styles.main}>
                 <View style={styles.dayRow}>
                   <Text style={styles.day}>{dayLabels[item.day]}</Text>
-                  {isToday && <Text style={styles.todayBadge}>Hoy</Text>}
+                  {isToday && (
+                    <View style={styles.todayBadge}>
+                      <Text style={styles.todayBadgeText}>Hoy</Text>
+                    </View>
+                  )}
                 </View>
                 <Text style={styles.title} numberOfLines={2}>
                   {item.title}
@@ -174,12 +178,12 @@ const styles = StyleSheet.create({
   card: {
     minHeight: 90,
     backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.xl,
+    borderRadius: theme.radius.card,
     paddingVertical: theme.spacing.lg,
     paddingLeft: theme.spacing.lg,
     paddingRight: theme.spacing.md,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.borderStrong,
     flexDirection: "row",
     alignItems: "center",
     overflow: "hidden",
@@ -228,8 +232,15 @@ const styles = StyleSheet.create({
   },
 
   todayBadge: {
+    borderRadius: theme.radius.pill,
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+  },
+
+  todayBadgeText: {
     fontSize: theme.typography.bodySM,
-    color: theme.colors.primary,
+    color: theme.colors.onPrimary,
     fontWeight: theme.fontWeight.bold,
   },
 

@@ -110,13 +110,15 @@ const styles = StyleSheet.create({
 
   step: {
     fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    color: theme.colors.primaryMuted,
+    fontWeight: theme.fontWeight.bold,
     marginBottom: spacing.sm,
   },
 
   title: {
-    fontSize: theme.typography.titleLG,
-    fontWeight: theme.fontWeight.bold,
+    fontSize: theme.typography.titleXL,
+    lineHeight: 36,
+    fontWeight: theme.fontWeight.extrabold,
     color: theme.colors.text,
     marginBottom: spacing.sm,
   },
@@ -136,16 +138,16 @@ const styles = StyleSheet.create({
   optionCard: {
     backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: theme.radius.xl,
+    borderColor: theme.colors.borderStrong,
+    borderRadius: theme.radius.card,
     paddingVertical: spacing.lg,
     alignItems: "center",
     ...theme.shadows.card,
   },
 
   optionCardSelected: {
-    borderColor: theme.colors.borderAccent,
-    backgroundColor: theme.colors.primaryLight,
+    borderColor: theme.colors.primary,
+    backgroundColor: theme.colors.primary,
   },
 
   optionText: {
@@ -155,7 +157,7 @@ const styles = StyleSheet.create({
   },
 
   optionTextSelected: {
-    color: theme.colors.primaryDark,
+    color: theme.colors.onPrimary,
     fontWeight: theme.fontWeight.bold,
   },
 
@@ -167,9 +169,9 @@ const styles = StyleSheet.create({
   secondaryButton: {
     flex: 1,
     height: 54,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.pill,
     borderWidth: 1,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.borderStrong,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: theme.colors.surface,
@@ -184,7 +186,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     flex: 1,
     height: 54,
-    borderRadius: theme.radius.lg,
+    borderRadius: theme.radius.pill,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",

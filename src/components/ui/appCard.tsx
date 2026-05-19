@@ -24,7 +24,7 @@ export default function AppCard({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: theme.radius.xl,
+    borderRadius: theme.radius.card,
     padding: theme.spacing.xxl,
     borderWidth: 1,
     ...theme.shadows.card,
@@ -35,6 +35,6 @@ const styles = StyleSheet.create({
   },
   surface: {
     backgroundColor: theme.colors.surface,
-    borderColor: theme.colors.border,
+    borderColor: theme.colors.borderStrong,
   },
 });
