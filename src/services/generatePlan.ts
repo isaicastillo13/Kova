@@ -9,6 +9,7 @@ import type {
   WorkoutCategory,
   WorkoutDetailBlock,
 } from "@/src/types/training";
+import { getDateStringForWeekday } from "@/src/components/utils/date";
 
 type RunningSessionKind = Extract<
   WorkoutCategory,
@@ -472,6 +473,7 @@ function buildTodayWorkoutFromDay(dayWorkout: DayWorkout): TodayWorkout {
   const isRest = dayWorkout.type === "rest";
 
   return {
+    id: dayWorkout.id,
     type: isRest ? "Descanso" : "running",
     category: dayWorkout.category,
     title: dayWorkout.title,
@@ -483,7 +485,12 @@ function buildTodayWorkoutFromDay(dayWorkout: DayWorkout): TodayWorkout {
     heartRate: dayWorkout.targetHeartRate ?? "FC Z2",
     targetPace: dayWorkout.targetPace,
     km: dayWorkout.km ?? 0,
-    status: "pending",
+    status: dayWorkout.status,
+    completedAt: dayWorkout.completedAt,
+    skippedAt: dayWorkout.skippedAt,
+    plannedDate: dayWorkout.plannedDate,
+    completedKm: dayWorkout.completedKm,
+    feedback: dayWorkout.feedback,
     details: dayWorkout.details ?? [],
   };
 }
@@ -507,12 +514,15 @@ export function generatePlan(input: GeneratePlanInput): GeneratedPlan {
       const meta = getSessionMeta(kind, input);
 
       weekPlan.push({
+        id: `day-${day}-${kind}`,
         day,
         type: "running",
         category: kind,
         title: meta.title,
         description: meta.description,
         intensity: meta.intensity,
+        status: "pending",
+        plannedDate: getDateStringForWeekday(day),
         km: currentKm,
         duration: input.duration,
         targetPace: meta.targetPace,
@@ -525,12 +535,15 @@ export function generatePlan(input: GeneratePlanInput): GeneratedPlan {
       const restMeta = getSessionMeta("rest", input);
 
       weekPlan.push({
+        id: `day-${day}-rest`,
         day,
         type: "rest",
         category: "rest",
         title: restMeta.title,
         description: restMeta.description,
         intensity: restMeta.intensity,
+        status: "pending",
+        plannedDate: getDateStringForWeekday(day),
         targetHeartRate: restMeta.targetHeartRate,
         details: getWorkoutDetails("rest", 0, input.duration, input),
       });

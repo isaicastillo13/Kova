@@ -3,16 +3,7 @@ import { Badge, BaseCard } from "@/src/components/ui/kova";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-
-type Activity = {
-  id: string;
-  title: string;
-  subtitle: string;
-  dateLabel: string;
-  type: string;
-  km: number;
-  duration: string;
-};
+import type { Activity } from "@/src/types/training";
 
 type Props = {
   activities: Activity[];
@@ -68,7 +59,10 @@ export default function QuickHistory({ activities }: Props) {
             </View>
             <View style={styles.dateBlock}>
               <Text style={styles.date}>{item.dateLabel}</Text>
-              <Badge label={formatType(item.type)} />
+              <Badge
+                label={item.status === "skipped" ? "Omitida" : formatType(item.type)}
+                tone={item.status === "skipped" ? "error" : "primary"}
+              />
             </View>
           </View>
 
@@ -78,7 +72,7 @@ export default function QuickHistory({ activities }: Props) {
 
           <View style={styles.metricsRow}>
             <Text style={styles.metric}>
-              {item.km > 0 ? `${item.km} km` : "Sesión"}
+              {item.completedKm > 0 ? `${item.completedKm} km` : "Sin carga"}
             </Text>
             <View style={styles.dot} />
             <Text style={styles.metric}>{item.duration}</Text>

@@ -14,7 +14,18 @@ export type RunningExperience =
 
 export type InjuryHistory = "none" | "minor" | "recent";
 
-export type WorkoutStatus = "pending" | "completed";
+export type WorkoutStatus =
+  | "pending"
+  | "completed"
+  | "skipped"
+  | "rescheduled";
+
+export type WorkoutFeedback = {
+  rpe: number;
+  energy: "low" | "normal" | "high";
+  pain: boolean;
+  note?: string;
+};
 
 export type DayWorkoutType =
   | "running"
@@ -48,12 +59,19 @@ export type WorkoutDetailBlock = {
 };
 
 export type DayWorkout = {
+  id: string;
   day: number;
   type: DayWorkoutType;
   category: WorkoutCategory;
   title: string;
   description: string;
   intensity: "baja" | "media" | "alta" | "recuperación";
+  status: WorkoutStatus;
+  completedAt?: string;
+  skippedAt?: string;
+  plannedDate?: string;
+  completedKm?: number;
+  feedback?: WorkoutFeedback;
   km?: number;
   duration?: number;
   targetPace?: string;
@@ -62,6 +80,7 @@ export type DayWorkout = {
 };
 
 export type TodayWorkout = {
+  id?: string;
   type: string;
   category?: WorkoutCategory;
   title: string;
@@ -74,6 +93,11 @@ export type TodayWorkout = {
   targetPace?: string;
   km: number;
   status: WorkoutStatus;
+  completedAt?: string;
+  skippedAt?: string;
+  plannedDate?: string;
+  completedKm?: number;
+  feedback?: WorkoutFeedback;
   details?: WorkoutDetailBlock[];
 };
 
@@ -88,12 +112,18 @@ export type WeeklyGoal = {
 
 export type Activity = {
   id: string;
+  workoutId: string;
   title: string;
   subtitle: string;
   dateLabel: string;
+  date: string;
   type: string;
+  plannedKm: number;
+  completedKm: number;
   km: number;
   duration: string;
+  status: Extract<WorkoutStatus, "completed" | "skipped">;
+  feedback?: WorkoutFeedback;
 };
 
 export type GeneratedPlan = {

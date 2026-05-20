@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { IntensityChip, SectionHeader } from "@/src/components/ui/kova";
+import { Badge, IntensityChip, SectionHeader } from "@/src/components/ui/kova";
 import { spacing, theme } from "@/src/constants/theme";
 import type { DayWorkout } from "@/src/types/training";
 
@@ -83,6 +83,26 @@ function getTypeMeta(item: DayWorkout) {
   }
 }
 
+function getStatusMeta(item: DayWorkout) {
+  if (item.type === "rest") {
+    return { label: "Descanso", tone: "info" as const };
+  }
+
+  if (item.status === "completed") {
+    return { label: "Completada", tone: "success" as const };
+  }
+
+  if (item.status === "skipped") {
+    return { label: "Omitida", tone: "error" as const };
+  }
+
+  if (item.status === "rescheduled") {
+    return { label: "Reprogramada", tone: "warning" as const };
+  }
+
+  return { label: "Pendiente", tone: "neutral" as const };
+}
+
 export default function WeeklyPlan({ weekPlan, onPressDay }: Props) {
   const todayIndex = getTodayIndex();
 
@@ -96,6 +116,7 @@ export default function WeeklyPlan({ weekPlan, onPressDay }: Props) {
           const isToday = item.day === todayIndex;
           const difficulty = getSessionDifficulty(item);
           const typeMeta = getTypeMeta(item);
+          const statusMeta = getStatusMeta(item);
           const metric = isRest
             ? "Sin carga"
             : item.type === "running" || item.type === "mixed"
@@ -104,11 +125,28 @@ export default function WeeklyPlan({ weekPlan, onPressDay }: Props) {
 
           return (
             <Pressable
-              key={item.day}
-              style={[styles.card, isToday && styles.todayCard]}
+              key={item.id}
+              style={[
+                styles.card,
+                isToday && styles.todayCard,
+                item.status === "completed" && styles.completedCard,
+                item.status === "skipped" && styles.skippedCard,
+              ]}
               onPress={() => onPressDay?.(item)}
             >
-              <View style={[styles.rail, { backgroundColor: typeMeta.color }]} />
+              <View
+                style={[
+                  styles.rail,
+                  {
+                    backgroundColor:
+                      item.status === "completed"
+                        ? theme.colors.success
+                        : item.status === "skipped"
+                          ? theme.colors.error
+                          : typeMeta.color,
+                  },
+                ]}
+              />
 
               <View style={[styles.iconWrap, { backgroundColor: typeMeta.bg }]}>
                 <MaterialCommunityIcons
@@ -135,10 +173,12 @@ export default function WeeklyPlan({ weekPlan, onPressDay }: Props) {
 
               <View style={styles.right}>
                 <Text style={styles.metric}>{metric}</Text>
-                <IntensityChip
-                  intensity={difficulty}
-                  label={isRest ? "Recuperación" : undefined}
-                />
+                <View style={styles.badgeStack}>
+                  <Badge label={statusMeta.label} tone={statusMeta.tone} />
+                  {!isRest && item.status === "pending" && (
+                    <IntensityChip intensity={difficulty} />
+                  )}
+                </View>
               </View>
             </Pressable>
           );
@@ -193,6 +233,14 @@ const styles = StyleSheet.create({
   todayCard: {
     borderColor: theme.colors.borderAccent,
     backgroundColor: theme.colors.surfaceGlassStrong,
+  },
+
+  completedCard: {
+    borderColor: "rgba(53, 208, 127, 0.34)",
+  },
+
+  skippedCard: {
+    borderColor: "rgba(255, 107, 97, 0.28)",
   },
 
   rail: {
@@ -262,6 +310,11 @@ const styles = StyleSheet.create({
   right: {
     alignItems: "flex-end",
     gap: spacing.sm,
+  },
+
+  badgeStack: {
+    alignItems: "flex-end",
+    gap: spacing.xs,
   },
 
   metric: {

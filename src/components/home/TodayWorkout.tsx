@@ -3,8 +3,7 @@ import { StyleSheet, Text, View, Pressable } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { spacing, theme } from "@/src/constants/theme";
-
-type Status = "pending" | "completed";
+import type { WorkoutStatus } from "@/src/types/training";
 
 type Props = {
   type: string;
@@ -14,7 +13,7 @@ type Props = {
   difficulty: string;
   metric: string;
   heartRate: string;
-  status: Status;
+  status: WorkoutStatus;
   onToggleComplete: () => void;
   onPress: () => void;
   km: number;
@@ -51,6 +50,8 @@ export default function TodayWorkout({
   km,
 }: Props) {
   const isCompleted = status === "completed";
+  const isSkipped = status === "skipped";
+  const isRescheduled = status === "rescheduled";
   const isRestDay = type.toLowerCase() === "descanso" || km === 0;
   const typeLabel = getTypeLabel(type, isRestDay);
   const iconName = getWorkoutIcon(type, isRestDay);
@@ -60,6 +61,7 @@ export default function TodayWorkout({
       style={[
         styles.container,
         isCompleted && styles.completedContainer,
+        isSkipped && styles.skippedContainer,
         isRestDay && styles.restContainer,
       ]}
       onPress={onPress}
@@ -83,6 +85,7 @@ export default function TodayWorkout({
           style={[
             styles.statusPill,
             isCompleted && styles.statusPillCompleted,
+            isSkipped && styles.statusPillSkipped,
             isRestDay && styles.statusPillRest,
           ]}
         >
@@ -90,10 +93,19 @@ export default function TodayWorkout({
             style={[
               styles.statusText,
               isCompleted && styles.statusTextCompleted,
+              isSkipped && styles.statusTextSkipped,
               isRestDay && styles.statusTextRest,
             ]}
           >
-            {isCompleted ? "Listo" : isRestDay ? "Descanso" : difficulty}
+            {isCompleted
+              ? "Listo"
+              : isSkipped
+                ? "Omitido"
+                : isRescheduled
+                  ? "Reprogramado"
+                  : isRestDay
+                    ? "Descanso"
+                    : difficulty}
           </Text>
         </View>
       </View>
@@ -174,6 +186,11 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surfaceGlass,
   },
 
+  skippedContainer: {
+    borderColor: "rgba(255, 107, 97, 0.28)",
+    backgroundColor: theme.colors.surfaceGlass,
+  },
+
   restContainer: {
     backgroundColor: theme.colors.surfaceGlass,
     borderColor: "rgba(120, 199, 255, 0.34)",
@@ -236,6 +253,11 @@ const styles = StyleSheet.create({
     borderColor: "rgba(56, 189, 248, 0.28)",
   },
 
+  statusPillSkipped: {
+    backgroundColor: theme.colors.errorLight,
+    borderColor: "rgba(255, 107, 97, 0.28)",
+  },
+
   statusText: {
     color: theme.colors.primaryDark,
     fontSize: theme.typography.bodySM,
@@ -249,6 +271,10 @@ const styles = StyleSheet.create({
 
   statusTextRest: {
     color: theme.colors.info,
+  },
+
+  statusTextSkipped: {
+    color: theme.colors.error,
   },
 
   title: {

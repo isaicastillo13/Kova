@@ -96,6 +96,7 @@ export default function HomeScreen() {
               streakDays={streakDays}
               todayWorkout={todayWorkout}
               weeklyGoal={weeklyGoal}
+              activities={activities}
             />
 
             <View style={styles.section}>

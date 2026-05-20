@@ -1,5 +1,5 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { BaseCard } from "@/src/components/ui/kova";
+import { Badge, BaseCard } from "@/src/components/ui/kova";
 import { theme, spacing } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -23,8 +23,14 @@ function getActivityIcon(type: string) {
 export default function HistoryScreen() {
   const { activities, weeklyGoal } = useHomeStore();
 
-  const totalKm = activities.reduce((acc, item) => acc + item.km, 0);
-  const totalSessions = activities.length;
+  const completedActivities = activities.filter(
+    (item) => item.status === "completed",
+  );
+  const totalKm = completedActivities.reduce(
+    (acc, item) => acc + item.completedKm,
+    0,
+  );
+  const totalSessions = completedActivities.length;
 
   return (
     <SafeAreaView style={styles.screen} edges={["top"]}>
@@ -91,7 +97,14 @@ export default function HistoryScreen() {
               <View style={styles.activityBody}>
                 <View style={styles.activityTop}>
                   <Text style={styles.date}>{item.dateLabel}</Text>
-                  <Text style={styles.type}>{formatType(item.type)}</Text>
+                  <Badge
+                    label={
+                      item.status === "skipped"
+                        ? "Omitida"
+                        : formatType(item.type)
+                    }
+                    tone={item.status === "skipped" ? "error" : "primary"}
+                  />
                 </View>
 
                 <Text style={styles.activityTitle} numberOfLines={2}>
@@ -100,7 +113,9 @@ export default function HistoryScreen() {
 
                 <View style={styles.metricsRow}>
                   <Text style={styles.metric}>
-                    {item.km > 0 ? `${item.km} km` : "Sesión"}
+                    {item.completedKm > 0
+                      ? `${item.completedKm} km`
+                      : "Sin carga"}
                   </Text>
                   <View style={styles.dot} />
                   <Text style={styles.metric}>{item.duration}</Text>

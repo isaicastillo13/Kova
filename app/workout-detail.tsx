@@ -35,6 +35,9 @@ export default function WorkoutDetailScreen() {
   const router = useRouter();
   const todayWorkout = useHomeStore((state) => state.todayWorkout);
   const selectedWorkout = useHomeStore((state) => state.selectedWorkout);
+  const completeWorkout = useHomeStore((state) => state.completeWorkout);
+  const skipWorkout = useHomeStore((state) => state.skipWorkout);
+  const resetWorkoutStatus = useHomeStore((state) => state.resetWorkoutStatus);
   const clearSelectedWorkout = useHomeStore(
     (state) => state.clearSelectedWorkout,
   );
@@ -68,6 +71,10 @@ export default function WorkoutDetailScreen() {
             : (selectedWorkout.targetHeartRate ?? "FC 140-160"),
         targetPace: selectedWorkout.targetPace,
         km: selectedWorkout.km ?? 0,
+        id: selectedWorkout.id,
+        status: selectedWorkout.status,
+        completedAt: selectedWorkout.completedAt,
+        skippedAt: selectedWorkout.skippedAt,
         details: selectedWorkout.details ?? [],
       }
     : todayWorkout;
@@ -75,6 +82,10 @@ export default function WorkoutDetailScreen() {
   const isRestDay =
     workout.type.toLowerCase() === "descanso" || workout.km === 0;
   const iconName = getWorkoutIcon(workout.type, workout.km);
+  const workoutId = workout.id;
+  const canExecute = !!workoutId && !isRestDay;
+  const isCompleted = workout.status === "completed";
+  const isSkipped = workout.status === "skipped";
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -126,6 +137,69 @@ export default function WorkoutDetailScreen() {
             </>
           )}
         </BaseCard>
+
+        {canExecute && (
+          <BaseCard variant="glass" style={styles.actionsCard}>
+            <View style={styles.statusRow}>
+              <Text style={styles.statusLabel}>Estado</Text>
+              <Text
+                style={[
+                  styles.statusValue,
+                  isCompleted && styles.statusCompleted,
+                  isSkipped && styles.statusSkipped,
+                ]}
+              >
+                {isCompleted
+                  ? "Completado"
+                  : isSkipped
+                    ? "Omitido"
+                    : workout.status === "rescheduled"
+                      ? "Reprogramado"
+                      : "Pendiente"}
+              </Text>
+            </View>
+
+            {workout.status === "pending" ? (
+              <View style={styles.actionRow}>
+                <Pressable
+                  style={styles.completeButton}
+                  onPress={() => workoutId && completeWorkout(workoutId)}
+                >
+                  <MaterialCommunityIcons
+                    name="check"
+                    size={19}
+                    color={theme.colors.onPrimary}
+                  />
+                  <Text style={styles.completeButtonText}>Completar</Text>
+                </Pressable>
+
+                <Pressable
+                  style={styles.skipButton}
+                  onPress={() => workoutId && skipWorkout(workoutId)}
+                >
+                  <MaterialCommunityIcons
+                    name="close"
+                    size={19}
+                    color={theme.colors.error}
+                  />
+                  <Text style={styles.skipButtonText}>Omitir</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <Pressable
+                style={styles.resetButton}
+                onPress={() => workoutId && resetWorkoutStatus(workoutId)}
+              >
+                <MaterialCommunityIcons
+                  name="restore"
+                  size={19}
+                  color={theme.colors.text}
+                />
+                <Text style={styles.resetButtonText}>Revertir estado</Text>
+              </Pressable>
+            )}
+          </BaseCard>
+        )}
 
         <View style={styles.section}>
           <SectionHeader
@@ -304,6 +378,101 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: theme.colors.border,
     marginVertical: theme.spacing.lg,
+  },
+
+  actionsCard: {
+    padding: theme.spacing.xl,
+    gap: theme.spacing.lg,
+  },
+
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.md,
+  },
+
+  statusLabel: {
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
+  },
+
+  statusValue: {
+    fontSize: theme.typography.bodyMD,
+    color: theme.colors.text,
+    fontWeight: theme.fontWeight.bold,
+  },
+
+  statusCompleted: {
+    color: theme.colors.success,
+  },
+
+  statusSkipped: {
+    color: theme.colors.error,
+  },
+
+  actionRow: {
+    flexDirection: "row",
+    gap: spacing.md,
+  },
+
+  completeButton: {
+    flex: 1,
+    minHeight: 52,
+    borderRadius: theme.radius.pill,
+    backgroundColor: theme.colors.primary,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+  },
+
+  completeButtonText: {
+    color: theme.colors.onPrimary,
+    fontSize: theme.typography.bodyMD,
+    fontWeight: theme.fontWeight.bold,
+  },
+
+  skipButton: {
+    flex: 1,
+    minHeight: 52,
+    borderRadius: theme.radius.pill,
+    backgroundColor: theme.colors.errorLight,
+    borderWidth: 1,
+    borderColor: "rgba(255, 107, 97, 0.28)",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+  },
+
+  skipButtonText: {
+    color: theme.colors.error,
+    fontSize: theme.typography.bodyMD,
+    fontWeight: theme.fontWeight.bold,
+  },
+
+  resetButton: {
+    minHeight: 52,
+    borderRadius: theme.radius.pill,
+    backgroundColor: theme.colors.surfaceGlass,
+    borderWidth: 1,
+    borderColor: theme.colors.borderStrong,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+  },
+
+  resetButtonText: {
+    color: theme.colors.text,
+    fontSize: theme.typography.bodyMD,
+    fontWeight: theme.fontWeight.bold,
   },
 
   section: {

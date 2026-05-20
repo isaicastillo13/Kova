@@ -4,12 +4,13 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { BaseCard } from "@/src/components/ui/kova";
 import { spacing, theme } from "@/src/constants/theme";
+import type { Activity, WorkoutStatus } from "@/src/types/training";
 
 type TodayWorkout = {
   type: string;
   title: string;
   km: number;
-  status: "pending" | "completed";
+  status: WorkoutStatus;
 };
 
 type WeeklyGoal = {
@@ -24,6 +25,7 @@ type Props = {
   streakDays: number;
   todayWorkout: TodayWorkout;
   weeklyGoal: WeeklyGoal;
+  activities?: Activity[];
 };
 
 type Insight = {
@@ -40,6 +42,7 @@ function getInsightMessage({
   streakDays,
   todayWorkout,
   weeklyGoal,
+  activities = [],
 }: Props): Insight {
   const isRestDay =
     todayWorkout.type.toLowerCase() === "descanso" || todayWorkout.km === 0;
@@ -48,6 +51,33 @@ function getInsightMessage({
     weeklyGoal.progressTotal > 0
       ? weeklyGoal.progressCurrent / weeklyGoal.progressTotal
       : 0;
+  const skippedSessions = activities.filter(
+    (activity) => activity.status === "skipped",
+  );
+  const lastActivity = activities[0];
+
+  if (skippedSessions.length > 0 && lastActivity?.status === "skipped") {
+    return {
+      family: "material",
+      icon: "calendar-alert",
+      label: "Ajuste de semana",
+      tone: "recovery",
+      text: "No pasa nada, ajusta la semana y vuelve con calma.",
+    };
+  }
+
+  if (
+    lastActivity?.status === "completed" &&
+    (lastActivity.feedback?.pain || (lastActivity.feedback?.rpe ?? 0) >= 8)
+  ) {
+    return {
+      family: "material",
+      icon: "heart-pulse",
+      label: "Recupera bien",
+      tone: "recovery",
+      text: "Fue una sesión exigente. Prioriza recuperación antes de volver a subir la carga.",
+    };
+  }
 
   if (isRestDay) {
     return {
@@ -66,6 +96,16 @@ function getInsightMessage({
       label: "Sesión cerrada",
       tone: "success",
       text: `Ya sumaste ${todayWorkout.km} ${weeklyGoal.unit}. Buen avance para esta semana.`,
+    };
+  }
+
+  if (weeklyGoal.completedSessions >= 2) {
+    return {
+      family: "material",
+      icon: "chart-timeline-variant",
+      label: "Constancia",
+      tone: "success",
+      text: "Buen ritmo, estás construyendo constancia sesión a sesión.",
     };
   }
 
@@ -112,11 +152,13 @@ export default function HomeInsight({
   streakDays,
   todayWorkout,
   weeklyGoal,
+  activities,
 }: Props) {
   const insight = getInsightMessage({
     streakDays,
     todayWorkout,
     weeklyGoal,
+    activities,
   });
 
   const iconColor =

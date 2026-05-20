@@ -36,11 +36,37 @@ export function getTodayDateString(): string {
   return formatDateToYYYYMMDD(today);
 }
 
+export function getDateStringForWeekday(dayIndex: number, baseDate = new Date()): string {
+  const normalizedDay = Math.min(Math.max(dayIndex, 0), 6);
+  const jsDay = baseDate.getDay();
+  const mondayOffset = jsDay === 0 ? -6 : 1 - jsDay;
+  const monday = new Date(baseDate);
+  monday.setDate(baseDate.getDate() + mondayOffset);
+
+  const plannedDate = new Date(monday);
+  plannedDate.setDate(monday.getDate() + normalizedDay);
+
+  return formatDateToYYYYMMDD(plannedDate);
+}
+
 export function formatDateToYYYYMMDD(date: Date): string {
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, "0");
   const day = `${date.getDate()}`.padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+export function getRelativeDateLabel(dateString: string): string {
+  const today = getTodayDateString();
+  const yesterday = getPreviousDateString(today);
+
+  if (dateString === today) return "Hoy";
+  if (dateString === yesterday) return "Ayer";
+
+  const [year, month, day] = dateString.split("-");
+  if (year && month && day) return `${day}/${month}`;
+
+  return dateString;
 }
 
 export function getPreviousDateString(dateString: string): string {
