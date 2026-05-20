@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    padding: theme.spacing.xxl,
+    padding: theme.spacing.xl,
     paddingBottom: 126,
     gap: theme.spacing.xl,
   },
@@ -222,9 +222,10 @@ const styles = StyleSheet.create({
   },
 
   kicker: {
-    fontSize: theme.typography.bodySM,
+    fontSize: theme.typography.label,
     color: theme.colors.primaryMuted,
     fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
     marginBottom: spacing.xs,
   },
 
@@ -252,9 +253,10 @@ const styles = StyleSheet.create({
   },
 
   heroMeta: {
-    fontSize: theme.typography.bodySM,
-    color: "rgba(255, 255, 255, 0.68)",
-    fontWeight: theme.fontWeight.semibold,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   metricsGrid: {
@@ -265,7 +267,7 @@ const styles = StyleSheet.create({
 
   metricCard: {
     width: "47%",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceGlass,
     borderRadius: theme.radius.card,
     borderWidth: 1,
     borderColor: theme.colors.borderStrong,
@@ -276,7 +278,7 @@ const styles = StyleSheet.create({
   metricIcon: {
     width: 38,
     height: 38,
-    borderRadius: 14,
+    borderRadius: theme.radius.md,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.md,
@@ -290,8 +292,10 @@ const styles = StyleSheet.create({
 
   metricLabel: {
     marginTop: 2,
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   card: {
@@ -353,8 +357,10 @@ const styles = StyleSheet.create({
 
   chartLabel: {
     marginTop: 2,
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   insightRow: {
@@ -368,7 +374,7 @@ const styles = StyleSheet.create({
   insightIcon: {
     width: 38,
     height: 38,
-    borderRadius: 14,
+    borderRadius: theme.radius.md,
     backgroundColor: theme.colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",

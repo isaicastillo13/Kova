@@ -1,29 +1,32 @@
 export type ThemeMode = "dark" | "light";
 
 const palette = {
-  primary: "#ff4d24",
-  primaryHot: "#ff6b3d",
-  primaryDeep: "#b72914",
-  ember: "#341813",
+  primary: "#ff6d29",
+  primaryHot: "#ffb599",
+  primaryDeep: "#a63b00",
+  ember: "#453027",
 
-  black: "#070808",
-  obsidian: "#0d0e10",
-  surfaceLow: "#111214",
-  surface: "#17181b",
-  surfaceHigh: "#202126",
-  surfaceHighest: "#292a30",
+  black: "#000000",
+  obsidian: "#0c0f0f",
+  surfaceLow: "#121414",
+  surface: "#1a1c1c",
+  surfaceHigh: "#1e2020",
+  surfaceHighest: "#282a2b",
+  surfaceBright: "#333535",
 
   white: "#ffffff",
-  daylight: "#f7f4f1",
-  daylightLow: "#eeeae6",
+  daylight: "#f8f9fa",
+  daylightLow: "#edeeef",
   daylightSurface: "#ffffff",
-  slate: "#171513",
+  slate: "#191c1d",
+  warmText: "#e1bfb3",
+  graphite: "#bababa",
 
-  success: "#22c55e",
-  warning: "#f59e0b",
-  error: "#ef4444",
-  info: "#38bdf8",
-  purple: "#a78bfa",
+  success: "#35d07f",
+  warning: "#f5b84b",
+  error: "#ff6b61",
+  info: "#78c7ff",
+  purple: "#c6a6ff",
 } as const;
 
 const sharedSpacing = {
@@ -44,17 +47,17 @@ const sharedRadius = {
   md: 12,
   lg: 16,
   xl: 20,
-  xxl: 28,
-  card: 22,
+  xxl: 24,
+  card: 16,
   pill: 999,
 } as const;
 
 const sharedTypography = {
-  hero: 44,
+  hero: 48,
   display: 36,
   titleXL: 32,
-  titleLG: 26,
-  titleMD: 22,
+  titleLG: 24,
+  titleMD: 20,
   titleSM: 18,
   bodyLG: 16,
   bodyMD: 14,
@@ -70,6 +73,14 @@ const sharedFontWeight = {
   extrabold: "800" as const,
 };
 
+const sharedFontFamily = {
+  body: "System",
+  heading: "System",
+  technical: "monospace",
+  stitchBody: "Hanken Grotesk",
+  stitchTechnical: "JetBrains Mono",
+} as const;
+
 function createColors(mode: ThemeMode) {
   const isDark = mode === "dark";
 
@@ -78,13 +89,13 @@ function createColors(mode: ThemeMode) {
 
     primary: palette.primary,
     primaryDark: isDark ? palette.primaryHot : palette.primaryDeep,
-    primaryLight: isDark ? "rgba(255, 77, 36, 0.18)" : "#ffe0d6",
-    primarySoft: isDark ? "rgba(255, 77, 36, 0.11)" : "#fff0ea",
-    primaryMuted: isDark ? "#ff9a7c" : "#c93417",
-    onPrimary: palette.white,
+    primaryLight: isDark ? "rgba(255, 109, 41, 0.18)" : "#ffdbce",
+    primarySoft: isDark ? "rgba(255, 109, 41, 0.10)" : "#fff0ea",
+    primaryMuted: isDark ? palette.primaryHot : palette.primaryDeep,
+    onPrimary: isDark ? palette.black : palette.white,
 
     accent: palette.primaryHot,
-    accentSoft: isDark ? "rgba(255, 154, 124, 0.13)" : "#fff0ea",
+    accentSoft: isDark ? "rgba(255, 181, 153, 0.12)" : "#fff0ea",
 
     background: isDark ? palette.obsidian : palette.daylight,
     backgroundAlt: isDark ? palette.black : palette.daylightLow,
@@ -92,28 +103,33 @@ function createColors(mode: ThemeMode) {
     surfaceAlt: isDark ? palette.surfaceHigh : palette.daylightLow,
     surfaceMuted: isDark ? palette.surfaceLow : "#edeeef",
     surfaceElevated: isDark ? palette.surfaceHighest : palette.daylightSurface,
-    surfaceGlass: isDark ? "rgba(32, 33, 38, 0.82)" : "rgba(255, 255, 255, 0.86)",
-    surfacePressed: isDark ? "rgba(255, 77, 36, 0.14)" : "#fff0ea",
+    surfaceBright: isDark ? palette.surfaceBright : "#e1e3e4",
+    surfaceGlass: isDark ? "rgba(250, 250, 250, 0.10)" : "rgba(255, 255, 255, 0.86)",
+    surfaceGlassStrong: isDark ? "rgba(250, 250, 250, 0.16)" : "rgba(255, 255, 255, 0.92)",
+    surfacePressed: isDark ? "rgba(255, 109, 41, 0.14)" : "#fff0ea",
 
     border: isDark ? "rgba(255, 255, 255, 0.08)" : "#e5dfda",
-    borderStrong: isDark ? "rgba(255, 255, 255, 0.16)" : "#d7cec7",
-    borderAccent: isDark ? "rgba(255, 77, 36, 0.42)" : "rgba(255, 77, 36, 0.42)",
+    borderStrong: isDark ? "rgba(255, 255, 255, 0.14)" : "#d7cec7",
+    borderAccent: isDark ? "rgba(255, 109, 41, 0.46)" : "rgba(255, 109, 41, 0.42)",
+    borderWarm: isDark ? "rgba(169, 138, 127, 0.36)" : "#e1bfb3",
 
-    text: isDark ? "#f7f2ef" : palette.slate,
-    textSecondary: isDark ? "rgba(247, 242, 239, 0.68)" : "#625c58",
-    textMuted: isDark ? "rgba(247, 242, 239, 0.42)" : "#908883",
+    text: isDark ? "#e8e0e5" : palette.slate,
+    textSecondary: isDark ? "rgba(232, 224, 229, 0.70)" : "#625c58",
+    textMuted: isDark ? "rgba(232, 224, 229, 0.46)" : "#908883",
     textInverse: isDark ? palette.slate : palette.white,
+    textWarm: isDark ? palette.warmText : "#594138",
+    textTechnical: isDark ? palette.graphite : "#5d5e61",
 
     success: palette.success,
-    successLight: isDark ? "rgba(34, 197, 94, 0.14)" : "#dcfce7",
+    successLight: isDark ? "rgba(53, 208, 127, 0.14)" : "#dcfce7",
     warning: palette.warning,
-    warningLight: isDark ? "rgba(245, 158, 11, 0.16)" : "#fff7db",
+    warningLight: isDark ? "rgba(245, 184, 75, 0.15)" : "#fff7db",
     error: palette.error,
-    errorLight: isDark ? "rgba(239, 68, 68, 0.15)" : "#fee2e2",
+    errorLight: isDark ? "rgba(255, 107, 97, 0.15)" : "#fee2e2",
     info: palette.info,
-    infoLight: isDark ? "rgba(56, 189, 248, 0.14)" : "#dbeafe",
+    infoLight: isDark ? "rgba(120, 199, 255, 0.14)" : "#dbeafe",
     purple: palette.purple,
-    purpleLight: isDark ? "rgba(167, 139, 250, 0.14)" : "#ede9fe",
+    purpleLight: isDark ? "rgba(198, 166, 255, 0.14)" : "#ede9fe",
 
     lowIntensity: palette.success,
     mediumIntensity: palette.warning,
@@ -122,10 +138,11 @@ function createColors(mode: ThemeMode) {
 
     white: palette.white,
     black: isDark ? palette.black : "#171514",
-    charcoal: isDark ? "#18120f" : "#1f1d1b",
+    charcoal: isDark ? "#161316" : "#1f1d1b",
     blue: isDark ? "#152033" : "#dbeafe",
     glow: palette.ember,
-    overlay: isDark ? "rgba(7, 8, 8, 0.78)" : "rgba(255, 255, 255, 0.78)",
+    heatGlow: isDark ? "rgba(255, 109, 41, 0.08)" : "rgba(255, 109, 41, 0.12)",
+    overlay: isDark ? "rgba(0, 0, 0, 0.78)" : "rgba(255, 255, 255, 0.78)",
   } as const;
 }
 
@@ -134,24 +151,24 @@ function createShadows(mode: ThemeMode) {
 
   return {
     card: {
-      shadowColor: isDark ? palette.primaryDeep : "#000",
-      shadowOffset: { width: 0, height: 14 },
-      shadowOpacity: isDark ? 0.22 : 0.06,
+      shadowColor: isDark ? palette.primary : "#000",
+      shadowOffset: { width: 0, height: 12 },
+      shadowOpacity: isDark ? 0.12 : 0.06,
       shadowRadius: 24,
       elevation: 5,
     },
     soft: {
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: isDark ? 0.18 : 0.04,
+      shadowOpacity: isDark ? 0.16 : 0.04,
       shadowRadius: 18,
       elevation: 2,
     },
     floating: {
-      shadowColor: isDark ? "#000" : "#000",
+      shadowColor: isDark ? palette.primary : "#000",
       shadowOffset: { width: 0, height: 16 },
-      shadowOpacity: isDark ? 0.36 : 0.08,
-      shadowRadius: 30,
+      shadowOpacity: isDark ? 0.18 : 0.08,
+      shadowRadius: 32,
       elevation: 12,
     },
     none: {
@@ -168,6 +185,7 @@ function createTheme(mode: ThemeMode) {
     spacing: sharedSpacing,
     radius: sharedRadius,
     typography: sharedTypography,
+    fontFamily: sharedFontFamily,
     fontWeight: sharedFontWeight,
     shadows: createShadows(mode),
   } as const;

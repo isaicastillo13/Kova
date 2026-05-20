@@ -176,9 +176,9 @@ const styles = StyleSheet.create({
 
   topSection: {
     backgroundColor: theme.colors.background,
-    paddingTop: spacing.xl,
+    paddingTop: spacing.lg,
     paddingBottom: spacing.lg,
-    paddingHorizontal: spacing.xxl,
+    paddingHorizontal: spacing.xl,
     gap: spacing.xl,
   },
 
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
 
   content: {
     flex: 1,
-    paddingHorizontal: spacing.xxl,
+    paddingHorizontal: spacing.xl,
     paddingVertical: spacing.lg,
     gap: spacing.lg,
   },
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
 
   weekHero: {
     padding: theme.spacing.xxl,
-    minHeight: 156,
+    minHeight: 168,
   },
 
   weekHeroContent: {
@@ -235,9 +235,10 @@ const styles = StyleSheet.create({
   },
 
   weekHeroLabel: {
-    fontSize: theme.typography.bodySM,
+    fontSize: theme.typography.label,
     color: theme.colors.primaryMuted,
     fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
     marginBottom: spacing.xs,
   },
 
@@ -256,7 +257,7 @@ const styles = StyleSheet.create({
   weekHeroCopy: {
     marginTop: spacing.sm,
     fontSize: theme.typography.bodySM,
-    color: "rgba(255, 255, 255, 0.7)",
+    color: theme.colors.textTechnical,
     fontWeight: theme.fontWeight.semibold,
   },
 

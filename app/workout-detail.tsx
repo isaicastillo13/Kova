@@ -209,23 +209,23 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    padding: theme.spacing.xxl,
+    padding: theme.spacing.xl,
     paddingBottom: 56,
     gap: theme.spacing.xl,
   },
 
   hero: {
     padding: theme.spacing.xxl,
-    minHeight: 220,
+    minHeight: 232,
   },
 
   backButton: {
     width: 42,
     height: 42,
-    borderRadius: 16,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderRadius: theme.radius.lg,
+    backgroundColor: theme.colors.surfaceGlass,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.12)",
+    borderColor: theme.colors.borderStrong,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.xl,
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   heroIcon: {
     width: 58,
     height: 58,
-    borderRadius: 20,
+    borderRadius: theme.radius.lg,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
@@ -242,11 +242,11 @@ const styles = StyleSheet.create({
   },
 
   type: {
-    fontSize: theme.typography.bodyMD,
+    fontSize: theme.typography.label,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.primaryMuted,
     marginBottom: 6,
-    textTransform: "capitalize",
+    textTransform: "uppercase",
   },
 
   title: {
@@ -287,8 +287,10 @@ const styles = StyleSheet.create({
   },
 
   summaryLabel: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
     marginBottom: 3,
   },
 
@@ -325,7 +327,7 @@ const styles = StyleSheet.create({
   blockIcon: {
     width: 40,
     height: 40,
-    borderRadius: 14,
+    borderRadius: theme.radius.md,
     backgroundColor: theme.colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",

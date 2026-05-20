@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
 
   card: {
     minHeight: 90,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceGlass,
     borderRadius: theme.radius.card,
     paddingVertical: theme.spacing.lg,
     paddingLeft: theme.spacing.lg,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
 
   todayCard: {
     borderColor: theme.colors.borderAccent,
-    backgroundColor: theme.colors.primarySoft,
+    backgroundColor: theme.colors.surfaceGlassStrong,
   },
 
   rail: {
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 42,
     height: 42,
-    borderRadius: 15,
+    borderRadius: theme.radius.md,
     alignItems: "center",
     justifyContent: "center",
     marginRight: spacing.md,
@@ -226,20 +226,21 @@ const styles = StyleSheet.create({
   },
 
   day: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
-    fontWeight: theme.fontWeight.medium,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   todayBadge: {
-    borderRadius: theme.radius.pill,
+    borderRadius: theme.radius.sm,
     backgroundColor: theme.colors.primary,
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
   },
 
   todayBadgeText: {
-    fontSize: theme.typography.bodySM,
+    fontSize: theme.typography.label,
     color: theme.colors.onPrimary,
     fontWeight: theme.fontWeight.bold,
   },
@@ -253,8 +254,9 @@ const styles = StyleSheet.create({
 
   type: {
     marginTop: 3,
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    textTransform: "uppercase",
   },
 
   right: {

@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   goalIcon: {
     width: 50,
     height: 50,
-    borderRadius: 18,
+    borderRadius: theme.radius.lg,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
@@ -117,9 +117,10 @@ const styles = StyleSheet.create({
   },
 
   eyebrow: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
-    fontWeight: theme.fontWeight.semibold,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
     marginBottom: 2,
   },
 
@@ -150,9 +151,10 @@ const styles = StyleSheet.create({
   },
 
   progressLabel: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
-    fontWeight: theme.fontWeight.semibold,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   progressValue: {
@@ -182,8 +184,9 @@ const styles = StyleSheet.create({
 
   statLabel: {
     marginTop: 2,
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    textTransform: "uppercase",
   },
 
   divider: {

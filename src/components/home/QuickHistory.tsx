@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    width: 220,
+    width: 226,
     padding: spacing.lg,
   },
 
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 40,
     height: 40,
-    borderRadius: 14,
+    borderRadius: theme.radius.md,
     backgroundColor: theme.colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",
@@ -126,8 +126,10 @@ const styles = StyleSheet.create({
   },
 
   date: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   title: {
@@ -161,7 +163,7 @@ const styles = StyleSheet.create({
 
   subtitle: {
     fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    color: theme.colors.textTechnical,
   },
 
   emptyCard: {
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
   emptyIcon: {
     width: 44,
     height: 44,
-    borderRadius: 16,
+    borderRadius: theme.radius.lg,
     backgroundColor: theme.colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",

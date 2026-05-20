@@ -67,8 +67,10 @@ const styles = StyleSheet.create({
   },
 
   dayLabel: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
     marginBottom: 6,
   },
 
@@ -80,10 +82,10 @@ const styles = StyleSheet.create({
   dayCircle: {
     width: 38,
     height: 38,
-    borderRadius: 19,
+    borderRadius: theme.radius.md,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceGlass,
     borderWidth: 1,
   },
 
@@ -128,6 +130,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     zIndex: 2,
     borderWidth: 2,
-    borderColor: theme.colors.surface,
+    borderColor: theme.colors.background,
   },
 });

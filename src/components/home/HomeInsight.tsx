@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 44,
     height: 44,
-    borderRadius: 15,
+    borderRadius: theme.radius.md,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -169,9 +169,10 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    fontSize: theme.typography.bodySM,
+    fontSize: theme.typography.label,
     color: theme.colors.text,
     fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
     marginBottom: 2,
   },
 

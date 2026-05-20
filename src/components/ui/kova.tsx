@@ -315,15 +315,16 @@ const styles = StyleSheet.create({
   },
   badge: {
     alignSelf: "flex-start",
-    borderRadius: theme.radius.pill,
+    borderRadius: theme.radius.sm,
     paddingHorizontal: theme.spacing.md,
-    paddingVertical: 6,
+    paddingVertical: 5,
     borderWidth: 1,
     borderColor: theme.colors.border,
   },
   badgeText: {
-    fontSize: theme.typography.bodySM,
+    fontSize: theme.typography.label,
     fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
   pill: {
     minHeight: 36,
@@ -350,7 +351,7 @@ const styles = StyleSheet.create({
   metricCard: {
     flex: 1,
     minWidth: 0,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceGlass,
   },
   metricTop: {
     flexDirection: "row",
@@ -367,9 +368,10 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     flex: 1,
-    color: theme.colors.textSecondary,
-    fontSize: theme.typography.bodySM,
-    fontWeight: theme.fontWeight.semibold,
+    color: theme.colors.textTechnical,
+    fontSize: theme.typography.label,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
   metricValue: {
     color: theme.colors.text,
@@ -399,14 +401,17 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.semibold,
   },
   floatingTabItem: {
-    width: 44,
-    height: 36,
+    width: 52,
+    height: 42,
     borderRadius: theme.radius.pill,
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "transparent",
   },
   floatingTabItemActive: {
     backgroundColor: theme.colors.primary,
+    borderColor: "rgba(255, 255, 255, 0.16)",
     ...theme.shadows.soft,
   },
   progressCard: {
@@ -461,12 +466,12 @@ const styles = StyleSheet.create({
 
 const cardVariants = StyleSheet.create({
   surface: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceGlass,
     borderColor: theme.colors.border,
     ...theme.shadows.soft,
   },
   elevated: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceGlassStrong,
     borderColor: theme.colors.borderStrong,
     ...theme.shadows.card,
   },

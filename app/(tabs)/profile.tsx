@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    padding: theme.spacing.xxl,
+    padding: theme.spacing.xl,
     paddingBottom: 126,
     gap: theme.spacing.xl,
   },
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 62,
     height: 62,
-    borderRadius: 22,
+    borderRadius: theme.radius.lg,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
@@ -270,9 +270,10 @@ const styles = StyleSheet.create({
   },
 
   kicker: {
-    fontSize: theme.typography.bodySM,
+    fontSize: theme.typography.label,
     color: theme.colors.primaryMuted,
     fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
     marginBottom: spacing.xs,
   },
 
@@ -286,7 +287,7 @@ const styles = StyleSheet.create({
   subtitle: {
     marginTop: spacing.sm,
     fontSize: theme.typography.bodyMD,
-    color: "rgba(255, 255, 255, 0.68)",
+    color: theme.colors.textTechnical,
     lineHeight: 22,
   },
 
@@ -320,9 +321,10 @@ const styles = StyleSheet.create({
   },
 
   cardMeta: {
-    fontSize: theme.typography.bodySM,
+    fontSize: theme.typography.label,
     color: theme.colors.primary,
     fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   item: {
@@ -337,8 +339,10 @@ const styles = StyleSheet.create({
 
   label: {
     flex: 1,
-    fontSize: theme.typography.bodyMD,
-    color: theme.colors.textSecondary,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   value: {
@@ -375,7 +379,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.pill,
     borderWidth: 1,
     borderColor: theme.colors.errorLight,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceGlass,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",

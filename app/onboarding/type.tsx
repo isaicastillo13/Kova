@@ -290,15 +290,16 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    padding: spacing.xxl,
+    padding: spacing.xl,
     paddingBottom: 40,
     gap: spacing.xl,
   },
 
   step: {
-    fontSize: theme.typography.bodySM,
+    fontSize: theme.typography.label,
     color: theme.colors.primaryMuted,
     fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
     marginBottom: spacing.sm,
   },
 
@@ -321,7 +322,7 @@ const styles = StyleSheet.create({
   },
 
   sectionTitle: {
-    fontSize: theme.typography.bodyLG,
+    fontSize: theme.typography.bodyMD,
     fontWeight: theme.fontWeight.bold,
     color: theme.colors.text,
   },
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
   },
 
   optionCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceGlass,
     borderWidth: 1,
     borderColor: theme.colors.borderStrong,
     borderRadius: theme.radius.card,
@@ -362,18 +363,18 @@ const styles = StyleSheet.create({
   },
 
   optionDescriptionSelected: {
-    color: "rgba(255, 255, 255, 0.78)",
+    color: "rgba(0, 0, 0, 0.62)",
   },
 
   input: {
     height: 52,
     borderWidth: 1,
     borderColor: theme.colors.borderStrong,
-    borderRadius: theme.radius.xl,
+    borderRadius: theme.radius.lg,
     paddingHorizontal: spacing.lg,
     fontSize: theme.typography.bodyLG,
     color: theme.colors.text,
-    backgroundColor: theme.colors.surfaceAlt,
+    backgroundColor: theme.colors.surfaceGlass,
   },
 
   footer: {
@@ -390,7 +391,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.borderStrong,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceGlass,
   },
 
   secondaryButtonText: {

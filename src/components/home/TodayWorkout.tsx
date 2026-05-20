@@ -161,22 +161,22 @@ function MetricItem({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: theme.colors.charcoal,
+    backgroundColor: theme.colors.surfaceGlassStrong,
     borderRadius: theme.radius.card,
     padding: theme.spacing.xxl,
     borderWidth: 1,
-    borderColor: theme.colors.borderAccent,
+    borderColor: theme.colors.borderStrong,
     ...theme.shadows.card,
   },
 
   completedContainer: {
-    borderColor: theme.colors.success,
-    backgroundColor: theme.colors.surface,
+    borderColor: "rgba(53, 208, 127, 0.34)",
+    backgroundColor: theme.colors.surfaceGlass,
   },
 
   restContainer: {
-    backgroundColor: theme.colors.surface,
-    borderColor: theme.colors.info,
+    backgroundColor: theme.colors.surfaceGlass,
+    borderColor: "rgba(120, 199, 255, 0.34)",
   },
 
   header: {
@@ -197,16 +197,17 @@ const styles = StyleSheet.create({
   iconBox: {
     width: 50,
     height: 50,
-    borderRadius: 18,
+    borderRadius: theme.radius.lg,
     backgroundColor: theme.colors.primary,
     alignItems: "center",
     justifyContent: "center",
   },
 
   eyebrow: {
-    fontSize: theme.typography.bodySM,
-    color: "rgba(255, 255, 255, 0.64)",
-    fontWeight: theme.fontWeight.semibold,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   type: {
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
   },
 
   statusPill: {
-    borderRadius: theme.radius.pill,
+    borderRadius: theme.radius.sm,
     backgroundColor: theme.colors.primaryLight,
     paddingHorizontal: spacing.md,
     paddingVertical: 7,
@@ -273,7 +274,7 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 70,
     borderRadius: theme.radius.lg,
-    backgroundColor: "rgba(255, 255, 255, 0.07)",
+    backgroundColor: theme.colors.surfaceGlass,
     borderWidth: 1,
     borderColor: theme.colors.border,
     padding: spacing.md,
@@ -281,8 +282,10 @@ const styles = StyleSheet.create({
   },
 
   metricLabel: {
-    fontSize: theme.typography.bodySM,
-    color: "rgba(255, 255, 255, 0.6)",
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
     marginBottom: 4,
   },
 
@@ -313,7 +316,7 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 7,
     borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.72)",
+    borderColor: "rgba(0, 0, 0, 0.56)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -338,13 +341,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255, 255, 255, 0.12)",
+    borderTopColor: theme.colors.border,
     paddingTop: spacing.lg,
   },
 
   recoveryText: {
     flex: 1,
-    color: "rgba(255, 255, 255, 0.72)",
+    color: theme.colors.textSecondary,
     fontSize: theme.typography.bodySM,
     lineHeight: 20,
   },

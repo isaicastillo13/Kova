@@ -66,9 +66,9 @@ const styles = StyleSheet.create({
   avatar: {
     width: 52,
     height: 52,
-    borderRadius: 18,
+    borderRadius: 16,
     borderWidth: 2,
-    borderColor: theme.colors.borderStrong,
+    borderColor: theme.colors.borderAccent,
   },
 
   textContainer: {
@@ -78,8 +78,10 @@ const styles = StyleSheet.create({
   },
 
   greeting: {
-    fontSize: theme.typography.bodyMD,
-    color: theme.colors.textSecondary,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
     marginBottom: 2,
   },
 
@@ -92,8 +94,8 @@ const styles = StyleSheet.create({
   brandPill: {
     height: 44,
     minWidth: 76,
-    borderRadius: theme.radius.pill,
-    backgroundColor: theme.colors.surfaceGlass,
+    borderRadius: theme.radius.lg,
+    backgroundColor: theme.colors.surfaceGlassStrong,
     borderWidth: 1,
     borderColor: theme.colors.borderStrong,
     flexDirection: "row",

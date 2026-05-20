@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    padding: theme.spacing.xxl,
+    padding: theme.spacing.xl,
     paddingBottom: 126,
     gap: theme.spacing.xl,
   },
@@ -136,9 +136,10 @@ const styles = StyleSheet.create({
   },
 
   kicker: {
-    fontSize: theme.typography.bodySM,
+    fontSize: theme.typography.label,
     color: theme.colors.primaryMuted,
     fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   title: {
@@ -173,8 +174,10 @@ const styles = StyleSheet.create({
 
   summaryLabel: {
     marginTop: 2,
-    fontSize: theme.typography.bodySM,
-    color: "rgba(255, 255, 255, 0.64)",
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   summaryDivider: {
@@ -192,7 +195,7 @@ const styles = StyleSheet.create({
   emptyIcon: {
     width: 58,
     height: 58,
-    borderRadius: 20,
+    borderRadius: theme.radius.lg,
     backgroundColor: theme.colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",
@@ -236,7 +239,7 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 44,
     height: 44,
-    borderRadius: 16,
+    borderRadius: theme.radius.md,
     backgroundColor: theme.colors.primaryLight,
     alignItems: "center",
     justifyContent: "center",
@@ -257,14 +260,17 @@ const styles = StyleSheet.create({
   },
 
   date: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   type: {
-    fontSize: theme.typography.bodySM,
+    fontSize: theme.typography.label,
     color: theme.colors.primary,
     fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   activityTitle: {

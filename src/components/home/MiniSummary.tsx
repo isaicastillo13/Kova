@@ -90,8 +90,10 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    fontSize: theme.typography.bodySM,
-    color: theme.colors.textSecondary,
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
     marginTop: 4,
   },
 

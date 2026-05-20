@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    paddingHorizontal: spacing.xxl,
+    paddingHorizontal: spacing.xl,
     paddingTop: spacing.xxl,
     paddingBottom: spacing.xxl,
     justifyContent: "space-between",
@@ -100,9 +100,10 @@ const styles = StyleSheet.create({
   },
 
   step: {
-    fontSize: theme.typography.bodySM,
+    fontSize: theme.typography.label,
     color: theme.colors.primaryMuted,
     fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
     marginBottom: spacing.sm,
   },
 
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   },
 
   optionCard: {
-    backgroundColor: theme.colors.surface,
+    backgroundColor: theme.colors.surfaceGlass,
     borderWidth: 1,
     borderColor: theme.colors.borderStrong,
     borderRadius: theme.radius.card,
