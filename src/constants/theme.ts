@@ -1,10 +1,10 @@
 export type ThemeMode = "dark" | "light";
 
 const palette = {
-  primary: "#ff6d29",
-  primaryHot: "#ffb599",
-  primaryDeep: "#a63b00",
-  ember: "#453027",
+  primary: "#fc0606",
+  primaryHot: "#ff5959",
+  primaryDeep: "#900c0c",
+  ember: "#500000",
 
   black: "#000000",
   obsidian: "#0c0f0f",
