@@ -26,6 +26,13 @@ type CoachRecommendationInput = {
   todayWorkout: TodayWorkout;
 };
 
+type CompletionLoad = {
+  plannedKm: number;
+  completedKm?: number;
+  plannedDuration?: number;
+  actualDuration?: number;
+};
+
 const RECENT_WINDOW_DAYS = 7;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -115,6 +122,30 @@ function getFeedbackSignals(feedback?: WorkoutFeedback) {
   };
 }
 
+function getLoadRatio(load?: CompletionLoad): number | undefined {
+  if (
+    !load ||
+    load.plannedKm <= 0 ||
+    typeof load.completedKm !== "number"
+  ) {
+    return undefined;
+  }
+
+  return load.completedKm / load.plannedKm;
+}
+
+function getDurationRatio(load?: CompletionLoad): number | undefined {
+  if (
+    !load ||
+    !load.plannedDuration ||
+    typeof load.actualDuration !== "number"
+  ) {
+    return undefined;
+  }
+
+  return load.actualDuration / load.plannedDuration;
+}
+
 function isRestToday(todayWorkout: TodayWorkout): boolean {
   const normalizedType = todayWorkout.type.toLowerCase();
   return normalizedType === "rest" || normalizedType === "descanso";
@@ -191,8 +222,58 @@ function getLatestFeedback({
   return completedWorkoutWithFeedback?.feedback;
 }
 
+function getLatestCompletionLoad({
+  sortedActivities,
+  weekPlan,
+}: {
+  sortedActivities: readonly Activity[];
+  weekPlan: readonly DayWorkout[];
+}): CompletionLoad | undefined {
+  const latestCompletedActivity = sortedActivities.find(
+    (activity) => activity.status === "completed",
+  );
+
+  if (latestCompletedActivity) {
+    const plannedWorkout = weekPlan.find(
+      (workout) => workout.id === latestCompletedActivity.workoutId,
+    );
+
+    return {
+      plannedKm: latestCompletedActivity.plannedKm,
+      completedKm:
+        latestCompletedActivity.feedback?.completedKm ??
+        latestCompletedActivity.completedKm,
+      plannedDuration: plannedWorkout?.duration,
+      actualDuration:
+        latestCompletedActivity.feedback?.actualDuration ??
+        latestCompletedActivity.actualDuration,
+    };
+  }
+
+  const latestCompletedWorkout = sortWorkoutsByExecutionDate(weekPlan).find(
+    (workout) => workout.status === "completed",
+  );
+
+  if (!latestCompletedWorkout) return undefined;
+
+  return {
+    plannedKm: latestCompletedWorkout.km ?? 0,
+    completedKm:
+      latestCompletedWorkout.feedback?.completedKm ??
+      latestCompletedWorkout.completedKm,
+    plannedDuration: latestCompletedWorkout.duration,
+    actualDuration:
+      latestCompletedWorkout.feedback?.actualDuration ??
+      latestCompletedWorkout.actualDuration,
+  };
+}
+
 function formatProgress(weeklyGoal: WeeklyGoal): string {
   return `${weeklyGoal.progressCurrent}/${weeklyGoal.progressTotal} ${weeklyGoal.unit}`;
+}
+
+function formatNumber(value: number): string {
+  return Number.isInteger(value) ? `${value}` : `${Number(value.toFixed(2))}`;
 }
 
 export function getCoachRecommendation({
@@ -207,6 +288,9 @@ export function getCoachRecommendation({
   );
   const latestFeedback = getLatestFeedback({ sortedActivities, weekPlan });
   const feedbackSignals = getFeedbackSignals(latestFeedback);
+  const latestLoad = getLatestCompletionLoad({ sortedActivities, weekPlan });
+  const loadRatio = getLoadRatio(latestLoad);
+  const durationRatio = getDurationRatio(latestLoad);
 
   const trainableWorkouts = weekPlan.filter(isTrainableWorkout);
   const completedWorkouts = trainableWorkouts.filter(
@@ -242,6 +326,16 @@ export function getCoachRecommendation({
   }
 
   if (feedbackSignals.rpe !== undefined && feedbackSignals.rpe >= 8) {
+    if (loadRatio !== undefined && loadRatio > 1.15) {
+      return {
+        title: "Carga alta y esfuerzo alto",
+        message:
+          "Superaste lo planificado y la sesión se sintió exigente. Prioriza recuperación para evitar acumular fatiga innecesaria.",
+        severity: "recovery",
+        actionLabel: "Recuperar",
+      };
+    }
+
     if (todayIsPending && todayIsIntense) {
       return {
         title: "Evita encadenar intensidad",
@@ -266,6 +360,34 @@ export function getCoachRecommendation({
         "Tu último feedback marcó energía baja. Hoy conviene ir suave, elegir descanso activo o recortar la sesión si notas fatiga acumulada.",
       severity: "recovery",
       actionLabel: "Hacer suave",
+    };
+  }
+
+  if (loadRatio !== undefined && loadRatio < 0.7) {
+    return {
+      title: "Recorte inteligente",
+      message:
+        "Recortaste la sesión. Bien si fue por control; mantén consistencia y vuelve al plan sin compensar volumen.",
+      severity: "neutral",
+      actionLabel: "Retomar",
+    };
+  }
+
+  if (loadRatio !== undefined && loadRatio > 1.15) {
+    const durationCopy =
+      durationRatio !== undefined && durationRatio > 1.15
+        ? " También extendiste la duración real."
+        : "";
+
+    return {
+      title: "Más carga de la planeada",
+      message: `Completaste ${formatNumber(
+        latestLoad?.completedKm ?? 0,
+      )} km frente a ${formatNumber(
+        latestLoad?.plannedKm ?? 0,
+      )} km planificados.${durationCopy} Evita acumular fatiga innecesaria.`,
+      severity: "warning",
+      actionLabel: "Controlar carga",
     };
   }
 

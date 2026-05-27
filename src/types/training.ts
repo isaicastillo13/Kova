@@ -25,6 +25,8 @@ export type WorkoutFeedback = {
   energy: "low" | "normal" | "high";
   pain: boolean;
   note?: string;
+  completedKm?: number;
+  actualDuration?: number;
 };
 
 export type DayWorkoutType =
@@ -71,6 +73,7 @@ export type DayWorkout = {
   skippedAt?: string;
   plannedDate?: string;
   completedKm?: number;
+  actualDuration?: number;
   feedback?: WorkoutFeedback;
   km?: number;
   duration?: number;
@@ -97,6 +100,7 @@ export type TodayWorkout = {
   skippedAt?: string;
   plannedDate?: string;
   completedKm?: number;
+  actualDuration?: number;
   feedback?: WorkoutFeedback;
   details?: WorkoutDetailBlock[];
 };
@@ -120,6 +124,7 @@ export type Activity = {
   type: string;
   plannedKm: number;
   completedKm: number;
+  actualDuration?: number;
   km: number;
   duration: string;
   status: Extract<WorkoutStatus, "completed" | "skipped">;

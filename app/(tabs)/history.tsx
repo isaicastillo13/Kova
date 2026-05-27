@@ -2,6 +2,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Badge, BaseCard } from "@/src/components/ui/kova";
 import { theme, spacing } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
+import type { Activity } from "@/src/types/training";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,6 +19,16 @@ function getActivityIcon(type: string) {
   if (type.toLowerCase() === "swimming") return "swim";
   if (type.toLowerCase() === "mixed") return "lightning-bolt";
   return "run-fast";
+}
+
+function formatNumber(value: number) {
+  return Number.isInteger(value) ? `${value}` : `${Number(value.toFixed(2))}`;
+}
+
+function getDurationLabel(activity: Activity) {
+  return typeof activity.actualDuration === "number"
+    ? `${formatNumber(activity.actualDuration)} min`
+    : activity.duration;
 }
 
 export default function HistoryScreen() {
@@ -54,7 +65,7 @@ export default function HistoryScreen() {
         </View>
         <View style={styles.summaryDivider} />
         <View style={styles.summaryItem}>
-          <Text style={styles.summaryValue}>{totalKm}</Text>
+          <Text style={styles.summaryValue}>{formatNumber(totalKm)}</Text>
           <Text style={styles.summaryLabel}>Km completados</Text>
         </View>
         <View style={styles.summaryDivider} />
@@ -114,12 +125,23 @@ export default function HistoryScreen() {
                 <View style={styles.metricsRow}>
                   <Text style={styles.metric}>
                     {item.completedKm > 0
-                      ? `${item.completedKm} km`
+                      ? `${formatNumber(item.completedKm)} km`
                       : "Sin carga"}
                   </Text>
                   <View style={styles.dot} />
-                  <Text style={styles.metric}>{item.duration}</Text>
+                  <Text style={styles.metric}>{getDurationLabel(item)}</Text>
                 </View>
+
+                {!!item.feedback && (
+                  <View style={styles.feedbackRow}>
+                    <Text style={styles.feedbackPill}>
+                      RPE {item.feedback.rpe}
+                    </Text>
+                    {item.feedback.pain && (
+                      <Text style={styles.painPill}>Dolor</Text>
+                    )}
+                  </View>
+                )}
 
                 <Text style={styles.subtitleSmall} numberOfLines={1}>
                   {item.subtitle}
@@ -307,6 +329,28 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.bodyMD,
     color: theme.colors.text,
     fontWeight: theme.fontWeight.semibold,
+  },
+
+  feedbackRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: spacing.sm,
+    marginBottom: spacing.xs,
+  },
+
+  feedbackPill: {
+    fontSize: theme.typography.label,
+    color: theme.colors.primaryMuted,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
+  },
+
+  painPill: {
+    fontSize: theme.typography.label,
+    color: theme.colors.warning,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   dot: {

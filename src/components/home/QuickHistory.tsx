@@ -24,6 +24,16 @@ function getActivityIcon(type: string) {
   return "run";
 }
 
+function formatNumber(value: number) {
+  return Number.isInteger(value) ? `${value}` : `${Number(value.toFixed(2))}`;
+}
+
+function getDurationLabel(activity: Activity) {
+  return typeof activity.actualDuration === "number"
+    ? `${formatNumber(activity.actualDuration)} min`
+    : activity.duration;
+}
+
 export default function QuickHistory({ activities }: Props) {
   if (!activities.length) {
     return (
@@ -72,11 +82,22 @@ export default function QuickHistory({ activities }: Props) {
 
           <View style={styles.metricsRow}>
             <Text style={styles.metric}>
-              {item.completedKm > 0 ? `${item.completedKm} km` : "Sin carga"}
+              {item.completedKm > 0
+                ? `${formatNumber(item.completedKm)} km`
+                : "Sin carga"}
             </Text>
             <View style={styles.dot} />
-            <Text style={styles.metric}>{item.duration}</Text>
+            <Text style={styles.metric}>{getDurationLabel(item)}</Text>
           </View>
+
+          {!!item.feedback && (
+            <View style={styles.feedbackRow}>
+              <Text style={styles.feedbackText}>RPE {item.feedback.rpe}</Text>
+              {item.feedback.pain && (
+                <Text style={styles.painText}>Dolor</Text>
+              )}
+            </View>
+          )}
 
           <Text style={styles.subtitle} numberOfLines={1}>
             {item.subtitle}
@@ -153,6 +174,27 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     backgroundColor: theme.colors.primary,
+  },
+
+  feedbackRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+
+  feedbackText: {
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
+  },
+
+  painText: {
+    fontSize: theme.typography.label,
+    color: theme.colors.warning,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
   },
 
   subtitle: {

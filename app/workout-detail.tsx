@@ -1,9 +1,11 @@
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { BaseCard, SectionHeader } from "@/src/components/ui/kova";
+import WorkoutFeedbackModal from "@/src/components/workout/WorkoutFeedbackModal";
 import { theme, spacing } from "@/src/constants/theme";
 import { useHomeStore } from "@/src/store/home-store";
+import type { WorkoutFeedback } from "@/src/types/training";
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -31,6 +33,22 @@ function getBlockIcon(type: string) {
   }
 }
 
+function parseDurationMinutes(duration: string): number | undefined {
+  const value = Number(duration.replace(/[^0-9.]/g, ""));
+  return Number.isFinite(value) && value > 0 ? value : undefined;
+}
+
+function formatMetricNumber(value?: number): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "—";
+  return Number.isInteger(value) ? `${value}` : `${Number(value.toFixed(2))}`;
+}
+
+function getEnergyLabel(energy: WorkoutFeedback["energy"]): string {
+  if (energy === "low") return "Baja";
+  if (energy === "high") return "Alta";
+  return "Normal";
+}
+
 export default function WorkoutDetailScreen() {
   const router = useRouter();
   const todayWorkout = useHomeStore((state) => state.todayWorkout);
@@ -41,6 +59,7 @@ export default function WorkoutDetailScreen() {
   const clearSelectedWorkout = useHomeStore(
     (state) => state.clearSelectedWorkout,
   );
+  const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -58,7 +77,10 @@ export default function WorkoutDetailScreen() {
           selectedWorkout.type === "rest"
             ? "—"
             : `${selectedWorkout.duration ?? 0} min`,
-        difficulty: selectedWorkout.type === "rest" ? "Recuperación" : selectedWorkout.intensity,
+        difficulty:
+          selectedWorkout.type === "rest"
+            ? "Recuperación"
+            : selectedWorkout.intensity,
         metric:
           selectedWorkout.type === "running" || selectedWorkout.type === "mixed"
             ? `${selectedWorkout.km ?? 0} km`
@@ -75,9 +97,16 @@ export default function WorkoutDetailScreen() {
         status: selectedWorkout.status,
         completedAt: selectedWorkout.completedAt,
         skippedAt: selectedWorkout.skippedAt,
+        completedKm: selectedWorkout.completedKm,
+        actualDuration: selectedWorkout.actualDuration,
+        plannedDuration: selectedWorkout.duration,
+        feedback: selectedWorkout.feedback,
         details: selectedWorkout.details ?? [],
       }
-    : todayWorkout;
+    : {
+        ...todayWorkout,
+        plannedDuration: parseDurationMinutes(todayWorkout.duration),
+      };
 
   const isRestDay =
     workout.type.toLowerCase() === "descanso" || workout.km === 0;
@@ -86,163 +115,227 @@ export default function WorkoutDetailScreen() {
   const canExecute = !!workoutId && !isRestDay;
   const isCompleted = workout.status === "completed";
   const isSkipped = workout.status === "skipped";
+  const feedbackCompletedKm =
+    workout.feedback?.completedKm ?? workout.completedKm;
+  const feedbackActualDuration =
+    workout.feedback?.actualDuration ?? workout.actualDuration;
+
+  function handleSaveFeedback(feedback: WorkoutFeedback) {
+    if (!workoutId) return;
+
+    completeWorkout(workoutId, feedback);
+    setFeedbackModalVisible(false);
+  }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <BaseCard variant="hero" style={styles.hero}>
-          <Pressable style={styles.backButton} onPress={() => router.back()}>
-            <MaterialCommunityIcons
-              name="chevron-left"
-              size={24}
-              color={theme.colors.white}
-            />
-          </Pressable>
-
-          <View style={styles.heroIcon}>
-            <MaterialCommunityIcons
-              name={iconName as never}
-              size={30}
-              color={theme.colors.onPrimary}
-            />
-          </View>
-
-          <Text style={styles.type}>{workout.type}</Text>
-          <Text style={styles.title}>{workout.title}</Text>
-          <Text style={styles.meta}>
-            {workout.day} · {workout.duration} · {workout.difficulty}
-          </Text>
-        </BaseCard>
-
-        <BaseCard variant="elevated" style={styles.summaryCard}>
-          <Metric
-            label={isRestDay ? "Enfoque" : "Objetivo"}
-            value={workout.metric}
-            icon={isRestDay ? "leaf" : "map-marker-distance"}
-          />
-          <View style={styles.summaryDivider} />
-          <Metric label="Zona" value={workout.heartRate} icon="heart-pulse" />
-          {!!workout.targetPace && (
-            <>
-              <View style={styles.summaryDivider} />
-              <Metric
-                label="Ritmo objetivo"
-                value={workout.targetPace}
-                icon="speedometer"
+    <>
+      <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
+          <BaseCard variant="hero" style={styles.hero}>
+            <Pressable style={styles.backButton} onPress={() => router.back()}>
+              <MaterialCommunityIcons
+                name="chevron-left"
+                size={24}
+                color={theme.colors.white}
               />
-            </>
-          )}
-        </BaseCard>
+            </Pressable>
 
-        {canExecute && (
-          <BaseCard variant="glass" style={styles.actionsCard}>
-            <View style={styles.statusRow}>
-              <Text style={styles.statusLabel}>Estado</Text>
-              <Text
-                style={[
-                  styles.statusValue,
-                  isCompleted && styles.statusCompleted,
-                  isSkipped && styles.statusSkipped,
-                ]}
-              >
-                {isCompleted
-                  ? "Completado"
-                  : isSkipped
-                    ? "Omitido"
-                    : workout.status === "rescheduled"
-                      ? "Reprogramado"
-                      : "Pendiente"}
-              </Text>
+            <View style={styles.heroIcon}>
+              <MaterialCommunityIcons
+                name={iconName as never}
+                size={30}
+                color={theme.colors.onPrimary}
+              />
             </View>
 
-            {workout.status === "pending" ? (
-              <View style={styles.actionRow}>
-                <Pressable
-                  style={styles.completeButton}
-                  onPress={() => workoutId && completeWorkout(workoutId)}
-                >
-                  <MaterialCommunityIcons
-                    name="check"
-                    size={19}
-                    color={theme.colors.onPrimary}
-                  />
-                  <Text style={styles.completeButtonText}>Completar</Text>
-                </Pressable>
+            <Text style={styles.type}>{workout.type}</Text>
+            <Text style={styles.title}>{workout.title}</Text>
+            <Text style={styles.meta}>
+              {workout.day} · {workout.duration} · {workout.difficulty}
+            </Text>
+          </BaseCard>
 
-                <Pressable
-                  style={styles.skipButton}
-                  onPress={() => workoutId && skipWorkout(workoutId)}
-                >
-                  <MaterialCommunityIcons
-                    name="close"
-                    size={19}
-                    color={theme.colors.error}
-                  />
-                  <Text style={styles.skipButtonText}>Omitir</Text>
-                </Pressable>
-              </View>
-            ) : (
-              <Pressable
-                style={styles.resetButton}
-                onPress={() => workoutId && resetWorkoutStatus(workoutId)}
-              >
-                <MaterialCommunityIcons
-                  name="restore"
-                  size={19}
-                  color={theme.colors.text}
+          <BaseCard variant="elevated" style={styles.summaryCard}>
+            <Metric
+              label={isRestDay ? "Enfoque" : "Objetivo"}
+              value={workout.metric}
+              icon={isRestDay ? "leaf" : "map-marker-distance"}
+            />
+            <View style={styles.summaryDivider} />
+            <Metric label="Zona" value={workout.heartRate} icon="heart-pulse" />
+            {!!workout.targetPace && (
+              <>
+                <View style={styles.summaryDivider} />
+                <Metric
+                  label="Ritmo objetivo"
+                  value={workout.targetPace}
+                  icon="speedometer"
                 />
-                <Text style={styles.resetButtonText}>Revertir estado</Text>
-              </Pressable>
+              </>
             )}
           </BaseCard>
-        )}
 
-        <View style={styles.section}>
-          <SectionHeader
-            title={isRestDay ? "Detalle del día" : "Bloques del entrenamiento"}
-          />
+          {canExecute && (
+            <BaseCard variant="glass" style={styles.actionsCard}>
+              <View style={styles.statusRow}>
+                <Text style={styles.statusLabel}>Estado</Text>
+                <Text
+                  style={[
+                    styles.statusValue,
+                    isCompleted && styles.statusCompleted,
+                    isSkipped && styles.statusSkipped,
+                  ]}
+                >
+                  {isCompleted
+                    ? "Completado"
+                    : isSkipped
+                      ? "Omitido"
+                      : workout.status === "rescheduled"
+                        ? "Reprogramado"
+                        : "Pendiente"}
+                </Text>
+              </View>
 
-          {workout.details && workout.details.length > 0 ? (
-            workout.details.map((block, index) => (
-              <BaseCard
-                key={`${block.type}-${index}`}
-                compact
-                style={styles.blockCard}
-              >
-                <View style={styles.blockIcon}>
+              {workout.status === "pending" ? (
+                <View style={styles.actionRow}>
+                  <Pressable
+                    style={styles.completeButton}
+                    onPress={() => setFeedbackModalVisible(true)}
+                  >
+                    <MaterialCommunityIcons
+                      name="check"
+                      size={19}
+                      color={theme.colors.onPrimary}
+                    />
+                    <Text style={styles.completeButtonText}>Completar</Text>
+                  </Pressable>
+
+                  <Pressable
+                    style={styles.skipButton}
+                    onPress={() => workoutId && skipWorkout(workoutId)}
+                  >
+                    <MaterialCommunityIcons
+                      name="close"
+                      size={19}
+                      color={theme.colors.error}
+                    />
+                    <Text style={styles.skipButtonText}>Omitir</Text>
+                  </Pressable>
+                </View>
+              ) : (
+                <Pressable
+                  style={styles.resetButton}
+                  onPress={() => workoutId && resetWorkoutStatus(workoutId)}
+                >
                   <MaterialCommunityIcons
-                    name={getBlockIcon(block.type) as never}
+                    name="restore"
                     size={19}
-                    color={theme.colors.primary}
+                    color={theme.colors.text}
                   />
-                </View>
-                <View style={styles.blockText}>
-                  <Text style={styles.blockLabel}>{block.label}</Text>
-                  <Text style={styles.blockDescription}>
-                    {block.description}
-                  </Text>
-                </View>
-              </BaseCard>
-            ))
-          ) : (
-            <BaseCard compact style={styles.emptyCard}>
-              <MaterialCommunityIcons
-                name="clipboard-text-outline"
-                size={24}
-                color={theme.colors.primary}
-              />
-              <Text style={styles.emptyText}>
-                Este entrenamiento todavía no tiene detalle disponible.
-              </Text>
+                  <Text style={styles.resetButtonText}>Revertir estado</Text>
+                </Pressable>
+              )}
             </BaseCard>
           )}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+
+          {isCompleted && workout.feedback && (
+            <BaseCard variant="glass" style={styles.feedbackCard}>
+              <SectionHeader title="Feedback guardado" />
+
+              <View style={styles.feedbackGrid}>
+                <FeedbackMetric
+                  label="RPE"
+                  value={`${workout.feedback.rpe}/10`}
+                  icon="speedometer"
+                />
+                <FeedbackMetric
+                  label="Energía"
+                  value={getEnergyLabel(workout.feedback.energy)}
+                  icon="battery-heart"
+                />
+                <FeedbackMetric
+                  label="Dolor"
+                  value={workout.feedback.pain ? "Sí" : "No"}
+                  icon={
+                    workout.feedback.pain ? "alert-circle" : "check-circle"
+                  }
+                />
+                <FeedbackMetric
+                  label="Km"
+                  value={`${formatMetricNumber(feedbackCompletedKm)} km`}
+                  icon="map-marker-distance"
+                />
+                <FeedbackMetric
+                  label="Duración"
+                  value={`${formatMetricNumber(feedbackActualDuration)} min`}
+                  icon="timer-outline"
+                />
+              </View>
+
+              {!!workout.feedback.note && (
+                <Text style={styles.feedbackNote}>{workout.feedback.note}</Text>
+              )}
+            </BaseCard>
+          )}
+
+          <View style={styles.section}>
+            <SectionHeader
+              title={
+                isRestDay ? "Detalle del día" : "Bloques del entrenamiento"
+              }
+            />
+
+            {workout.details && workout.details.length > 0 ? (
+              workout.details.map((block, index) => (
+                <BaseCard
+                  key={`${block.type}-${index}`}
+                  compact
+                  style={styles.blockCard}
+                >
+                  <View style={styles.blockIcon}>
+                    <MaterialCommunityIcons
+                      name={getBlockIcon(block.type) as never}
+                      size={19}
+                      color={theme.colors.primary}
+                    />
+                  </View>
+                  <View style={styles.blockText}>
+                    <Text style={styles.blockLabel}>{block.label}</Text>
+                    <Text style={styles.blockDescription}>
+                      {block.description}
+                    </Text>
+                  </View>
+                </BaseCard>
+              ))
+            ) : (
+              <BaseCard compact style={styles.emptyCard}>
+                <MaterialCommunityIcons
+                  name="clipboard-text-outline"
+                  size={24}
+                  color={theme.colors.primary}
+                />
+                <Text style={styles.emptyText}>
+                  Este entrenamiento todavía no tiene detalle disponible.
+                </Text>
+              </BaseCard>
+            )}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+
+      <WorkoutFeedbackModal
+        visible={feedbackModalVisible}
+        workoutTitle={workout.title}
+        plannedKm={workout.km}
+        plannedDuration={workout.plannedDuration}
+        onClose={() => setFeedbackModalVisible(false)}
+        onSave={handleSaveFeedback}
+      />
+    </>
   );
 }
 
@@ -267,6 +360,30 @@ function Metric({
       <View style={styles.metricText}>
         <Text style={styles.summaryLabel}>{label}</Text>
         <Text style={styles.summaryValue}>{value}</Text>
+      </View>
+    </View>
+  );
+}
+
+function FeedbackMetric({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: string;
+  icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
+}) {
+  return (
+    <View style={styles.feedbackMetric}>
+      <MaterialCommunityIcons
+        name={icon}
+        size={18}
+        color={theme.colors.primary}
+      />
+      <View style={styles.feedbackMetricText}>
+        <Text style={styles.feedbackMetricLabel}>{label}</Text>
+        <Text style={styles.feedbackMetricValue}>{value}</Text>
       </View>
     </View>
   );
@@ -473,6 +590,58 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
     fontSize: theme.typography.bodyMD,
     fontWeight: theme.fontWeight.bold,
+  },
+
+  feedbackCard: {
+    padding: theme.spacing.xl,
+    gap: spacing.lg,
+  },
+
+  feedbackGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.md,
+  },
+
+  feedbackMetric: {
+    width: "47%",
+    minHeight: 58,
+    borderRadius: theme.radius.md,
+    backgroundColor: theme.colors.surfaceAlt,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    padding: spacing.md,
+  },
+
+  feedbackMetricText: {
+    flex: 1,
+    minWidth: 0,
+  },
+
+  feedbackMetricLabel: {
+    fontSize: theme.typography.label,
+    color: theme.colors.textTechnical,
+    fontWeight: theme.fontWeight.bold,
+    textTransform: "uppercase",
+    marginBottom: 2,
+  },
+
+  feedbackMetricValue: {
+    fontSize: theme.typography.bodyMD,
+    color: theme.colors.text,
+    fontWeight: theme.fontWeight.bold,
+  },
+
+  feedbackNote: {
+    fontSize: theme.typography.bodyMD,
+    color: theme.colors.textSecondary,
+    lineHeight: 22,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border,
+    paddingTop: spacing.md,
   },
 
   section: {

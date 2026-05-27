@@ -85,6 +85,40 @@ function isWorkoutStatus(value: unknown): value is WorkoutStatus {
   );
 }
 
+function isNonNegativeNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0;
+}
+
+function isPositiveNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value > 0;
+}
+
+function formatNumber(value: number): string {
+  return Number.isInteger(value) ? `${value}` : `${Number(value.toFixed(2))}`;
+}
+
+function formatDuration(minutes?: number): string {
+  return isPositiveNumber(minutes) ? `${formatNumber(minutes)} min` : "—";
+}
+
+function normalizeCompletionFeedback(
+  feedback: WorkoutFeedback | undefined,
+  plannedKm: number,
+  plannedDuration?: number,
+): WorkoutFeedback | undefined {
+  if (!feedback) return undefined;
+
+  return {
+    ...feedback,
+    completedKm: isNonNegativeNumber(feedback.completedKm)
+      ? feedback.completedKm
+      : plannedKm,
+    actualDuration: isPositiveNumber(feedback.actualDuration)
+      ? feedback.actualDuration
+      : plannedDuration,
+  };
+}
+
 function normalizeWorkoutId(workout: Partial<DayWorkout>, day: number) {
   const category = workout.category ?? (workout.type === "rest" ? "rest" : "easy_run");
   return workout.id ?? `day-${day}-${category}`;
@@ -120,7 +154,12 @@ function normalizeWorkout(
     completedAt: workout.completedAt,
     skippedAt: workout.skippedAt,
     plannedDate: workout.plannedDate ?? getDateStringForWeekday(day),
-    completedKm: workout.completedKm,
+    completedKm: isNonNegativeNumber(workout.completedKm)
+      ? workout.completedKm
+      : workout.feedback?.completedKm,
+    actualDuration: isPositiveNumber(workout.actualDuration)
+      ? workout.actualDuration
+      : workout.feedback?.actualDuration,
     feedback: workout.feedback,
     km: workout.km,
     duration: workout.duration,
@@ -175,9 +214,21 @@ function buildActivity(
 ): Activity {
   const date = getWorkoutDate(workout, status);
   const plannedKm = workout.km ?? 0;
+  const plannedDuration = workout.duration;
   const completedKm =
-    status === "completed" ? workout.completedKm ?? plannedKm : 0;
-  const duration = workout.type === "rest" ? "—" : `${workout.duration ?? 0} min`;
+    status === "completed"
+      ? feedback?.completedKm ?? workout.completedKm ?? plannedKm
+      : 0;
+  const actualDuration =
+    status === "completed"
+      ? feedback?.actualDuration ?? workout.actualDuration ?? plannedDuration
+      : undefined;
+  const duration =
+    workout.type === "rest"
+      ? "—"
+      : status === "completed"
+        ? formatDuration(actualDuration ?? plannedDuration)
+        : formatDuration(plannedDuration);
 
   return {
     id: `activity-${workout.id}`,
@@ -192,6 +243,7 @@ function buildActivity(
     type: workout.type,
     plannedKm,
     completedKm,
+    actualDuration,
     km: completedKm,
     duration,
     status,
@@ -208,9 +260,16 @@ function normalizeActivity(activity: LegacyActivity): Activity {
   const completedKm =
     typeof activity.completedKm === "number"
       ? activity.completedKm
-      : activity.km ?? 0;
+      : activity.feedback?.completedKm ?? activity.km ?? 0;
   const plannedKm =
     typeof activity.plannedKm === "number" ? activity.plannedKm : completedKm;
+  const actualDuration =
+    status === "completed"
+      ? isPositiveNumber(activity.actualDuration)
+        ? activity.actualDuration
+        : activity.feedback?.actualDuration
+      : undefined;
+  const duration = activity.duration ?? formatDuration(actualDuration);
 
   return {
     id: activity.id,
@@ -219,15 +278,16 @@ function normalizeActivity(activity: LegacyActivity): Activity {
     subtitle:
       activity.subtitle ??
       (status === "completed"
-        ? `${completedKm} km · ${activity.duration ?? "—"}`
-        : `Omitida · ${activity.duration ?? "—"}`),
+        ? `${completedKm} km · ${duration}`
+        : `Omitida · ${duration}`),
     dateLabel: activity.dateLabel ?? getRelativeDateLabel(date),
     date,
     type: activity.type ?? "running",
     plannedKm,
     completedKm,
+    actualDuration,
     km: activity.km ?? completedKm,
-    duration: activity.duration ?? "—",
+    duration,
     status,
     feedback: activity.feedback,
   };
@@ -260,6 +320,7 @@ function buildTodayWorkoutFromDay(dayWorkout: DayWorkout): TodayWorkout {
     skippedAt: dayWorkout.skippedAt,
     plannedDate: dayWorkout.plannedDate,
     completedKm: dayWorkout.completedKm,
+    actualDuration: dayWorkout.actualDuration,
     feedback: dayWorkout.feedback,
     details: dayWorkout.details ?? [],
   };
@@ -377,6 +438,7 @@ export const useHomeStore = create<HomeState>()(
           completedAt: undefined,
           skippedAt: undefined,
           completedKm: undefined,
+          actualDuration: undefined,
           feedback: undefined,
         }));
 
@@ -397,13 +459,24 @@ export const useHomeStore = create<HomeState>()(
 
         if (!target || !isTrainableWorkout(target)) return;
 
+        const plannedKm = target.km ?? 0;
+        const normalizedFeedback = normalizeCompletionFeedback(
+          feedback,
+          plannedKm,
+          target.duration,
+        );
+        const completedKm = normalizedFeedback?.completedKm ?? plannedKm;
+        const actualDuration =
+          normalizedFeedback?.actualDuration ?? target.duration;
+
         const completedWorkout: DayWorkout = {
           ...target,
           status: "completed",
           completedAt: getTodayDateString(),
           skippedAt: undefined,
-          completedKm: target.km ?? 0,
-          feedback,
+          completedKm,
+          actualDuration,
+          feedback: normalizedFeedback,
         };
         const nextWeekPlan = state.weekPlan.map((workout) =>
           workout.id === workoutId ? completedWorkout : workout,
@@ -411,7 +484,7 @@ export const useHomeStore = create<HomeState>()(
         const nextActivity = buildActivity(
           completedWorkout,
           "completed",
-          feedback,
+          normalizedFeedback,
         );
         const nextActivities = [
           nextActivity,
@@ -436,6 +509,7 @@ export const useHomeStore = create<HomeState>()(
           completedAt: undefined,
           skippedAt: getTodayDateString(),
           completedKm: 0,
+          actualDuration: undefined,
           feedback: undefined,
         };
         const nextWeekPlan = state.weekPlan.map((workout) =>
@@ -465,6 +539,7 @@ export const useHomeStore = create<HomeState>()(
           completedAt: undefined,
           skippedAt: undefined,
           completedKm: undefined,
+          actualDuration: undefined,
           feedback: undefined,
         };
         const nextWeekPlan = state.weekPlan.map((workout) =>

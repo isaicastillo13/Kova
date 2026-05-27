@@ -23,7 +23,6 @@ export default function HomeScreen() {
     todayWorkout,
     completedDates,
     activities,
-    toggleTodayWorkout,
     weekPlan,
     setSelectedWorkout,
   } = useHomeStore();
@@ -109,7 +108,7 @@ export default function HomeScreen() {
                 metric={todayWorkout.metric}
                 heartRate={todayWorkout.heartRate}
                 status={todayWorkout.status}
-                onToggleComplete={toggleTodayWorkout}
+                onToggleComplete={() => router.push("/workout-detail")}
                 onPress={() => router.push("/workout-detail")}
                 km={todayWorkout.km}
               />
