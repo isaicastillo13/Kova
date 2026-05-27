@@ -173,12 +173,12 @@ function MetricItem({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: theme.colors.surfaceGlassStrong,
+    backgroundColor: theme.colors.surface,
     borderRadius: theme.radius.card,
     padding: theme.spacing.xxl,
     borderWidth: 1,
     borderColor: theme.colors.borderStrong,
-    ...theme.shadows.card,
+
   },
 
   completedContainer: {
