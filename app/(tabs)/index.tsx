@@ -93,9 +93,9 @@ export default function HomeScreen() {
             </BaseCard>
 
             <HomeInsight
-              streakDays={streakDays}
               todayWorkout={todayWorkout}
               weeklyGoal={weeklyGoal}
+              weekPlan={weekPlan}
               activities={activities}
             />
 

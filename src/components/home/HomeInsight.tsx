@@ -1,190 +1,93 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { BaseCard } from "@/src/components/ui/kova";
 import { spacing, theme } from "@/src/constants/theme";
-import type { Activity, WorkoutStatus } from "@/src/types/training";
-
-type TodayWorkout = {
-  type: string;
-  title: string;
-  km: number;
-  status: WorkoutStatus;
-};
-
-type WeeklyGoal = {
-  progressCurrent: number;
-  progressTotal: number;
-  completedSessions: number;
-  totalSessions: number;
-  unit: string;
-};
+import {
+  getCoachRecommendation,
+  type CoachRecommendationSeverity,
+} from "@/src/services/coachRecommendation";
+import type {
+  Activity,
+  DayWorkout,
+  TodayWorkout,
+  WeeklyGoal,
+} from "@/src/types/training";
 
 type Props = {
-  streakDays: number;
   todayWorkout: TodayWorkout;
   weeklyGoal: WeeklyGoal;
+  weekPlan: DayWorkout[];
   activities?: Activity[];
 };
 
-type Insight = {
-  label: string;
-  text: string;
-  icon:
-    | React.ComponentProps<typeof MaterialCommunityIcons>["name"]
-    | React.ComponentProps<typeof Ionicons>["name"];
-  family: "material" | "ion";
-  tone: "primary" | "success" | "recovery";
+type SeverityMeta = {
+  icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
+  color: string;
+  backgroundColor: string;
+  borderColor: string;
 };
 
-function getInsightMessage({
-  streakDays,
-  todayWorkout,
-  weeklyGoal,
-  activities = [],
-}: Props): Insight {
-  const isRestDay =
-    todayWorkout.type.toLowerCase() === "descanso" || todayWorkout.km === 0;
-
-  const progressPercent =
-    weeklyGoal.progressTotal > 0
-      ? weeklyGoal.progressCurrent / weeklyGoal.progressTotal
-      : 0;
-  const skippedSessions = activities.filter(
-    (activity) => activity.status === "skipped",
-  );
-  const lastActivity = activities[0];
-
-  if (skippedSessions.length > 0 && lastActivity?.status === "skipped") {
-    return {
-      family: "material",
-      icon: "calendar-alert",
-      label: "Ajuste de semana",
-      tone: "recovery",
-      text: "No pasa nada, ajusta la semana y vuelve con calma.",
-    };
-  }
-
-  if (
-    lastActivity?.status === "completed" &&
-    (lastActivity.feedback?.pain || (lastActivity.feedback?.rpe ?? 0) >= 8)
-  ) {
-    return {
-      family: "material",
-      icon: "heart-pulse",
-      label: "Recupera bien",
-      tone: "recovery",
-      text: "Fue una sesión exigente. Prioriza recuperación antes de volver a subir la carga.",
-    };
-  }
-
-  if (isRestDay) {
-    return {
-      family: "material",
-      icon: "sleep",
-      label: "Recuperación",
-      tone: "recovery",
-      text: "Hoy baja la carga. Recuperar bien también suma al plan.",
-    };
-  }
-
-  if (todayWorkout.status === "completed") {
-    return {
-      family: "ion",
-      icon: "checkmark-done",
-      label: "Sesión cerrada",
-      tone: "success",
-      text: `Ya sumaste ${todayWorkout.km} ${weeklyGoal.unit}. Buen avance para esta semana.`,
-    };
-  }
-
-  if (weeklyGoal.completedSessions >= 2) {
-    return {
-      family: "material",
-      icon: "chart-timeline-variant",
-      label: "Constancia",
-      tone: "success",
-      text: "Buen ritmo, estás construyendo constancia sesión a sesión.",
-    };
-  }
-
-  if (streakDays >= 3) {
-    return {
-      family: "material",
-      icon: "fire",
-      label: "Racha activa",
-      tone: "primary",
-      text: `Llevas ${streakDays} días seguidos. Mantén el ritmo sin forzar de más.`,
-    };
-  }
-
-  if (progressPercent >= 0.75) {
-    return {
-      family: "material",
-      icon: "chart-line",
-      label: "Casi listo",
-      tone: "primary",
-      text: "Estás cerca de completar la meta semanal. Cuida la ejecución.",
-    };
-  }
-
-  if (weeklyGoal.completedSessions === 0) {
-    return {
-      family: "material",
-      icon: "run-fast",
-      label: "Primera sesión",
-      tone: "primary",
-      text: `Hoy toca ${todayWorkout.title}. Buen día para abrir la semana.`,
-    };
-  }
-
-  return {
-    family: "material",
-    icon: "map-marker-distance",
-    label: "Construyendo base",
-    tone: "primary",
-    text: `Vas ${weeklyGoal.progressCurrent}/${weeklyGoal.progressTotal} ${weeklyGoal.unit}. Sigue acumulando trabajo útil.`,
-  };
-}
+const severityMeta: Record<CoachRecommendationSeverity, SeverityMeta> = {
+  positive: {
+    icon: "check-decagram",
+    color: theme.colors.success,
+    backgroundColor: theme.colors.successLight,
+    borderColor: "rgba(53, 208, 127, 0.34)",
+  },
+  neutral: {
+    icon: "compass-outline",
+    color: theme.colors.primary,
+    backgroundColor: theme.colors.primaryLight,
+    borderColor: theme.colors.borderStrong,
+  },
+  warning: {
+    icon: "alert-circle-outline",
+    color: theme.colors.warning,
+    backgroundColor: theme.colors.warningLight,
+    borderColor: "rgba(245, 184, 75, 0.34)",
+  },
+  recovery: {
+    icon: "heart-pulse",
+    color: theme.colors.info,
+    backgroundColor: theme.colors.infoLight,
+    borderColor: "rgba(120, 199, 255, 0.34)",
+  },
+};
 
 export default function HomeInsight({
-  streakDays,
   todayWorkout,
   weeklyGoal,
+  weekPlan,
   activities,
 }: Props) {
-  const insight = getInsightMessage({
-    streakDays,
-    todayWorkout,
+  const recommendation = getCoachRecommendation({
+    activities: activities ?? [],
+    weekPlan,
     weeklyGoal,
-    activities,
+    todayWorkout,
   });
-
-  const iconColor =
-    insight.tone === "success"
-      ? theme.colors.success
-      : insight.tone === "recovery"
-        ? theme.colors.info
-        : theme.colors.primary;
+  const meta = severityMeta[recommendation.severity];
 
   return (
-    <BaseCard variant="glass" compact style={styles.banner}>
-      <View style={[styles.iconWrap, { backgroundColor: `${iconColor}18` }]}>
-        {insight.family === "ion" ? (
-          <Ionicons name={insight.icon as never} size={22} color={iconColor} />
-        ) : (
-          <MaterialCommunityIcons
-            name={insight.icon as never}
-            size={24}
-            color={iconColor}
-          />
-        )}
+    <BaseCard
+      variant="glass"
+      compact
+      style={[styles.banner, { borderColor: meta.borderColor }]}
+    >
+      <View style={[styles.iconWrap, { backgroundColor: meta.backgroundColor }]}>
+        <MaterialCommunityIcons
+          name={meta.icon}
+          size={24}
+          color={meta.color}
+        />
       </View>
 
       <View style={styles.messageBlock}>
-        <Text style={styles.label}>{insight.label}</Text>
-        <Text style={styles.message}>{insight.text}</Text>
+        <Text style={[styles.label, { color: meta.color }]}>
+          {recommendation.title}
+        </Text>
+        <Text style={styles.message}>{recommendation.message}</Text>
       </View>
     </BaseCard>
   );
