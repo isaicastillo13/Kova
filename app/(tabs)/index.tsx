@@ -105,6 +105,7 @@ export default function HomeScreen() {
               weeklyGoal={weeklyGoal}
               weekPlan={weekPlan}
               activities={activities}
+              readiness={readiness}
             />
 
             <TrainingReadinessCard readiness={readiness} />

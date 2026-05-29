@@ -7,6 +7,7 @@ import {
   getCoachRecommendation,
   type CoachRecommendationSeverity,
 } from "@/src/services/coachRecommendation";
+import type { TrainingReadiness } from "@/src/services/trainingReadiness";
 import type {
   Activity,
   DayWorkout,
@@ -19,6 +20,7 @@ type Props = {
   weeklyGoal: WeeklyGoal;
   weekPlan: DayWorkout[];
   activities?: Activity[];
+  readiness?: TrainingReadiness;
 };
 
 type SeverityMeta = {
@@ -55,18 +57,59 @@ const severityMeta: Record<CoachRecommendationSeverity, SeverityMeta> = {
   },
 };
 
+type InsightMessage = {
+  title: string;
+  message: string;
+  severity: CoachRecommendationSeverity;
+};
+
+function getReadinessInsight(
+  readiness?: TrainingReadiness,
+): InsightMessage | null {
+  if (!readiness || readiness.status === "normal") return null;
+
+  switch (readiness.status) {
+    case "caution":
+      return {
+        title: "Baja intensidad hoy",
+        message:
+          "Hoy conviene evitar intensidad. Prioriza técnica, movilidad o descanso si las señales siguen cargadas.",
+        severity: "warning",
+      };
+    case "recovery":
+      return {
+        title: "Descarga inteligente",
+        message:
+          "Enfoca la sesión en recuperación activa, movilidad o trabajo suave para asimilar la carga.",
+        severity: "recovery",
+      };
+    case "ready":
+      return {
+        title: "Buen momento para ejecutar",
+        message:
+          "Puedes seguir el plan, manteniendo la técnica y sin convertir una buena sensación en carga extra.",
+        severity: "positive",
+      };
+    default:
+      return null;
+  }
+}
+
 export default function HomeInsight({
   todayWorkout,
   weeklyGoal,
   weekPlan,
   activities,
+  readiness,
 }: Props) {
-  const recommendation = getCoachRecommendation({
+  const coachRecommendation = getCoachRecommendation({
     activities: activities ?? [],
     weekPlan,
     weeklyGoal,
     todayWorkout,
   });
+  const recommendation =
+    getReadinessInsight(readiness) ?? coachRecommendation;
   const meta = severityMeta[recommendation.severity];
 
   return (
