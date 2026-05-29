@@ -3,6 +3,7 @@ import HomeInsight from "@/src/components/home/HomeInsight";
 import MiniSummary from "@/src/components/home/MiniSummary";
 import QuickHistory from "@/src/components/home/QuickHistory";
 import TodayWorkout from "@/src/components/home/TodayWorkout";
+import TrainingReadinessCard from "@/src/components/home/TrainingReadinessCard";
 import WeeklyGoalCard from "@/src/components/home/WeeklyGoalCard";
 import WeeklyPlan from "@/src/components/home/WeeklyPlan";
 import { BaseCard, ProgressRing, SectionHeader } from "@/src/components/ui/kova";
@@ -12,6 +13,7 @@ import {
 } from "@/src/components/utils/date";
 import WeeklyCalendar from "@/src/components/weeklyCalendar";
 import { spacing, theme } from "@/src/constants/theme";
+import { getTrainingReadiness } from "@/src/services/trainingReadiness";
 import { useHomeStore } from "@/src/store/home-store";
 import { useRouter } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -50,6 +52,13 @@ export default function HomeScreen() {
       : 0;
 
   const weekDays = getWeekDaysWithLabels(completedDates);
+  const readiness = getTrainingReadiness({
+    activities,
+    weekPlan,
+    weeklyGoal,
+    todayWorkout,
+    streakDays,
+  });
   const router = useRouter();
 
   return (
@@ -97,6 +106,8 @@ export default function HomeScreen() {
               weekPlan={weekPlan}
               activities={activities}
             />
+
+            <TrainingReadinessCard readiness={readiness} />
 
             <View style={styles.section}>
               <TodayWorkout
